@@ -1,0 +1,4 @@
+import(grid)
+importFrom(car, Anova)
+
+export(iNZightSummary, plotlm6)

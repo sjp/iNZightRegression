@@ -1,0 +1,14 @@
+Package: iNZightRegression
+Type: Package
+Title: iNZightRegression
+Version: 0.0.2
+Date: 2012-09-10
+Authors@R: c(person("Simon", "Potter", role = c("aut", "cre"),
+                    email = "spot023@aucklanduni.ac.nz"),
+             person("David", "Banks", role = "aut"))
+Depends: R (>= 2.13)
+Imports: grid, car
+Suggests: vit
+Enhances: vit
+Description: Core functions for iNZight
+License: GPL-2
