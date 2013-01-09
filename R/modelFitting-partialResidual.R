@@ -26,17 +26,23 @@ partialResPlot = function(fit, varname) {
         bsm_r = bsm[[j]]$residuals
         bsm_Bi = bsm[[j]]$coefficients[varname]
         bsm_Xi = bsm[[j]]$model[, varname]
-        bsm_sm = lowess(bsm_Xi, bsm_r + bsm_Bi * bsm_Xi)
-        lines(bsm_sm$x, bsm_sm$y, col = "lightgreen")
+        bsm_sm = loess(bsm_r + bsm_Bi * bsm_Xi ~ bsm_Xi)
+        bsm_smOrd = order(bsm_sm$x)
+        bsm_smx = bsm_sm$x[bsm_smOrd]
+        bsm_smy = bsm_sm$fitted[bsm_smOrd]
+        lines(bsm_smx, bsm_smy, col = "lightgreen")
     }
         
-    ## Plot linear trend we are modelling
-    xlims = c(min(Xi), max(Xi))    
+    ## Plot linear trend we are modelling  
+    xlims = range(Xi)
     lines(xlims, Bi * xlims, lty = "dashed", col = "blue", lwd = 2)
     
-    ## Plot original data smooth
-    sm = lowess(Xi, Yi)
-    lines(sm$x, sm$y, col = "red", lwd = 2)
+    ## Plot original data smooth  
+    sm = loess(Yi ~ Xi)
+    smOrd = order(sm$x)
+    smx = sm$x[smOrd]
+    smy = sm$fitted[smOrd]
+    lines(smx, smy, col= "orangered", lwd = 2)
 }
 
 allPartialResPlots = function(fit) {
@@ -45,6 +51,7 @@ allPartialResPlots = function(fit) {
     xVarnames = xVarterms[ ! grepl(":", xVarterms)]
     xVartypes = attr(fit$terms, "dataClasses")
     for (v in xVarnames)
-        if (! xVartypes[v] %in% c("factor", "ordered")) partialResPlot(fit, v)
+        if (! xVartypes[v] %in% c("factor", "ordered"))
+            partialResPlot(fit, v)
    devAskNewPage(promptSetting)
 }

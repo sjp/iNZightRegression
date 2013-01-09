@@ -1,4 +1,4 @@
 import(grid)
 importFrom(car, Anova)
 
-export(iNZightSummary, plotlm6)
+export(iNZightSummary, plotlm6, partialResPlot, allPartialResPlots)
