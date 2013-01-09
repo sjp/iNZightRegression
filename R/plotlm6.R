@@ -7,6 +7,9 @@ plotlm6 = function (x, which = 1:6,
     qqline = TRUE, cook.levels = c(0.5, 1), add.smooth = getOption("add.smooth"),
     label.pos = c(4, 2), cex.caption = 1)
 {
+    smColour = "orangered"      # colour of data loess line
+    bsmColour = "lightgreen"    # colour of bootstrap loess lines
+
     dropInf <- function(x, h) {
         if (any(isInf <- h >= 1)) {
             warning("Not plotting observations with leverage one:\n  ",
@@ -181,11 +184,16 @@ plotlm6 = function (x, which = 1:6,
             plot(yh, r, xlab = l.fit, ylab = "Residuals", main = main,
                 ylim = ylim, ...)
 
-            ### Draw bootstrap sample lowess lines
-            for (i in 1:nBootstraps)
-                lines(lowess(yhbs[[i]], rbs[[i]]), col = "lightgreen")
-            ### Draw lowess line for original data set
-            lines(lowess(yh, r), col = "red", lwd = 2)
+            ### Draw bootstrap sample loess lines
+            for (i in 1:nBootstraps) {
+                bsm = loess(rbs[[i]] ~ yhbs[[i]])
+                bsmOrd = order(bsm$x)
+                lines(bsm$x[bsmOrd], bsm$fitted[bsmOrd], col = bsmColour)
+            }
+            ### Draw loess line for original data set
+            sm = loess(r ~ yh)
+            smOrd = order(sm$x)
+            lines(sm$x[smOrd], sm$fitted[smOrd], col = smColour, lwd = 2)
 
             if (one.fig)
                 title(sub = sub.caption, ...)
@@ -209,11 +217,16 @@ plotlm6 = function (x, which = 1:6,
             plot(yhn0, sqrtabsr, xlab = l.fit, ylab = yl, main = main,
                 ylim = ylim, ...)
 
-            ### Draw bootstrap sample lowess lines
-            for (i in 1:nBootstraps)
-                lines(lowess(yhbs[[i]], sqrt(abs(rsbs[[i]]))), col = "lightgreen")
-            ### Draw lowess line for original data set
-            lines(lowess(yhn0, sqrtabsr), col = "red", lwd = 2)
+            ### Draw bootstrap sample loess lines
+            for (i in 1:nBootstraps) {
+                bsm = loess(sqrt(abs(rsbs[[i]])) ~ yhbs[[i]])
+                bsmOrd = order(bsm$x)
+                lines(bsm$x[bsmOrd], bsm$fitted[bsmOrd], col = bsmColour)
+            }
+            ### Draw loess line for original data set
+            sm = loess(sqrtabsr ~ yhn0)
+            smOrd = order(sm$x)
+            lines(sm$x[smOrd], sm$fitted[smOrd], col = smColour, lwd = 2)
 
             if (one.fig)
                 title(sub = sub.caption, ...)
@@ -251,12 +264,19 @@ plotlm6 = function (x, which = 1:6,
             plot(xx, rsp, xlim = c(0, max(xx, na.rm = TRUE)),
                 ylim = ylim, main = main, xlab = "Leverage",
                 ylab = ylab5, ...)
+            ## Bootstrap smooths
             for (i in 1:nBootstraps) {
               xxbs = hiibs[[i]]
               xxbs[xxbs >= 1] = NA
-              lines(lowess(xxbs, rspbs[[i]]), col = "lightgreen")
+              bsm = loess(rspbs[[i]] ~ xxbs)
+              bsmOrd = order(bsm$x)
+              lines(bsm$x[bsmOrd], bsm$fitted[bsmOrd], col = bsmColour)
             }
-            lines(lowess(xx, rsp), col = "red", lwd = 2)
+            ## Original data smooth
+            sm = loess(rsp ~ xx)
+            smOrd = order(sm$x)
+            lines(sm$x[smOrd], sm$fitted[smOrd], col = smColour, lwd = 2)
+            
             if (one.fig)
                 title(sub = sub.caption, ...)
             if (length(cook.levels)) {
