@@ -362,17 +362,19 @@ plotlm6 = function (x, which = 1:6,
 }
 
 # A modified version of the s20x::normcheck default method
-normCheck = function (x, col = NULL, ...) {
+normCheck = function (x, col = NULL, shapiroWilk = TRUE, ...) {
     xlab <- "Theoretical Quantiles"
     qqp <- qqnorm(x, xlab = xlab, main = "")
 	mx <- mean(x)
     sx <- sd(x)
     abline(c(mx, sx), col = "gray50")
-    stest <- shapiro.test(x)
-    txt <- paste("Shapiro-Wilk normality test", "\n", "W = ",
-        round(stest$statistic, 4), "\n", "P-value = ", round(stest$p.value,
-            3), sep = "")
-    text(sort(qqp$x)[2], 0.99 * sort(qqp$y)[length(qqp$y)], txt,
-        adj = c(0, 1))
+    if (shapiroWilk) {
+      stest <- shapiro.test(x)
+      txt <- paste("Shapiro-Wilk normality test", "\n", "W = ",
+                   round(stest$statistic, 4), "\n", "P-value = ",
+                   round(stest$p.value, 3), sep = "")
+      text(sort(qqp$x)[2], 0.99 * sort(qqp$y)[length(qqp$y)], txt,
+           adj = c(0, 1))
+    }
 	list(x = qqp$x, y = qqp$y)
 }

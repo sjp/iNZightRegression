@@ -42,7 +42,8 @@ qqplotArray = function(x, n = 7) {
     ylim <- range(rs, na.rm = TRUE)
     ylim[2] <- ylim[2] + diff(ylim) * 0.075
     normCheck(rs, xlab = "Theoretical Quantiles",
-              ylab = "Sample Quantiles", ylim = ylim)
+              ylab = "Sample Quantiles", ylim = ylim,
+              shapiroWilk = FALSE)
     mtext(paste("Normal errors: sample", i), 3, font = 2,
           col = "navy", line = 1)
   }
