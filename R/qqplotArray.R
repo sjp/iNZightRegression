@@ -26,7 +26,7 @@ qqplotArray = function(x, n = 7) {
   # if (id.n > 0)
   #   text.id(qq$x[show.rs], qq$y[show.rs], show.rs)
      
-  newdat = dat
+  newdat = x$model
   response = rownames(attr(x$terms, "factors"))[1]
   newcall = modifyModelCall(x, "newdat")
     

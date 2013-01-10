@@ -23,7 +23,7 @@ histogramArray = function(x, n = 7) {
   y1 <- dnorm(x1, mx, sx)
   lines(x1, y1, lwd = 1.5, lty = 3)
   
-  newdat = dat
+  newdat = x$model
   response = rownames(attr(x$terms, "factors"))[1]
   newcall = modifyModelCall(x, "newdat")
   
