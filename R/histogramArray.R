@@ -47,7 +47,7 @@ histogramArray = function(x, n = 7) {
   for (i in 1:n) {
     r = resList[[i]]
     h = hist(r, plot = FALSE, breaks = breaks)
-    ymax = max(ymax, max(h$density, dnorm(mx, mx, sx)) * 1.05)
+    ymax = max(ymax, max(h$density, dnorm(mean(r), mean(r), sd(r))) * 1.05)
   }
   oh = hist(residuals(x), breaks = breaks, plot = FALSE)
   r = residuals(x)
