@@ -190,10 +190,11 @@ iNZightSummary <-
                     # No longer dealing with var or base
                     if (k > (i + 1)) {
                       if (method == "bootstrap") {
+                        original.name <- paste(current.var, substring(name.k, 3), sep = "")
                         bsCoefs = c(coefs.copy[k, 1],
-                                    bootCoefs$seCoef[k],
-                                    T.info$t[k],
-                                    T.info$p[k])
+                                    bootCoefs$seCoef[original.name],
+                                    T.info$t[original.name],
+                                    T.info$p[original.name])
                         if (all(is.na(bsCoefs)))
                           bsCoefs <- rep(" ", 4)
                         coefs.copy <- insert.lines(name.k, k, bsCoefs,
