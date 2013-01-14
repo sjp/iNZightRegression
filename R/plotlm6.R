@@ -101,15 +101,15 @@ plotlm6 = function (x, which = 1:6,
         }
     }
 
-	caption = list("Residuals vs Fitted", "Scale-Location",
+    caption = list("Residuals vs Fitted", "Scale-Location",
                    "Residuals vs Leverage","Cook's distance",
-				   "Normal Q-Q", "Histogram")
+                   "Normal Q-Q", "Histogram")
     getCaption <- function(k) {
-		if (length(caption) < k)
-			NA_character_
-		else
-			as.graphicsAnnot(caption[[k]])
-	}
+        if (length(caption) < k)
+            NA_character_
+        else
+            as.graphicsAnnot(caption[[k]])
+    }
     if (is.null(sub.caption)) {
         cal <- x$call
         if (!is.na(m.f <- match("formula", names(cal)))) {
@@ -365,7 +365,7 @@ plotlm6 = function (x, which = 1:6,
 normCheck = function (x, col = NULL, shapiroWilk = TRUE, ...) {
     xlab <- "Theoretical Quantiles"
     qqp <- qqnorm(x, xlab = xlab, main = "")
-	mx <- mean(x)
+    mx <- mean(x)
     sx <- sd(x)
     abline(c(mx, sx), col = "gray50")
     if (shapiroWilk) {
