@@ -36,7 +36,7 @@ qqplotArray = function(x, n = 7) {
     newdat[, response] = x$fitted.values + rNormal
     newlm = eval(parse(text = newcall))
     r = residuals(newlm)
-    s = sqrt(deviance(newlm)) / df.residual(newlm)
+    s = sqrt(deviance(newlm) / df.residual(newlm))
     hii <- lm.influence(newlm, do.coef = FALSE)$hat
     rs = dropInf(r/(s * sqrt(1 - hii)), hii)
     ylim <- range(rs, na.rm = TRUE)
