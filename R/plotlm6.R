@@ -376,5 +376,5 @@ normCheck = function (x, col = NULL, shapiroWilk = TRUE, ...) {
       text(sort(qqp$x)[2], 0.99 * sort(qqp$y)[length(qqp$y)], txt,
            adj = c(0, 1))
     }
-	list(x = qqp$x, y = qqp$y)
+    qqp
 }
