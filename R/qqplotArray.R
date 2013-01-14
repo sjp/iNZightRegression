@@ -18,19 +18,15 @@ qqplotArray = function(x, n = 7) {
   r = residuals(x)
   s = sqrt(deviance(x)/df.residual(x))
   rs = dropInf(r/(s * sqrt(1 - hii)), hii)
-  ylim = range(rs, na.rm = TRUE)
-  ylim[2] = ylim[2] + diff(ylim) * 0.075
-  qq = normCheck(rs, xlab = "Theoretical Quantiles",
-                 ylab = "Sample Quantiles", ylim = ylim)
-  mtext("Original data", 3, font = 2, col = "navy", line = 1)
-  # if (id.n > 0)
-  #   text.id(qq$x[show.rs], qq$y[show.rs], show.rs)
+  qq = normCheck(rs, plot = FALSE)
+  ylims = range(qq$y)
      
   newdat = x$model
   response = rownames(attr(x$terms, "factors"))[1]
   newcall = modifyModelCall(x, "newdat")
-    
+  
   n.obs = nrow(x$model)
+  rsList = list()
   for (i in 1:n) {
     rNormal = rnorm(n.obs, sd = summary(x)$sigma)
     newdat[, response] = x$fitted.values + rNormal
@@ -38,12 +34,19 @@ qqplotArray = function(x, n = 7) {
     r = residuals(newlm)
     s = sqrt(deviance(newlm) / df.residual(newlm))
     hii <- lm.influence(newlm, do.coef = FALSE)$hat
-    rs = dropInf(r/(s * sqrt(1 - hii)), hii)
-    ylim <- range(rs, na.rm = TRUE)
-    ylim[2] <- ylim[2] + diff(ylim) * 0.075
-    normCheck(rs, xlab = "Theoretical Quantiles",
-              ylab = "Sample Quantiles", ylim = ylim,
-              shapiroWilk = FALSE)
+    rsList[[i]] = dropInf(r/(s * sqrt(1 - hii)), hii)
+    qq = normCheck(rsList[[i]], plot = FALSE)
+    ylims = range(c(ylims, qq$y), na.rm = TRUE)
+  }
+
+  normCheck(rs, xlab = "Theoretical Quantiles",
+            ylab = "Sample Quantiles", ylim = ylims)
+  mtext("Original data", 3, font = 2, col = "navy", line = 1)
+  
+  for (i in 1:n) {
+    normCheck(rsList[[i]], xlab = "Theoretical Quantiles",
+                   ylab = "Sample Quantiles", ylim = ylims,
+                   shapiroWilk = FALSE)
     mtext(paste("Normal errors: sample", i), 3, font = 2,
           col = "navy", line = 1)
   }
