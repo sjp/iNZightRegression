@@ -373,7 +373,7 @@ normCheck = function (x, col = NULL, shapiroWilk = TRUE, plot = TRUE, ...) {
         txt <- paste("Shapiro-Wilk normality test", "\n", "W = ",
                      round(stest$statistic, 4), "\n", "P-value = ",
                      round(stest$p.value, 3), sep = "")
-        text(sort(qqp$x)[2], 0.99 * tail(sort(qqp$y), 1), txt,
+        text(sort(qqp$x)[2], 0.99 * max(qqp$y, na.rm = TRUE), txt,
              adj = c(0, 1))
       }
     }
