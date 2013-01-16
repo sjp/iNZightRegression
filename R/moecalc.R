@@ -1,15 +1,15 @@
 ## Margin of Error help:
-## if obj is model:
+## if x is model:
 ##   must has factorname or coefficient index(coef.idx)
 ##   if input factorname
 ##     will compute ErrBars by factorname (for given model)
 ##   if input coefficient index
 ##     will compute ErrBars simply by index only (even they are not factor)
-## if obj is ses.moecalc object
+## if x is ses.moecalc object
 ##   will compute ErrBars simply by given ses.moecalc object
 ##
 ## Arguments:
-## obj        : can be model or ses.moecalc object
+## x          : can be model or ses.moecalc object
 ## factorname : name of factor
 ## levelnames : name of each level of factor
 ## coef.idx   : coefficient index
@@ -20,10 +20,10 @@
 ## basename   : label name of base term if base is TRUE
 ## conf.level : confidence level for both ErrBars and confidnece interval
 
-moecalc = function(obj, factorname = NULL, levelnames = NULL, coef.idx = NULL, 
+moecalc = function(x, factorname = NULL, levelnames = NULL, coef.idx = NULL, 
                    est = NULL, ci = NULL, base = TRUE, basename = "base",
                    conf.level = 1.96){
-                   
+  obj <- x
   modelcall = NULL
   ## obtain standard error difference matrix
   if(!any(class(obj) == "ses.moecalc")){
@@ -171,7 +171,8 @@ moecalc = function(obj, factorname = NULL, levelnames = NULL, coef.idx = NULL,
   ret
 }
 
-print.moecalc = function(obj, ...){
+print.moecalc = function(x, ...){
+  obj <- x
   if(!is.null(obj$est)){
     out = cbind(obj$est, obj$ErrBars, obj$compL, obj$compU)
     colnames(out) = c("Est", "ErrBar", "compL", "compU")  
@@ -184,7 +185,8 @@ print.moecalc = function(obj, ...){
 }
 
 
-summary.moecalc = function(obj, ...){
+summary.moecalc = function(object, ...){
+  obj <- object
   factorname = names(obj$xlevels)[1]
   levelnames = obj$xlevels[[factorname]]
   
@@ -208,7 +210,8 @@ summary.moecalc = function(obj, ...){
   x
 }
 
-print.summary.moecalc = function(obj, ...){
+print.summary.moecalc = function(x, ...){
+  obj <- x
   if(!is.null(obj$modelcall)){
     cat("Call:\n")
     print(obj$modelcall)
@@ -225,14 +228,15 @@ print.summary.moecalc = function(obj, ...){
 }
 
 ## plot moecalc
-## obj      : moecalc object
+## x        : moecalc object
 ## horiz    : horizontal plot or not
 ## conf     : has confidence interval bar or not
 ## xlevels  : factor name
 
 
 
-plot.moecalc = function(obj, horiz=FALSE, conf=FALSE, xlevels=NULL){
+plot.moecalc = function(x, horiz=FALSE, conf=FALSE, xlevels=NULL, ...){
+  obj <- x
   if(is.null(obj$est)) stop("No estimates, cannot plot interval")
   
   def.par <- par(no.readonly = TRUE)
