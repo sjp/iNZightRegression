@@ -1,5 +1,5 @@
 iNZightSummary <-
-    function (x, method = "standard", reorder.factors = TRUE,
+    function (x, method = "standard", reorder.factors = FALSE,
               digits = max(3, getOption("digits") - 3),
               symbolic.cor = x$symbolic.cor,
 	      signif.stars= getOption("show.signif.stars"),	...)
@@ -19,6 +19,21 @@ iNZightSummary <-
       bootCoefs = bootstrapCoefs(x)
       T.info = bootstrapTTests(bootCoefs)
       F.info = bootstrapFTests(bootCoefs)
+      
+      if (bootCoefs$keptSamples / bootCoefs$N < .95) {
+        if (reorder.factors) {
+          cat("Error: Not enough baseline cases in one or more factors even after reordering.", "\n",
+              "Use standard output instead.", "\n")
+          return(invisible())  
+        } else {
+          cat("Warning: Not enough baseline cases in one or more factors.", "\n",
+              "Trying again with factor levels reordered.", "\n")
+          iNZightSummary(x, method = "bootstrap", reorder.factors = TRUE,
+                         digits = digits, symbolic.cor = symbolic.cor,
+                         signif.stars = signif.stars)
+          return(invisible())
+        }
+      }
     }
 
     x.lm <- x

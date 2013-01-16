@@ -90,7 +90,7 @@ bootstrapCoefs = function(fit, N = 1000) {
         naNames = character()
     }
     
-    list(fit = fit, seCoef = seCoefs, covCoef = covCoef,
+    list(fit = fit, seCoef = seCoefs, covCoef = covCoef, N = N,
          keptSamples = keptSamples, errors = errors, naNames = naNames)
 }
 
