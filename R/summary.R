@@ -2,7 +2,7 @@ iNZightSummary <-
     function (x, method = "standard", reorder.factors = FALSE,
               digits = max(3, getOption("digits") - 3),
               symbolic.cor = x$symbolic.cor,
-	      signif.stars= getOption("show.signif.stars"),	...)
+              signif.stars= getOption("show.signif.stars"),	...)
 {
 
     if (reorder.factors) {
@@ -21,13 +21,25 @@ iNZightSummary <-
       F.info = bootstrapFTests(bootCoefs)
       
       if (bootCoefs$keptSamples / bootCoefs$N < .95) {
+
+        lwd <- getOption("width")
+        ind <- paste(rep(" ", floor(0.05 * lwd)), collapse = "")
+        header <- paste(rep("=", lwd), collapse = "")
+        parwrap <- function(txt, init = "", indent = "") {
+          paste(strwrap(txt, prefix = indent, initial = init), collapse = "\n")
+        }
+
         if (reorder.factors) {
-          cat("Error: Not enough baseline cases in one or more factors even after reordering.", "\n",
-              "Use standard output instead.", "\n")
+          txt <- "Not enough baseline cases in one or more factors even after reordering."
+          cat(parwrap(paste(txt, init = "Error: ", indent = "       ")), "\n")
+          txt <- "Use standard output instead."
+          cat(parwrap(paste(txt, init = "       ", indent = "       ")), "\n")
           return(invisible())  
         } else {
-          cat("Warning: Not enough baseline cases in one or more factors.", "\n",
-              "Trying again with factor levels reordered.", "\n")
+          txt <- "Not enough baseline cases in one or more factors."
+          cat(parwrap(paste(txt, init = "Warning: ", indent = "         ")), "\n")
+          txt <- "Trying again with factor levels reordered."
+          cat(parwrap(paste(txt, init = "         ", indent = "         ")), "\n")
           iNZightSummary(x, method = "bootstrap", reorder.factors = TRUE,
                          digits = digits, symbolic.cor = symbolic.cor,
                          signif.stars = signif.stars)

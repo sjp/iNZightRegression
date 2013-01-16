@@ -11,7 +11,7 @@
 \usage{
 iNZightSummary(x,
                method = "standard",
-               reorder.factors = TRUE,
+               reorder.factors = FALSE,
                digits = max(3, getOption("digits") - 3),
                symbolic.cor = x$symbolic.cor,
                signif.stars = getOption("show.signif.stars"), ...)
