@@ -51,16 +51,15 @@ iNZightSummary <-
     x.lm <- x
     x.data <- x.lm$model
     x <- summary(x)
-    cat("\nCall:\n", # S has ' ' instead of '\n'
-	paste(deparse(x$call), sep="\n", collapse = "\n"), "\n\n", sep="")
+    cat("\nModel for: ", attr(x.data, "names")[1], "\n\n", sep = "")
     var.classes <- attr(x$terms, "dataClasses")[-1]
     var.labels <- attr(x$terms, "term.labels")
     var.labels <- strsplit(var.labels, ":")
     resid <- x$residuals
     df <- x$df
     rdf <- df[2L]
-    cat(if(!is.null(x$weights) && diff(range(x$weights))) "Weighted ",
-        "Residuals:\n", sep="")
+   # cat(if(!is.null(x$weights) && diff(range(x$weights))) "Weighted ",
+   #     "Residuals:\n", sep="")
     if (rdf > 5L) {
 	nam <- c("Min", "1Q", "Median", "3Q", "Max")
 	rq <- if (length(dim(resid)) == 2L)
@@ -70,7 +69,7 @@ iNZightSummary <-
             zz <- zapsmall(quantile(resid), digits + 1)
             structure(zz, names = nam)
         }
-	print(rq, digits = digits, ...)
+	## print(rq, digits = digits, ...)
     }
     else if (rdf > 0L) {
 	print(resid, digits = digits, ...)
@@ -81,9 +80,9 @@ iNZightSummary <-
         cat("\nNo Coefficients\n")
     } else {
         if (nsingular <- df[3L] - df[1L])
-            cat("\nCoefficients: (", nsingular,
+            cat("Coefficients: (", nsingular,
                 " not defined because of singularities)\n", sep = "")
-        else cat("\nCoefficients:\n")
+        else cat("Coefficients:\n")
         coefs <- x$coefficients
         if(!is.null(aliased <- x$aliased) && any(aliased)) {
             cn <- names(aliased)
