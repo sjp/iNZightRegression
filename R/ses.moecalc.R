@@ -16,7 +16,7 @@ ses.moecalc = function(ses, ses.diffs){
 ## find ses.diffs of model
 ## base : has baseline or not
 seModel = function(model, idx, base = TRUE){
-  covs = vcov(model)[idx, idx]
+  covs = vcov(model)[idx, idx, drop = FALSE]
   vars = diag(covs)
   ses = sqrt(vars)
   ses.diffs = outer(vars, vars, '+') - 2 * covs

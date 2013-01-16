@@ -387,7 +387,8 @@ plot.moecalc = function(obj, horiz=FALSE, conf=FALSE, xlevels=NULL){
     text(0.5, 0.75, paste("Factor level effects for", factorname),
          cex = 1.75, font = 2)
   } else {
-    title(paste("Factor level effects for", factorname))
+    title(paste("Factor level effects of", factorname, "on",
+                attr(obj$fit$model, "names")[1]))
   }
   
   ## Legend
