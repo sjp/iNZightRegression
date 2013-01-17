@@ -363,7 +363,15 @@ plotlm6 = function (x, which = 1:6,
 
 # A modified version of the s20x::normcheck default method
 normCheck = function (x, col = NULL, shapiroWilk = TRUE, plot = TRUE, ...) {
-    qqp = qqnorm(x, plot.it = plot, main = "", ...)
+    # Note: this is a bit nasty, consider rewriting
+    # If 'main' has been passed in, use it, otherwise leave as empty
+    moreargs <- list(...)
+    qqp =
+      if ("main" %in% names(moreargs))
+        qqnorm(x, plot.it = plot, ...)
+      else
+        qqnorm(x, plot.it = plot, main = "", ...)
+
     if (plot) {
       mx <- mean(x)
       sx <- sd(x)
