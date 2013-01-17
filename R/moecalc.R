@@ -91,12 +91,12 @@ moecalc = function(x, factorname = NULL, levelnames = NULL, coef.idx = NULL,
   xlevels = makexlv(factorname, levelnames, n)  
   factorname = names(xlevels)[1]
   levelnames = xlevels[[factorname]]
-  
-  moe.diffs = conf.level * ses.diffs
-  
   if(!is.null(est)) names(est) = levelnames
+  
+  ## Margins of error for differences
+  moe.diffs = conf.level * ses.diffs
   dimnames(moe.diffs) = list(levelnames, levelnames)
-    
+  
   k = ncol(moe.diffs)
   if (nrow(moe.diffs) != k | !is.matrix(moe.diffs) | k <= 1)
     stop("moe.diffs must be square matrix")
@@ -106,7 +106,9 @@ moecalc = function(x, factorname = NULL, levelnames = NULL, coef.idx = NULL,
     k2 = sum(keep) # number of unique moe.diffs for diffs without redundancies
     Xr = row(moe.diffs)[keep] # (going down cols)
     Xc = col(moe.diffs)[keep]
+    ## each row of X contains 2 ones, representing a pair of levels to split moe between
     X = outer(1:k2, 1:k, function(x,y) {y==Xr[x] | y==Xc[x]})
+    ## crossprod same as t(x) %*% x
     ErrBars = drop(solve(crossprod(X)) %*% t(X) %*% moe.diffs[keep])
   }
   else {
@@ -158,14 +160,15 @@ moecalc = function(x, factorname = NULL, levelnames = NULL, coef.idx = NULL,
     names(confL) = names(confU) = names(compL) = names(compU) = levelnames
   }
     
-  ret = list(fit = obj, est=est, ErrBars=ErrBars, errpercent=errpercent,
-             MaxErrProp=max(errpercent), signiferr=signiferr,
-             moe.diffs=moe.diffs, moe.diffs.approx=moe.diffs.approx,
-             modelcall=modelcall, xlevels=xlevels, ses=ses,
-             confL=confL, confU=confU, compL=compL, compU=compU)
+  ret = list(fit = obj, est = est, ErrBars = ErrBars, errpercent = errpercent,
+             MaxErrProp = errpercent[which.max(abs(errpercent))],
+             signiferr = signiferr, moe.diffs = moe.diffs,
+             moe.diffs.approx = moe.diffs.approx, modelcall = modelcall,
+             xlevels = xlevels, ses = ses, confL = confL, confU = confU,
+             compL = compL, compU = compU)
   class(ret) = "moecalc"             
   
-  if(ret$MaxErrProp>=1)
+  if(abs(ret$MaxErrProp) >= 1)
     warningErrProp(ret)
     
   ret
