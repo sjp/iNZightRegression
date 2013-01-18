@@ -159,13 +159,13 @@ moecalc = function(x, factorname = NULL, levelnames = NULL, coef.idx = NULL,
     compU = est + ErrBars
     names(confL) = names(confU) = names(compL) = names(compU) = levelnames
   }
-    
-  ret = list(fit = obj, est = est, ErrBars = ErrBars, errpercent = errpercent,
+
+  ret = list(fit = obj, est = est, est.diffs = est.diffs, ErrBars = ErrBars, errpercent = errpercent,
              MaxErrProp = errpercent[which.max(abs(errpercent))],
              signiferr = signiferr, moe.diffs = moe.diffs,
              moe.diffs.approx = moe.diffs.approx, modelcall = modelcall,
-             xlevels = xlevels, ses = ses, confL = confL, confU = confU,
-             compL = compL, compU = compU)
+             xlevels = xlevels, ses = ses, ses.diffs = ses.diffs,
+             confL = confL, confU = confU, compL = compL, compU = compU)
   class(ret) = "moecalc"             
   
   if(abs(ret$MaxErrProp) >= 1)
