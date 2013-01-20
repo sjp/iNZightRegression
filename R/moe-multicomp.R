@@ -4,7 +4,7 @@ multicomp <- function(x, ...) {
 
 multicomp.moecalc <- function(x, ...) {
   if (! is.null(x$est)) {
-    cols <- c("Estimate", "Lower", "Upper", "p-value")
+    cols <- c("Estimate", "Lower", "Upper", "p-value (unadj.)")
     levelnames <- x$xlevels[[1]]
     k <- length(levelnames)
     nr <- k * (k - 1) / 2
