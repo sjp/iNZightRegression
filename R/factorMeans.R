@@ -58,18 +58,18 @@ adjustedMeans = function(fit) {
   for (i in seq_along(nonInteractions)) {
     f = nonInteractions[i]
     facLevels = levels(fit$model[,f])
-    otherVars = names(varTypes)[names(varTypes) != f]
-    otherVarsList = list()
-    for (i in seq_along(otherVars)) {
-      val = ifelse(otherVars[i] %in% factorNames,
-                   levels(fit$model[,otherVars[i]])[1],
-                   numericMeans[otherVars[i]])
-      otherVarsList[[otherVars[i]]] = val
+    xVars = names(varTypes)[names(varTypes) != f]
+    xVarsList = list()
+    for (i in seq_along(xVars)) {
+      val = ifelse(xVars[i] %in% factorNames,
+                   levels(fit$model[,xVars[i]])[1],
+                   numericMeans[xVars[i]])
+      xVarsList[[xVars[i]]] = val
     }
     adjMean = structure(numeric(length(facLevels)), names = facLevels)
     for (flev in facLevels) {
-      otherVarsList[[f]] = flev
-      adjMean[flev] = predict(fit, data.frame(otherVarsList))
+      xVarsList[[f]] = flev
+      adjMean[flev] = predict(fit, data.frame(xVarsList))
     }
     res[[f]] = adjMean
   }
