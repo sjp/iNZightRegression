@@ -76,17 +76,31 @@ adjustedMeans = function(fit) {
 
   for (i in seq_along(interactions)) {
     f = interactingVars[[i]]
-    facCombinations = expand.grid(levels(fit$model[,f[1]]), levels(fit$model[,f[2]]))
+    facCombinations = expand.grid(levels(fit$model[,f[1]]),
+                                  levels(fit$model[,f[2]]))
+    nCombinations = nrow(facCombinations)
+    combinationNames = paste(facCombinations[,1], facCombinations[,2],
+                             sep = ".")
+    xVars = names(varTypes)[!names(varTypes) %in% f]
+    xVarsList = list()
+    for (i in seq_along(xVars)) {
+      val = ifelse(xVars[i] %in% factorNames,
+                   levels(fit$model[,xVars[i]])[1],
+                   numericMeans[xVars[i]])
+      xVarsList[[xVars[i]]] = val
+    }
 
-    ###################
+    adjMean = structure(numeric(nCombinations), names = combinationNames)
+    for (i in 1:nCombinations) {
+      for (j in 1:2)
+        xVarsList[[f[j]]] = facCombinations[i, j]
+      adjMean[combinationNames[i]] = predict(fit, data.frame(xVarsList))
+    }
+    ord = order(names(adjMean))
+    adjMean = adjMean[names(adjMean)[ord]]
 
-    ## More to do here!
-
-    ###################
- 
+    res[[paste(f, collapse = ":")]] = adjMean
   }
-
-
   res
 }
 
