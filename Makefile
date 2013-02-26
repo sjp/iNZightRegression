@@ -22,6 +22,11 @@ build:
 	R CMD build .
 	make undo-version
 
+release:
+	make win-build
+	mv iNZightRegression_0.0.2*.tar.gz iNZightRegression.tar.gz
+	mv iNZightRegression_0.0.2*.zip iNZightRegression.zip
+
 clean:
 	-rm iNZightRegression_0.0.2*.tar.gz
 	-rm -rf iNZightRegression.Rcheck/
