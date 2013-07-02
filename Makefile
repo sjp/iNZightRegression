@@ -1,40 +1,48 @@
-build-and-check:
-	make build
-	R CMD check iNZightRegression_0.0.2*.tar.gz
-	-rm -rf iNZightRegression.Rcheck
+PKG_VERSION = $(shell grep -i ^version DESCRIPTION | cut -d : -d \  -f 2)
+PKG_NAME = $(shell grep -i ^package DESCRIPTION | cut -d : -d \  -f 2)
+CURRENT_DATE = $(shell date +%Y%m%d)
 
-install-and-run:
-	make gen-version
-	R CMD INSTALL ./
-	make undo-version
+INST_FILES := $(shell find inst -type f -print)
+MAN_FILES := $(wildcard man/*.Rd)
+R_FILES := $(wildcard R/*.R)
+PKG_FILES := DESCRIPTION NAMESPACE $(R_FILES) $(MAN_FILES) $(INST_FILES)
+
+.PHONY: build check install run win release clean
+
+build: $(PKG_NAME)_$(PKG_VERSION)-$(CURRENT_DATE).tar.gz
+
+$(PKG_NAME)_$(PKG_VERSION)-$(CURRENT_DATE).tar.gz: $(PKG_FILES)
+	sed -i "s/$(PKG_VERSION)/$(PKG_VERSION)-$(CURRENT_DATE)/" DESCRIPTION
+	R CMD build ./
+	sed -i "s/$(PKG_VERSION).*/$(PKG_VERSION)/" DESCRIPTION
+
+check: $(PKG_NAME)_$(PKG_VERSION)-$(CURRENT_DATE).tar.gz
+	R CMD check $<
+
+install: $(PKG_NAME)_$(PKG_VERSION)-$(CURRENT_DATE).tar.gz
+	R CMD INSTALL $<
+
+run: $(PKG_NAME)_$(PKG_VERSION)-$(CURRENT_DATE).tar.gz
+	R CMD INSTALL $<
 	R
 
-win-build:
-	make build
+release: $(PKG_NAME).zip $(PKG_NAME).tar.gz
+
+win: $(PKG_NAME)_$(PKG_VERSION)-$(CURRENT_DATE).zip
+
+$(PKG_NAME).tar.gz: $(PKG_NAME)_$(PKG_VERSION)-$(CURRENT_DATE).tar.gz
+	cp $< $@
+
+$(PKG_NAME).zip: $(PKG_NAME)_$(PKG_VERSION)-$(CURRENT_DATE).zip
+	cp $< $@
+
+$(PKG_NAME)_$(PKG_VERSION)-$(CURRENT_DATE).zip: $(PKG_NAME)_$(PKG_VERSION)-$(CURRENT_DATE).tar.gz
 	mkdir tmp
-	R CMD INSTALL -l tmp iNZightRegression_0.0.2*.tar.gz
-	cd tmp ; zip -r iNZightRegression_0.0.2-`date +%Y%m%d`.zip iNZightRegression ; mv iNZightRegression_0.0.2*.zip ../
-	rm -rf tmp
-
-build:
-	make clean
-	make gen-version
-	R CMD build .
-	make undo-version
-
-release:
-	make win-build
-	mv iNZightRegression_0.0.2*.tar.gz iNZightRegression.tar.gz
-	mv iNZightRegression_0.0.2*.zip iNZightRegression.zip
+	R CMD INSTALL -l tmp $<
+	cd tmp ; zip --quiet -r $@ $(PKG_NAME) ; mv $@ ../
+	-rm -rf tmp
 
 clean:
-	-rm iNZightRegression_0.0.2*.tar.gz
-	-rm -rf iNZightRegression.Rcheck/
-	-rm iNZightRegression_0.0.2*.zip
-
-gen-version:
-	sed -i "s/0\.0\.2/\\0-`date +%Y%m%d`/" DESCRIPTION
-
-undo-version:
-	sed -i "s/0\.0\.2.*/0\.0\.2/" DESCRIPTION
-
+	-rm $(PKG_NAME)*.tar.gz
+	-rm -rf $(PKG_NAME).Rcheck
+	-rm $(PKG_NAME)*.zip
