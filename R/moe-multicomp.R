@@ -18,7 +18,7 @@ multicomp.moecalc <- function(x, ...) {
         est <- - x$est.diffs[j, i]
         bounds <- est + c(-1, 1) * x$moe.diffs[j, i]
         # TODO: Adjust p-values for multiple comparisons using Tukey or Bonf
-        pval <- pt(est / x$ses.diffs[j, i], df = df, lower.tail = FALSE)
+        pval <- pt(abs(est / x$ses.diffs[j, i]), df = df, lower.tail = FALSE)
         result.matrix[row, ] <- c(est, bounds, pval)
         names[row] <- paste(levelnames[i], " - ", levelnames[j])
         row <- row + 1
