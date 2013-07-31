@@ -26,6 +26,7 @@ moecalc = function(x, factorname = NULL, levelnames = NULL, coef.idx = NULL,
   obj <- x
   modelcall = NULL
   ## obtain standard error difference matrix
+  if (! inherits(obj, "ses.moecalc")) {
     modelcall = obj$call
     
     if(!xor(is.null(factorname), is.null(coef.idx)))
@@ -74,8 +75,16 @@ moecalc = function(x, factorname = NULL, levelnames = NULL, coef.idx = NULL,
       if(base)
         levelnames = c(basename, levelnames)
     }
-    out = paste("confidence interval of baseline is 0")
-    warning(out)
+    warning("confidence interval of baseline is 0")
+  } else {
+    if (! is.null(est)) {
+      levelnames = names(est)
+      est = as.numeric(est)
+    }
+
+    ses = obj$ses
+    ses.diffs = obj$ses.diffs
+  }
 
   n = if(is.null(est)) NULL else length(est)
   xlevels = makexlv(factorname, levelnames, n)  
@@ -84,7 +93,11 @@ moecalc = function(x, factorname = NULL, levelnames = NULL, coef.idx = NULL,
   if(!is.null(est)) names(est) = levelnames
   
   ## Margins of error for differences
-  moe.diffs = ses.diffs
+  moe.diffs =
+    if (inherits(obj, "ses.moecalc"))
+      conf.level * ses.diffs
+    else
+      ses.diffs
   dimnames(moe.diffs) = list(levelnames, levelnames)
   
   k = ncol(moe.diffs)
@@ -94,10 +107,11 @@ moecalc = function(x, factorname = NULL, levelnames = NULL, coef.idx = NULL,
   if (k >= 3){ # get  ErrBars by solving least squares problem
     keep = col(moe.diffs) > row(moe.diffs)  # Upper triangle, above diag.
     k2 = sum(keep) # number of unique moe.diffs for diffs without redundancies
-    ## Multiple comparisons adjustment
-    multiplier = qtukey(0.95, k, obj$df.residual) / sqrt(2)
-    moe.diffs = moe.diffs * multiplier
-
+    if (! inherits(obj, "ses.moecalc")) {
+      ## Multiple comparisons adjustment
+      multiplier = qtukey(0.95, k, obj$df.residual) / sqrt(2)
+      moe.diffs = moe.diffs * multiplier
+    }
     Xr = row(moe.diffs)[keep] # (going down cols)
     Xc = col(moe.diffs)[keep]
     ## each row of X contains 2 ones, representing a pair of levels to split moe between
