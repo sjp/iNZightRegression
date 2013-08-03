@@ -343,6 +343,7 @@ plotlm6 = function (x, which = 1:6,
             xmin <- min(rx[1], mx - 3.5 * sx, h$breaks[1])
             xmax <- max(rx[2], mx + 3.5 * sx, h$breaks[length(h$breaks)])
             ymax <- max(h$density, dnorm(mx, mx, sx)) * 1.05
+            dev.hold()
             hist(r, prob = TRUE, ylim = c(0, ymax), xlim = c(xmin, xmax),
                  xlab = xlab, col = "light blue",
                  main = main)
@@ -375,6 +376,7 @@ normCheck = function (x, col = NULL, shapiroWilk = TRUE, plot = TRUE, ...) {
     if (plot) {
       mx <- mean(x)
       sx <- sd(x)
+      dev.hold()
       abline(c(mx, sx), col = "gray50")
       if (shapiroWilk) {
         stest <- shapiro.test(x)
@@ -384,6 +386,7 @@ normCheck = function (x, col = NULL, shapiroWilk = TRUE, plot = TRUE, ...) {
         text(sort(qqp$x)[2], 0.99 * max(qqp$y, na.rm = TRUE), txt,
              adj = c(0, 1))
       }
+      dev.flush()
     }
     qqp
 }
