@@ -1,11 +1,15 @@
 histogramArray = function(x, n = 7) {
+  if (isGlm(x))
+      if (x$family$family != 'gaussian')
+          stop('histrogramArray only works with linear models.')
+
   ## Assumes lm model (gaussian errors only)
   n = min(n, 11)
   nRows = 2
   nCols = ceiling(round(n + 1) / nRows)
   opar = par(mfrow = c(2, nCols))
   on.exit(par(opar))
-  
+
   r = residuals(x)
   h = hist(r, plot = FALSE)
   xlab <- "Residuals"
@@ -14,16 +18,19 @@ histogramArray = function(x, n = 7) {
   rx <- range(r)
   xmin <- min(rx[1], mx - 3.5 * sx, h$breaks[1])
   xmax <- max(rx[2], mx + 3.5 * sx, h$breaks[length(h$breaks)])
-  
-  newdat = x$model
+
+  newdat = bootstrapData(x, 1:nrow(x$model))
   response = rownames(attr(x$terms, "factors"))[1]
   newcall = modifyModelCall(x, "newdat")
-  
+
   n.obs = nrow(x$model)
   resList = list()
   breaksList = list()
   for (i in 1:n) {
-    rNormal = rnorm(n.obs, sd = summary(x)$sigma)
+    sd <- ifelse(isGlm(x),
+                 sqrt(1 / (nrow(x$model) - ncol(x$model)) * sum((x$residuals)^2)),
+                 summary(x)$sigma)
+    rNormal = rnorm(n.obs, sd = sd)
     newdat[, response] = x$fitted.values + rNormal
     newlm = eval(parse(text = newcall))
     r = residuals(newlm)
@@ -36,11 +43,11 @@ histogramArray = function(x, n = 7) {
     xmin <- min(xmin, min(rx[1], mx - 3.5 * sx, h$breaks[1]))
     xmax <- max(xmax, max(rx[2], mx + 3.5 * sx, h$breaks[length(h$breaks)]))
 
-  } 
+  }
   binWidth = diff(breaksList[[1]][1:2])
   breaks = seq(binWidth * floor(xmin / binWidth), binWidth * ceiling(xmax / binWidth),
                by = binWidth)
-  
+
   ## Need to define histograms again without drawing, to find max density
   ymax = 0
   for (i in 1:n) {
@@ -52,7 +59,7 @@ histogramArray = function(x, n = 7) {
   r = residuals(x)
   maxOh = max(oh$density, dnorm(mean(r), mean(r), sd(r)))
   ymax = max(ymax, maxOh)
-  
+
   ## Original data histogram of residuals
   hist(residuals(x), breaks = breaks, prob = TRUE, ylim = c(0, ymax),
        xlim = c(xmin, xmax), xlab = xlab, col = "light blue", main = NULL)
@@ -61,7 +68,7 @@ histogramArray = function(x, n = 7) {
   x1 <- seq(xmin, xmax, length = 100)
   y1 <- dnorm(x1, mx, sx)
   lines(x1, y1, lwd = 1.5, lty = 3)
-  
+
   ## Normal error sample histograms
   for (i in 1:n) {
     hist(resList[[i]], breaks = breaks, prob = TRUE, ylim = c(0, ymax),

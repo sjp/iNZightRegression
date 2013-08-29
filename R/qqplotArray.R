@@ -1,4 +1,7 @@
 qqplotArray = function(x, n = 7) {
+  if (isGlm(x))
+      if (x$family$family != 'gaussian')
+          stop('histrogramArray only works with linear models.')
   ## Assumes lm model (gaussian errors only)
   n = min(n, 11)
   nRows = 2
@@ -20,15 +23,18 @@ qqplotArray = function(x, n = 7) {
   rs = dropInf(r/(s * sqrt(1 - hii)), hii)
   qq = normCheck(rs, plot = FALSE)
   ylims = range(qq$y)
-     
-  newdat = x$model
+
+  newdat = bootstrapData(x, 1:nrow(x$model))
   response = rownames(attr(x$terms, "factors"))[1]
   newcall = modifyModelCall(x, "newdat")
-  
+
   n.obs = nrow(x$model)
   rsList = list()
   for (i in 1:n) {
-    rNormal = rnorm(n.obs, sd = summary(x)$sigma)
+    sd <- ifelse(isGlm(x),
+                 sqrt(1 / (nrow(x$model) - ncol(x$model)) * sum((x$residuals)^2)),
+                 summary(x)$sigma)
+    rNormal = rnorm(n.obs, sd = sd)
     newdat[, response] = x$fitted.values + rNormal
     newlm = eval(parse(text = newcall))
     r = residuals(newlm)
@@ -42,7 +48,7 @@ qqplotArray = function(x, n = 7) {
   normCheck(rs, xlab = "Theoretical Quantiles",
             ylab = "Sample Quantiles", ylim = ylims)
   mtext("Original data", 3, font = 2, col = "navy", line = 1)
-  
+
   for (i in 1:n) {
     normCheck(rsList[[i]], xlab = "Theoretical Quantiles",
                    ylab = "Sample Quantiles", ylim = ylims,

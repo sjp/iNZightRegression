@@ -5,7 +5,8 @@ plotlm6 = function (x, which = 1:6,
     main = "", ask = prod(par("mfcol")) < length(which) && dev.interactive(),
     ..., id.n = 3, labels.id = names(residuals(x)), cex.id = 0.75,
     qqline = TRUE, cook.levels = c(0.5, 1), add.smooth = getOption("add.smooth"),
-    label.pos = c(4, 2), cex.caption = 1)
+    label.pos = c(4, 2), cex.caption = 1,
+    showBootstraps = nrow(x$model) >= 30)
 {
     smColour = "orangered"      # colour of data loess line
     bsmColour = "lightgreen"    # colour of bootstrap loess lines
@@ -32,7 +33,6 @@ plotlm6 = function (x, which = 1:6,
         onlyShowAll <- FALSE
     }
 
-    isGlm <- inherits(x, "glm")
     show <- rep(FALSE, 6)
     show[which] <- TRUE
     r <- residuals(x)
@@ -49,18 +49,18 @@ plotlm6 = function (x, which = 1:6,
     if (any(show[2:6])) {
         s <- if (inherits(x, "rlm"))
             x$s
-        else if (isGlm)
+        else if (isGlm(x))
             sqrt(summary(x)$dispersion)
         else sqrt(deviance(x)/df.residual(x))
         hii <- lm.influence(x, do.coef = FALSE)$hat
         if (any(show[3L:6L])) {
-            cook <- if (isGlm)
+            cook <- if (isGlm(x))
                 cooks.distance(x)
             else cooks.distance(x, sd = s, res = r)
         }
     }
     if (any(show[c(2,5)])) {
-        ylab23 <- if (isGlm)
+        ylab23 <- if (isGlm(x))
             "Std. deviance resid."
         else "Standardized residuals"
         r.w <- if (is.null(w))
@@ -74,7 +74,7 @@ plotlm6 = function (x, which = 1:6,
             mean(hii, na.rm = TRUE)
     }
     if (any(show[1:2]))
-        l.fit <- if (isGlm)
+        l.fit <- if (isGlm(x))
             "Predicted values"
         else "Fitted values"
     if (is.null(id.n))
@@ -132,23 +132,25 @@ plotlm6 = function (x, which = 1:6,
         oask <- devAskNewPage(FALSE)
         on.exit(devAskNewPage(oask))
     }
-    
-    bsModels = bootstrapModels(x)
-    nBootstraps = length(bsModels)
-    ## New bootstrapped values (bs suffix stands for bootstrap)
-    rbs = rsbs = yhbs = sbs = hiibs = vector("list", nBootstraps)
-    for (i in 1:nBootstraps) {
-        rbs[[i]] = residuals(bsModels[[i]])
-        yhbs[[i]] = fitted(bsModels[[i]])
-        sbs[[i]] = if (inherits(x, "rlm"))
-                     bsModels[[i]]$s
-                   else if (isGlm)
-                     sqrt(summary(bsModels[[i]])$dispersion)
-                   else sqrt(deviance(bsModels[[i]])/df.residual(bsModels[[i]]))
-        if (any(show[2:6]))
-            hiibs[[i]] <- lm.influence(bsModels[[i]], do.coef = FALSE)$hat
-        if (any(show[2:3]))
-            rsbs[[i]] <- dropInf(rbs[[i]]/(sbs[[i]] * sqrt(1 - hiibs[[i]])), hiibs[[i]])
+
+    if (showBootstraps) {
+        bsModels = bootstrapModels(x)
+        nBootstraps = length(bsModels)
+        ## New bootstrapped values (bs suffix stands for bootstrap)
+        rbs = rsbs = yhbs = sbs = hiibs = vector("list", nBootstraps)
+        for (i in 1:nBootstraps) {
+            rbs[[i]] = residuals(bsModels[[i]])
+            yhbs[[i]] = predict(bsModels[[i]])
+            sbs[[i]] = if (inherits(x, "rlm"))
+                bsModels[[i]]$s
+            else if (isGlm(x))
+                sqrt(summary(bsModels[[i]])$dispersion)
+            else sqrt(deviance(bsModels[[i]])/df.residual(bsModels[[i]]))
+            if (any(show[2:6]))
+                hiibs[[i]] <- lm.influence(bsModels[[i]], do.coef = FALSE)$hat
+            if (any(show[2:3]))
+                rsbs[[i]] <- dropInf(rbs[[i]]/(sbs[[i]] * sqrt(1 - hiibs[[i]])), hiibs[[i]])
+        }
     }
 
     # If we want to show all of the plots, assume "all" is the seventh plot
@@ -184,11 +186,13 @@ plotlm6 = function (x, which = 1:6,
             plot(yh, r, xlab = l.fit, ylab = "Residuals", main = main,
                 ylim = ylim, ...)
 
-            ### Draw bootstrap sample loess lines
-            for (i in 1:nBootstraps) {
-                bsm = loess(rbs[[i]] ~ yhbs[[i]])
-                bsmOrd = order(bsm$x)
-                lines(bsm$x[bsmOrd], bsm$fitted[bsmOrd], col = bsmColour)
+            if (showBootstraps) {
+                ## Draw bootstrap sample loess lines
+                for (i in 1:nBootstraps) {
+                    bsm = loess(rbs[[i]] ~ yhbs[[i]])
+                    bsmOrd = order(bsm$x)
+                    lines(bsm$x[bsmOrd], bsm$fitted[bsmOrd], col = bsmColour)
+                }
             }
             ### Draw loess line for original data set
             sm = loess(r ~ yh)
@@ -217,11 +221,13 @@ plotlm6 = function (x, which = 1:6,
             plot(yhn0, sqrtabsr, xlab = l.fit, ylab = yl, main = main,
                 ylim = ylim, ...)
 
-            ### Draw bootstrap sample loess lines
-            for (i in 1:nBootstraps) {
-                bsm = loess(sqrt(abs(rsbs[[i]])) ~ yhbs[[i]])
-                bsmOrd = order(bsm$x)
-                lines(bsm$x[bsmOrd], bsm$fitted[bsmOrd], col = bsmColour)
+            if (showBootstraps) {
+                ## Draw bootstrap sample loess lines
+                for (i in 1:nBootstraps) {
+                    bsm = loess(sqrt(abs(rsbs[[i]])) ~ yhbs[[i]])
+                    bsmOrd = order(bsm$x)
+                    lines(bsm$x[bsmOrd], bsm$fitted[bsmOrd], col = bsmColour)
+                }
             }
             ### Draw loess line for original data set
             sm = loess(sqrtabsr ~ yhn0)
@@ -236,21 +242,23 @@ plotlm6 = function (x, which = 1:6,
             dev.flush()
         }
         if (showPlot[3]) {
-            ylab5 <- if (isGlm)
+            ylab5 <- if (isGlm(x))
                 "Std. Pearson resid."
             else "Standardized residuals"
             r.w <- residuals(x, "pearson")
             if (!is.null(w))
                 r.w <- r.w[wind]
             rsp <- dropInf(r.w/(s * sqrt(1 - hii)), hii)
-            
-            ## bootstrap rsp
-            rspbs = vector("list", nBootstraps)
-            for (i in 1:nBootstraps) {
-                pearsonResid = residuals(bsModels[[i]], "pearson")
-                rspbs[[i]] = dropInf(pearsonResid / (sbs[[i]] * sqrt(1 - hiibs[[i]])), hiibs[[i]])
+
+            if (showBootstraps) {
+                ## bootstrap rsp
+                rspbs = vector("list", nBootstraps)
+                for (i in 1:nBootstraps) {
+                    pearsonResid = residuals(bsModels[[i]], "pearson")
+                    rspbs[[i]] = dropInf(pearsonResid / (sbs[[i]] * sqrt(1 - hiibs[[i]])), hiibs[[i]])
+                }
             }
-            
+
             ylim <- range(rsp, na.rm = TRUE)
             if (id.n > 0) {
                 ylim <- extendrange(r = ylim, f = 0.08)
@@ -264,19 +272,21 @@ plotlm6 = function (x, which = 1:6,
             plot(xx, rsp, xlim = c(0, max(xx, na.rm = TRUE)),
                 ylim = ylim, main = main, xlab = "Leverage",
                 ylab = ylab5, ...)
-            ## Bootstrap smooths
-            for (i in 1:nBootstraps) {
-              xxbs = hiibs[[i]]
-              xxbs[xxbs >= 1] = NA
-              bsm = loess(rspbs[[i]] ~ xxbs)
-              bsmOrd = order(bsm$x)
-              lines(bsm$x[bsmOrd], bsm$fitted[bsmOrd], col = bsmColour)
+            if (showBootstraps) {
+                ## Bootstrap smooths
+                for (i in 1:nBootstraps) {
+                    xxbs = hiibs[[i]]
+                    xxbs[xxbs >= 1] = NA
+                    bsm = loess(rspbs[[i]] ~ xxbs)
+                    bsmOrd = order(bsm$x)
+                    lines(bsm$x[bsmOrd], bsm$fitted[bsmOrd], col = bsmColour)
+                }
             }
             ## Original data smooth
             sm = loess(rsp ~ xx)
             smOrd = order(sm$x)
             lines(sm$x[smOrd], sm$fitted[smOrd], col = smColour, lwd = 2)
-            
+
             if (one.fig)
                 title(sub = sub.caption, ...)
             if (length(cook.levels)) {

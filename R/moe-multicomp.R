@@ -11,7 +11,7 @@ multicomp.moecalc <- function(x, ...) {
     result.matrix <- matrix(0, nrow = nr, ncol = length(cols))
     row <- 1
     names <- character(nr)
-    df <- x$fit$df
+    df <- ifelse(isGlm(x$fit), x$fit$df.null, x$fit$df)
 
     for (i in 1:(k - 1)) {
       for (j in (i + 1):k) {

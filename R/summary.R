@@ -19,7 +19,7 @@ iNZightSummary <-
       bootCoefs = bootstrapCoefs(x)
       T.info = bootstrapTTests(bootCoefs)
       F.info = bootstrapFTests(bootCoefs)
-      
+
       if (bootCoefs$keptSamples / bootCoefs$N < .95) {
 
         lwd <- getOption("width")
@@ -34,7 +34,7 @@ iNZightSummary <-
           cat(parwrap(paste(txt, init = "Error: ", indent = "       ")), "\n")
           txt <- "Use standard output instead."
           cat(parwrap(paste(txt, init = "       ", indent = "       ")), "\n")
-          return(invisible())  
+          return(invisible())
         } else {
           txt <- "Not enough baseline cases in one or more factors."
           cat(parwrap(paste(txt, init = "Warning: ", indent = "         ")), "\n")
@@ -51,11 +51,14 @@ iNZightSummary <-
     x.lm <- x
     x.data <- x.lm$model
     x <- summary(x)
-    cat("\nModel for: ", attr(x.data, "names")[1], "\n\n", sep = "")
+    surv <- ifelse(isSurvey(x.lm), 'Survey ', '')
+    genlin <- ifelse(isGlm(x.lm), 'Generalised Linear ', '')
+    cat("\n", surv, genlin, "Model for: ", attr(x.data, "names")[1],
+        "\n\n", sep = "")
     var.classes <- attr(x$terms, "dataClasses")[-1]
     var.labels <- attr(x$terms, "term.labels")
     var.labels <- strsplit(var.labels, ":")
-    resid <- x$residuals
+    resid <- ifelse(isGlm(x.lm), x$deviance.resid, x$residuals)
     df <- x$df
     rdf <- df[2L]
    # cat(if(!is.null(x$weights) && diff(range(x$weights))) "Weighted ",
@@ -138,7 +141,7 @@ iNZightSummary <-
                       }
                     pvalue <- type3pval
                   }
-                      
+
                   coefs.copy <- insert.lines(row.label, i, c(rep(NA, 3), pvalue), coefs.copy)
                 }
 
@@ -256,6 +259,38 @@ iNZightSummary <-
         ######
     }
     ##
+
+    if (isGlm(x.lm)) {
+        cat("\n(Dispersion parameter for ", x.lm$family$family, " family taken to be ",
+            format(x$dispersion), ")\n\n",
+            apply(cbind(paste(format(c("Null", "Residual"), justify = "right"), "deviance:"),
+                        format(unlist(x[c("null.deviance", "deviance")]),
+                               digits = max(5, digits + 1)), " on",
+                        format(unlist(x[c("df.null", "df.residual")])), " degrees of freedom\n"),
+                  1L, paste, collapse = " "), sep = "")
+        if (nzchar(mess <- naprint(x$na.action)))
+            cat("  (", mess, ")\n", sep = "")
+        if (!is.na(x$aic))
+            cat("AIC: ", format(x$aic, digits = max(4, digits + 1)), '\n', sep = '')
+        cat("\n", "Number of Fisher Scoring iterations: ", x$iter,
+            "\n", sep = "")
+        correl <- x$correlation
+        if (!is.null(correl)) {
+            p <- NCOL(correl)
+            if (p > 1) {
+                cat("\nCorrelation of Coefficients:\n")
+                if (is.logical(symbolic.cor) && symbolic.cor) {
+                    print(symnum(correl, abbr.colnames = NULL))
+                }
+                else {
+                    correl <- format(round(correl, 2), nsmall = 2,
+                                     digits = digits)
+                    correl[!lower.tri(correl)] <- ""
+                    print(correl[-1, -p, drop = FALSE], quote = FALSE)
+                }
+            }
+        }
+    } else {
     cat("\nResidual standard error:",
 	format(signif(x$sigma, digits)), "on", rdf, "degrees of freedom\n")
     if(nzchar(mess <- naprint(x$na.action))) cat("  (",mess, ")\n", sep="")
@@ -276,6 +311,7 @@ iNZightSummary <-
                 print(correl[-1, -p, drop=FALSE], quote = FALSE)
             }
 	}
+      }
     }
     cat("\n")#- not in S
     invisible(x)
