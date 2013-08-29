@@ -1,6 +1,6 @@
-setwd('~/iNZight/regression/')               # mac
+setwd('~/iNZight/iNZightRegression/')               # mac
 
-mydata = read.csv('testing/course.csv')
+mydata = read.csv('../regression/testing/course.csv')
 
 for (file in list.files('R/'))
   source(paste('R/', file, sep = ''))
@@ -34,7 +34,7 @@ design <- svydesign(id=~SDMVPSU, strata=~SDMVSTRA, weights=~WTMEC2YR,
 mod[[6]] <- svyglm(HI_CHOL ~ race + agecat + sex, design = design,
                family = 'quasibinomial')
 
-i <- 6  # change this
+i <- 5  # change this
 model <- mod[[i]]
 model
 
@@ -44,9 +44,6 @@ modifyModelCall(model, 'bootdata')
 head(bootstrapData(model, sample(1:nrow(model$model), replace = TRUE)))
 
 ## bootstrapCoef.R
-bootstrapCoefs(model, 1000) -> boot; boot
-bootstrapTTests(boot)
-bootstrapFTests(boot)
 summary(reorderFactors(mydata)) # orders them from most to least ...
 
 ## factorMeans.R
@@ -61,7 +58,7 @@ isSurvey(model)
 histogramArray(model)
 
 ## moecalc.R
-moecalc(model, 'race') -> moe; moe  ## will need to change this depending on the model ..
+moecalc(model, 'Gender') -> moe; moe  ## will need to change this depending on the model ..
 print(moe)
 summary(moe)
 print(summary(moe))
@@ -72,7 +69,6 @@ multicomp(moe)
 print(multicomp(moe))
 
 ## partialResidual.R
-partialResPlot(model, 'sex')
 allPartialResPlots(model)
 
 ## plotlm6.R
