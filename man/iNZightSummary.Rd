@@ -18,8 +18,8 @@ iNZightSummary(x,
 }
 \arguments{
   \item{x}{
-    an object of class \code{"lm"}, usually, a result of a call to
-    \code{\link{lm}}.
+    an object of class \code{"lm"}, \code{"glm"}, or \code{"svyglm"},
+    usually a result of a call to the corresponding function.
   }
   \item{method}{
     One of either \code{"standard"} or \code{"bootstrap"}. If
@@ -68,7 +68,8 @@ iNZightSummary(x,
   the factor name also.
 }
 \value{
-  An object of class \code{summary.lm}.
+  An object of class \code{summary.lm}, \code{summary.glm}, or
+  \code{summary.svyglm}.
 }
 \author{
   Simon Potter.
@@ -80,7 +81,10 @@ iNZightSummary(x,
 }
 
 \seealso{
-  The model fitting function \code{\link{lm}}, \code{\link{summary}}.
+  The model fitting function \code{\link{lm}}, \code{\link{glm}},
+  \code{\link{summary}}.
+
+  The \code{\link{survey}} package.
 
   Function \code{\link{coef}} will extract the matrix of coefficients
   with standard errors, t-statistics and p-values.

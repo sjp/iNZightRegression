@@ -35,12 +35,13 @@ plotlm6(x,
         cook.levels = c(0.5, 1),
         add.smooth = getOption("add.smooth"),
         label.pos = c(4, 2),
-        cex.caption = 1)
+        cex.caption = 1,
+        showBootstraps = nrow(x$model) >= 30)
 }
 \arguments{
   \item{x}{
-    \code{lm} object, typically result of \code{\link{lm}} or
-    \code{\link{glm}}.
+    \code{lm} object, typically the result of \code{\link{lm}} or
+    \code{\link{glm}}. Can also take \code{\link{svyglm}} objects.
   }
   \item{which}{
     If a subset of the plots is required, specify a subset of the
@@ -97,6 +98,11 @@ plotlm6(x,
   }
   \item{cex.caption}{
     controls the size of \code{caption}.
+  }
+  \item{showBootstraps}{
+    logical; if \code{TRUE}, then bootstrap loess smooths are shown in
+    the first 4 plots. By default, these are only shown for sample sizes
+    greater than 30.
   }
 }
 \details{
