@@ -41,7 +41,8 @@ plotlm6(x,
 \arguments{
   \item{x}{
     \code{lm} object, typically the result of \code{\link{lm}} or
-    \code{\link{glm}}. Can also take \code{\link{svyglm}} objects.
+    \code{\link{glm}}. Can also take \code{\link[survey]{svyglm}}
+    objects.
   }
   \item{which}{
     If a subset of the plots is required, specify a subset of the

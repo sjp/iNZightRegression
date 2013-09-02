@@ -9,7 +9,7 @@
   expect to see, and a nest of bootstrap smooths.
 }
 \usage{
-partialResPlot(fit, varname)
+partialResPlot(fit, varname, showBootstraps = nrow(fit$model) >= 30)
 }
 \arguments{
   \item{fit}{
@@ -18,6 +18,11 @@ partialResPlot(fit, varname)
   \item{varname}{
     Character vector. The name of the variable that is shown in the partial residual
     plot. Must refer to a continuous variable.
+  }
+  \item{showBootstraps}{
+    A logical value. Whether or not to show bootstrap smoothers. This will
+    be \code{TRUE} by default for models where there are at least 30
+    observations.
   }
 }
 \value{

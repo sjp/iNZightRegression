@@ -1,15 +1,17 @@
 \name{moecalc}
 \alias{moecalc}
+\alias{ses.moecalc}
 \title{
   Margin of Error Calculations
 }
 \description{
-  DESCRIBE BETTER.
+  TODO: DESCRIBE BETTER.
 }
 \usage{
 moecalc(x, factorname = NULL, levelnames = NULL,
         coef.idx = NULL, est = NULL, ci = NULL, base = TRUE,
         basename = "base", conf.level = 1.96)
+ses.moecalc(ses, ses.diffs)
 }
 \arguments{
   \item{x}{
@@ -41,10 +43,18 @@ moecalc(x, factorname = NULL, levelnames = NULL,
   \item{conf.level}{
     Confidence level for both error bars and confidence intervals.
   }
+  \item{ses}{
+    A numeric vector of standard errors.
+  }
+  \item{ses.diffs}{
+    A matrix of standard error differences.
+  }
 }
 \value{
   An \code{moecalc} object. Which has the following methods:
   \code{plot}, \code{print}, \code{summary}.
+
+  \code{ses.moecalc} produces an object of class \code{"ses.moecalc"}.
 }
 \author{
   Danny Chang, David Banks
