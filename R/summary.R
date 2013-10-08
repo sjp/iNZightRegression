@@ -205,7 +205,9 @@ iNZightSummary <-
                         type3pval <- if (all(is.na(tmpaov))) {
                             NA
                           } else {
-                            tmpaov[which(rownames(tmpaov) == name.k), 4]
+                         ## Anova() on glm has different dimensions:
+                            tmpaov[which(rownames(tmpaov) == name.k),
+                                   ifelse(isGlm(x.lm), 3, 4)]
                           }
                         pvalue <- type3pval
                       }
