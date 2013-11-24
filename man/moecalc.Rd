@@ -1,58 +1,50 @@
 \name{moecalc}
 \alias{moecalc}
-\alias{ses.moecalc}
 \title{
-  Margin of Error Calculations
+Margin of Error Calculations
 }
 \description{
-  TODO: DESCRIBE BETTER.
+  ...
 }
 \usage{
-moecalc(x, factorname = NULL, levelnames = NULL,
-        coef.idx = NULL, est = NULL, ci = NULL, base = TRUE,
-        basename = "base", conf.level = 1.96)
-ses.moecalc(ses, ses.diffs)
+moecalc(x, factorname = NULL, levelnames = NULL, coef.idx = NULL,
+        est = NULL, ci = NULL, base = TRUE, basename = "base",
+        conf.level = 1.96)
 }
 \arguments{
   \item{x}{
-    A model object (i.e. \code{lm}) or an \code{ses.moecalc} object.
-  }
+    a model object (i.e. \code{lm}, \code{glm}, \code{svyglm}), or an
+    \code{ses.moecalc} object.
+}
   \item{factorname}{
-    Character vector. The name of the factor. Can be an interaction.
-  }
+    character, the name of the factor. Can be an interaction.
+}
   \item{levelnames}{
-    The names of each level of the factor.
-  }
+    the names of each level of the factor.
+}
   \item{coef.idx}{
-    The coefficient index.
-  }
+    the coefficient index.
+}
   \item{est}{
-    Estimate.
-  }
+    estimate.
+}
   \item{ci}{
-    The relevant confidence interval, only use when the length of
-    \code{est} is 2.
-  }
+    the relevant confidence interval; only use when the length of
+    \code{est} is 2. Default is 1.96, default 95\% level.
+}
   \item{base}{
-    Whether a baseline level is set. Defaults to \code{TRUE}.
-  }
+    logical, whether a baseline level is set. defaults to \code{TRUE}.
+}
   \item{basename}{
-    Label name to apply to baseline level, if \code{base} is
-    \code{TRUE}.
-  }
+    label name to apply to baseline level if \code{base = TRUE}.
+}
   \item{conf.level}{
-    Confidence level for both error bars and confidence intervals.
-  }
-  \item{ses}{
-    A numeric vector of standard errors.
-  }
-  \item{ses.diffs}{
-    A matrix of standard error differences.
-  }
+    confidence level for both error bars and confidence intervals.
+}
 }
 \value{
-  An \code{moecalc} object. Which has the following methods:
-  \code{plot}, \code{print}, \code{summary}.
+  An \code{moecalc} object, which has the following methods:
+  \code{plot}, \code{print}, and \code{summary}.
 
   \code{ses.moecalc} produces an object of class \code{"ses.moecalc"}.
 }

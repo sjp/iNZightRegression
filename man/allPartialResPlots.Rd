@@ -1,25 +1,28 @@
 \name{allPartialResPlots}
 \alias{allPartialResPlots}
 \title{
-  Draws multiple partial residual plots
+  Draw multiple partial residual plots
 }
 \description{
-  Given a fitted model, this function draws partial residual plots for
-  all continuous explanatory variables in the model. Clicking the device
+  This function draws partial residual plots for all continuous
+  explanatory variables in a given model. Clicking the device
   displays the next plot in the sequence.
 }
 \usage{
 allPartialResPlots(fit)
 }
-
 \arguments{
   \item{fit}{
-    An lm or glm object
-  }
+    an \code{lm}, \code{glm} or \code{svyglm} object.
+}
 }
 \value{
   None.
 }
 \author{
-David Banks
+  David Banks, Tom Elliott.
+}
+
+\seealso{
+  \code{\link{partialResPlot}}
 }

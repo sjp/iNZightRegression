@@ -6,7 +6,8 @@
 \description{
   This is a method for \code{moecalc} objects. Most other \code{moecalc}
   methods are concerned with how each factor level differs from the
-  baseline. This does not show
+  baseline. This does not show the significance of differences between
+  non-baseline levels of a factor.
 
   Currently the p-values are not adjusted. As a result, more comparisons
   are likely to be significantly different when they shouldn't be.
@@ -16,10 +17,11 @@ multicomp(x, ...)
 }
 \arguments{
   \item{x}{
-    An \code{moecalc} object.
+    an \code{moecalc} object.
   }
   \item{\dots}{
-    Other parameters to be passed into the function (currently ignored).
+    additional parameters to be passed to the function (currently
+    ignored).
   }
 }
 \value{

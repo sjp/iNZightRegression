@@ -1,12 +1,13 @@
 \name{iNZightSummary}
 \alias{iNZightSummary}
 \title{
-  Informative summary information for linear models
+  Informative summary information for (general) linear models
 }
 \description{
-  This function aims to improve upon the base R summary output.
-  More information is provided, and this function provides both creates
-  and returns a summary object as well as printing it.
+  The iNZightSummary improves upon the base R summary output for
+  (general) linear models. More information is provided and displayed in
+  a more intuitive format. This function both creates and returns a
+  summary object, as well as printing it.
 }
 \usage{
 iNZightSummary(x,
@@ -14,37 +15,38 @@ iNZightSummary(x,
                reorder.factors = FALSE,
                digits = max(3, getOption("digits") - 3),
                symbolic.cor = x$symbolic.cor,
-               signif.stars = getOption("show.signif.stars"), ...)
+               signif.stars = getOption("show.signif.stars"),
+               ...)
 }
 \arguments{
   \item{x}{
-    an object of class \code{"lm"}, \code{"glm"}, or \code{"svyglm"},
-    usually a result of a call to the corresponding function.
-  }
+    an object of class \code{"lm"}, \code{"glm"} or \code{"svyglm"},
+    usually the result of a call to the corresponding function.
+}
   \item{method}{
-    One of either \code{"standard"} or \code{"bootstrap"}. If
-    \code{"bootstrap"}, then construct bootstrapped estimates and
-    standard errors. Otherwise, use the standard estimates.
-  }
+    one of either \code{"standard"} or \code{"bootstrap"}. If
+    \code{"bootstrap"}, then bootstrapped estimates and standard errors
+    are calculated; otherwise, uses the standard estimtes.
+}
   \item{reorder.factors}{
-    If there are factors present in the model, and \code{TRUE} is given
+    if there are factors present in the model, and \code{TRUE} is give
     to this argument, then the most common level of the factor is set to
     be the baseline.
-  }
+}
   \item{digits}{
     the number of significant digits to use when printing.
-  }
+}
   \item{symbolic.cor}{
-    logical. If \code{TRUE}, print the correlations in
-    a symbolic form (see \code{\link{symnum}}) rather than as numbers.
-  }
+    logical: if \code{TRUE}, print the correlations in a symbolic form
+    (see \code{\link{symnum}}), rather than as numbers.
+}
   \item{signif.stars}{
-    logical. If \code{TRUE}, \sQuote{significance stars}
-    are printed for each coefficient.
-  }
+    logical: if \code{TRUE}, \sQuote{significance stars} are printed for
+    each coefficient.
+}
   \item{\dots}{
-    further arguments passed to or from other methods.
-  }
+    further arguments paseed to and from other methods.
+}
 }
 \details{
   This summary function provides more information in the following ways:
@@ -54,16 +56,15 @@ iNZightSummary(x,
   level of a factor is, rather than attempting to work out by deduction
   from what has already been printed.
 
-  The p-value of a factor is now given, this is not simply the output
-  from the \code{\link{anova}} function. The reason is because
-  \code{\link{anova}} works sequentially, instead we use
-  \code{\link[car]{Anova}} to calculate the p-value based off Type III
-  sums of squares.
+  The p-value of a factor is now given; this is the output from
+  \code{\link[car]{Anova}}, which calculates the p-value based off of
+  Type III sums of squares, rather than sequentially as done by
+  \code{\link{anova}}.
 
   Each level of a factor is indented by 2 characters for its label and
-  its p-value to distinguish between a factor and a level of a factor.
+  its p-value to distinguish between a factor, and levels of a factor.
 
-  The labels for each level of an interaction is now just the levels of
+  The labels for each level of an interaction are now just the levels of
   the factor (separated by a \code{.}), rather than being prepended with
   the factor name also.
 }
@@ -72,17 +73,17 @@ iNZightSummary(x,
   \code{summary.svyglm}.
 }
 \author{
-  Simon Potter.
+  Simon Potter, Tom Elliott.
 }
 \note{
   If any level is not observed in a factor, no p-values will be printed
   on all factors. This is because we cannot calculate Type III sums of
-  squares if that is the case.
+  squares when this is the case.
 }
 
 \seealso{
-  The model fitting function \code{\link{lm}}, \code{\link{glm}},
-  \code{\link{summary}}.
+  The model fitting functions \code{\link{lm}}, \code{\link{glm}}, and
+  \code{\link{sumary}}.
 
   The \code{\link{survey}} package.
 
@@ -90,5 +91,8 @@ iNZightSummary(x,
   with standard errors, t-statistics and p-values.
 
   To calculate p-values for factors, use \code{\link[car]{Anova}} with
-  type three sums of squares.
+  type III sums of squares.
+}
+\examples{
+  x <- runif(1)
 }

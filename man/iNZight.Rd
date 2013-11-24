@@ -1,0 +1,22 @@
+\name{iNZightRegression}
+\docType{package}
+\title{
+  Additional functionality for iNZight
+}
+\description{
+  This package provides some additional functions to be used when
+  fitting regression models. It supports linear, general linear, and
+  survey (general) linear models. 
+}
+\details{
+\tabular{ll}{
+Package: \tab iNZightRegression\cr
+Type: \tab Package\cr
+Version: \tab 0.3\cr
+License: \tab GPL-2\cr
+}
+}
+\author{
+  Simon Potter, David Banks, Tom Elliott.
+}
+\keyword{iNZight}

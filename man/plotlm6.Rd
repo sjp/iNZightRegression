@@ -1,23 +1,20 @@
 \name{plotlm6}
 \alias{plotlm6}
 \title{
-  Extended Plot Diagnostics for (g)lm models
+  Extended Plot Diagnostics for (g)lm Models
 }
 \description{
-
-  These plots are an extension to the original plots provided by
+  These plots are an extension of the original plots provided by
   \code{plot.lm}.
 
-  Six plots (selectable by \code{which}) are currently available: a plot
-  of residuals against fitted values, a Scale-Location plot of
-  \eqn{\sqrt{| residuals |}}{sqrt(| residuals |)} against fitted values,
-  a plot of residuals against leverages, a plot of Cook's distances
-  versus row labels, a Normal Q-Q plot and histogram.
+  Six plots are currently available: residuals versus fitted,
+  Scale-Location of \eqn{\sqrt{| residuals|}}{sqrt{|residual|}} against
+  fitted values, residuals against leverages, Cook's distance, Normal
+  Q-Q plot and histogram of residuals.
 
-  Also provided is a summary plot which shows all diagnostic plots
+  Also privided is the summary plot which shows all diagnostic plots
   arranged in a 2 by 3 grid. By default, this is shown first, then each
   of the individual plots in turn.
-
 }
 \usage{
 plotlm6(x,
@@ -26,8 +23,7 @@ plotlm6(x,
         sub.caption = NULL,
         main = "",
         ask = prod(par("mfcol")) < length(which) &&
-              dev.interactive(),
-        ...,
+              dev.interactive(), ...,
         id.n = 3,
         labels.id = names(residuals(x)),
         cex.id = 0.75,
@@ -38,87 +34,91 @@ plotlm6(x,
         cex.caption = 1,
         showBootstraps = nrow(x$model) >= 30)
 }
+%- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{x}{
-    \code{lm} object, typically the result of \code{\link{lm}} or
-    \code{\link{glm}}. Can also take \code{\link[survey]{svyglm}}
-    objects.
-  }
+    an \code{lm} object, typically the result of
+  \code{\link{lm}} or \code{\link{glm}}. Can also take
+  \code{\link[survey]{svyglm}} objects.
+}
   \item{which}{
-    If a subset of the plots is required, specify a subset of the
-    numbers \code{1:6}. \code{7} will produce a summary plot showing all
-    of the plots arranged in a grid. \code{1:6} will show the summary
-    plot followed by each of the single plots one by one.
-  }
+    numeric, if a subset of the plots is required, specify a subset of
+    the numbers \code{1:6}. \code{7} will produce a summary plot showing
+    all of the plots arranged ina a grid. \code{1:6} will show the
+    summary plot followed by each of the single plots one by one
+    (default).
+}
   \item{panel}{
-    panel function. The useful alternative to \code{\link{points}},
-    \code{\link{panel.smooth}} can be chosen by \code{add.smooth = TRUE}.
-  }
+    panel function. the useful alternative to \code{\link{points}},
+  \code{\link{panel.smooth}} can be chosen by \code{add.smooth = TRUE}. 
+}
   \item{sub.caption}{
-    common title---above the figures if there are more than one; used as
-    \code{sub} (s.\code{\link{title}}) otherwise.  If \code{NULL}, as by
+    common title. Above the figures if there are more than one; used as
+    \code{sub} (s.\code{\link{title}}) otherwise. If \code{NULL}, as by
     default, a possible abbreviated version of \code{deparse(x$call)} is
-    used.
-  }
+    used. 
+}
   \item{main}{
-    title to each plot---in addition to \code{caption}.
-  }
+    title to each plot, in addition to \code{caption}.
+}
   \item{ask}{
-    logical; if \code{TRUE}, the user is \emph{ask}ed before each plot,
-    see \code{\link{par}(ask=.)}. Ignored when only one plot is being
-    shown.
-  }
+    logical, if \code{TRUE}, the user is \emph{ask}ed before each plot,
+  see \code{\link{par}(ask=.)}. Ignored when only one plot is being
+  shown.
+}
   \item{\dots}{
-    other parameters to be passed through to plotting functions.
-  }
+    other arguments to be passed to through to plotting functions.
+}
   \item{id.n}{
     number of points to be labelled in each plot, starting with the most
-    extreme.
-  }
+    extreme. 
+}
   \item{labels.id}{
-    vector of labels, from which the labels for extreme points will be
-    chosen. \code{NULL} uses observation numbers.
-  }
+    vector of labels, from which the labels for extreme plots will be
+  chosen. \code{NULL} uses observation numbers.
+}
   \item{cex.id}{
     magnification of point labels.
-  }
+}
   \item{qqline}{
-    logical indicating if a \code{\link{qqline}()} should be added to
-    the normal Q-Q plot.
-  }
+    logical, if \code{TRUE}, a \code{\link{qqline}()} is added to the
+    normal QQ plot.
+}
   \item{cook.levels}{
-    levels of Cook's distance at which to draw contours.
-  }
+    levels of the Cook's distance at which to draw contours.
+}
   \item{add.smooth}{
-    logical indicating if a smoother should be added to most plots; see
-    also \code{panel} above.
-  }
+    logical, if \code{TRUE}, a smoother is drawn to the appropriate
+  plots; see also \code{panel} above.
+}
   \item{label.pos}{
     positioning of labels, for the left half and right half of the graph
-    respectively, for plots 1-3.
-  }
+  respectively, for plots 1--3.
+}
   \item{cex.caption}{
     controls the size of \code{caption}.
-  }
+}
   \item{showBootstraps}{
-    logical; if \code{TRUE}, then bootstrap loess smooths are shown in
-    the first 4 plots. By default, these are only shown for sample sizes
-    greater than 30.
-  }
+    logical, if \code{TRUE}, bootstrap loess smoothers are drawn in the
+  first 4 plots. By default, only drawn for sample sizes of at least 30.
+}
 }
 \details{
-  For the residuals vs fitted values plot, we add bootstrapped smoothers
-  to illustrate variance. The smoother is also added to the
-  Scale-Location plot too.
+  For the residuals versus fitted values plot, we add bootstrapped
+  smoothers to illustrate variance. The smoother is also added to the
+  Scale-Location plot.
 
   The Normal Q-Q and histogram plots are taken from the \code{normcheck}
   function in the \code{s20x} package.
 }
 \author{
-  Simon Potter, David Banks. Original authors of \code{plot.lm} are John
-  Maindonald and Martin Maechler.
+  Simon Potter, David Banks, Tom Elliott. Original authors of
+  \code{plot.lm} are John Maindonald and Martin Maechler.
 }
-
 \seealso{
-  \code{\link{plot.lm}}
+  \code{\link{histogramArray}}, \code{\link{qqplotArray}}
+}
+\examples{
+fit <- lm(Volume ~ Height + Girth, data = trees)
+plotlm6(fit, which = 7)
 }
