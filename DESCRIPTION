@@ -6,10 +6,10 @@ Date: 2013-11-25
 Authors@R: c(person("Simon", "Potter", role = c("aut", "cre"),
                     email = "spot023@aucklanduni.ac.nz"),
              person("David", "Banks", role = "aut"),
-	     person("Tom", "Elliott", role = "aut"))
+	     person("Tom", "Elliott", role = "aut",
+                    email = "tell029@aucklanduni.ac.nz"))
 Depends: R (>= 2.13)
 Imports: grid, car
 Suggests: iNZight
-Enhances: iNZight
 Description: Core functions for iNZight
 License: GPL-2

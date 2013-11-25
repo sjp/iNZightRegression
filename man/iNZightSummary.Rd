@@ -83,7 +83,7 @@ iNZightSummary(x,
 
 \seealso{
   The model fitting functions \code{\link{lm}}, \code{\link{glm}}, and
-  \code{\link{sumary}}.
+  \code{\link{summary}}.
 
   The \code{\link{survey}} package.
 

@@ -1,6 +1,6 @@
 ## standard error class
 ## has two components
-## ses       : standard error, simply a numeirc vector
+## ses       : standard error, simply a numeric vector
 ## ses.diffs : standard error difference matrix
 ##
 ## can add any other funcitons for any other kind of situation

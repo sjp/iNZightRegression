@@ -51,3 +51,4 @@ moecalc(x, factorname = NULL, levelnames = NULL, coef.idx = NULL,
 \author{
   Danny Chang, David Banks
 }
+

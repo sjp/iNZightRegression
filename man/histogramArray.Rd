@@ -13,10 +13,10 @@ histogramArray(x, n = 7)
 \arguments{
   \item{x}{
     an \code{lm} or \code{svyglm} object.
-}
+  }
   \item{n}{
     the number of additional histograms to plot alongside the original.
-}
+  }
 }
 \details{
   The histogram of the model \code{x} appears in the top-left
@@ -40,3 +40,4 @@ histogramArray(x, n = 7)
 fit <- lm(Volume ~ Height + Girth, data = trees)
 histogramArray(fit)
 }
+
