@@ -2,52 +2,59 @@ iNZightSummary <-
     function (x, method = "standard", reorder.factors = FALSE,
               digits = max(3, getOption("digits") - 3),
               symbolic.cor = x$symbolic.cor,
-              signif.stars= getOption("show.signif.stars"),	...)
-{
-
+              signif.stars= getOption("show.signif.stars"),
+              ...) {
+        
     if (reorder.factors) {
-      varsAreFactors = which(sapply(x$model, class) %in% c("factor", "ordered"))
-      if (length(varsAreFactors) > 0) {
-        dat = reorderFactors(x$model)
-        newCall = modifyModelCall(x, "dat")
-        x = eval(parse(text = newCall))
-      }
+        varsAreFactors = which(sapply(x$model, class) %in%
+            c("factor", "ordered"))
+        if (length(varsAreFactors) > 0) {
+            dat = reorderFactors(x$model)
+            newCall = modifyModelCall(x, "dat")
+            x = eval(parse(text = newCall))
+        }
     }
-
+    
     ## If method bootstrap, get bootstrap inference
     if (method == "bootstrap") {
-      bootCoefs = bootstrapCoefs(x)
-      T.info = bootstrapTTests(bootCoefs)
-      F.info = bootstrapFTests(bootCoefs)
-
-      if (bootCoefs$keptSamples / bootCoefs$N < .95) {
-
-        lwd <- getOption("width")
-        ind <- paste(rep(" ", floor(0.05 * lwd)), collapse = "")
-        header <- paste(rep("=", lwd), collapse = "")
-        parwrap <- function(txt, init = "", indent = "") {
-          paste(strwrap(txt, prefix = indent, initial = init), collapse = "\n")
+        bootCoefs = bootstrapCoefs(x)
+        T.info = bootstrapTTests(bootCoefs)
+        F.info = bootstrapFTests(bootCoefs)
+        
+        if (bootCoefs$keptSamples / bootCoefs$N < .95) {
+            
+            lwd <- getOption("width")
+            ind <- paste(rep(" ", floor(0.05 * lwd)), collapse = "")
+            header <- paste(rep("=", lwd), collapse = "")
+            parwrap <- function(txt, init = "", indent = "") {
+                paste(strwrap(txt, prefix = indent, initial = init),
+                      collapse = "\n")
+            }
+            
+            if (reorder.factors) {
+                txt <- "Not enough baseline cases in one or more factors even after reordering."
+                cat(parwrap(paste(txt, init = "Error: ",
+                                  indent = "       ")), "\n")
+                txt <- "Use standard output instead."
+                cat(parwrap(paste(txt, init = "       ",
+                                  indent = "       ")), "\n")
+                return(invisible())
+            } else {
+                txt <- "Not enough baseline cases in one or more factors."
+                cat(parwrap(paste(txt, init = "Warning: ",
+                                  indent = "         ")), "\n")
+                txt <- "Trying again with factor levels reordered."
+                cat(parwrap(paste(txt, init = "         ",
+                                  indent = "         ")), "\n")
+                iNZightSummary(x, method = "bootstrap",
+                               reorder.factors = TRUE,
+                               digits = digits, symbolic.cor = symbolic.cor,
+                               signif.stars = signif.stars)
+                return(invisible())
+            }
         }
-
-        if (reorder.factors) {
-          txt <- "Not enough baseline cases in one or more factors even after reordering."
-          cat(parwrap(paste(txt, init = "Error: ", indent = "       ")), "\n")
-          txt <- "Use standard output instead."
-          cat(parwrap(paste(txt, init = "       ", indent = "       ")), "\n")
-          return(invisible())
-        } else {
-          txt <- "Not enough baseline cases in one or more factors."
-          cat(parwrap(paste(txt, init = "Warning: ", indent = "         ")), "\n")
-          txt <- "Trying again with factor levels reordered."
-          cat(parwrap(paste(txt, init = "         ", indent = "         ")), "\n")
-          iNZightSummary(x, method = "bootstrap", reorder.factors = TRUE,
-                         digits = digits, symbolic.cor = symbolic.cor,
-                         signif.stars = signif.stars)
-          return(invisible())
-        }
-      }
     }
-
+    
     x.lm <- x
     x.data <- x.lm$model
     x <- summary(x)
@@ -61,23 +68,22 @@ iNZightSummary <-
     resid <- ifelse(isGlm(x.lm), x$deviance.resid, x$residuals)
     df <- x$df
     rdf <- df[2L]
-   # cat(if(!is.null(x$weights) && diff(range(x$weights))) "Weighted ",
-   #     "Residuals:\n", sep="")
+
     if (rdf > 5L) {
 	nam <- c("Min", "1Q", "Median", "3Q", "Max")
 	rq <- if (length(dim(resid)) == 2L)
 	    structure(apply(t(resid), 1L, quantile),
 		      dimnames = list(nam, dimnames(resid)[[2L]]))
-	else  {
+	else {
             zz <- zapsmall(quantile(resid), digits + 1)
             structure(zz, names = nam)
         }
-	## print(rq, digits = digits, ...)
     }
     else if (rdf > 0L) {
 	print(resid, digits = digits, ...)
     } else { # rdf == 0 : perfect fit!
-	cat("ALL", df[1L], "residuals are 0: no residual degrees of freedom!\n")
+	cat("ALL", df[1L],
+            "residuals are 0: no residual degrees of freedom!\n")
     }
     if (length(x$aliased) == 0L) {
         cat("\nNo Coefficients\n")
@@ -89,7 +95,8 @@ iNZightSummary <-
         coefs <- x$coefficients
         if(!is.null(aliased <- x$aliased) && any(aliased)) {
             cn <- names(aliased)
-            coefs <- matrix(NA, length(aliased), 4, dimnames=list(cn, colnames(coefs)))
+            coefs <- matrix(NA, length(aliased), 4,
+                            dimnames = list(cn, colnames(coefs)))
             coefs[!aliased, ] <- x$coefficients
         }
         ########
@@ -101,160 +108,208 @@ iNZightSummary <-
         na.line <- rep(NA, 4)
         i <- 1
         while (i <= nrow(coefs.copy)) {
-          # If the name has been modified, we know we're not dealing
-          # with a numeric variable, or it is crossed with some factor
-          summary.row <- rownames(coefs.copy)[i]
-          split.current.row <- strsplit(summary.row, ":")[[1]]
-          nlines.to.add <- 1
-          if (! summary.row %in% varnames) {
-            # Need to test whether the var is indeed a factor
-            # and that the factor contains the level we want
-            for (j in 1:length(varnames)) {
-              current.var <- varnames[j]
-              # Need to account for the fact that there may be an interaction
-              # term being included, need to account for cases like:
-              # numeric*factor, factor*numeric, factor*factor, factor^3, etc
-              if (length(split.current.row) > 1) {
-                row.label <- ""
-                for (vl in 1:length(var.labels)) {
-                  current.term <- var.labels[[vl]]
-                  # Dealing with an interaction
-                  if (length(current.term) > 1) {
-                    row.cand <- substr(split.current.row, 1, nchar(current.term))
-                    if (all(row.cand == current.term)) {
-                      row.label <- paste(current.term, collapse = ":")
+         ## If the name has been modified, we know we're not dealing
+         ## with a numeric variable, or it is crossed with some factor
+            summary.row <- rownames(coefs.copy)[i]
+            split.current.row <- strsplit(summary.row, ":")[[1]]
+            nlines.to.add <- 1
+            if (! summary.row %in% varnames) {
+             ## Need to test whether the var is indeed a factor
+             ## and that the factor contains the level we want
+                for (j in 1:length(varnames)) {
+                    current.var <- varnames[j]
+                    ## Need to account for the fact that there may be
+                    ## an interaction
+                    ## term being included, need to account for cases like:
+                    ## numeric*factor, factor*numeric, factor*factor,
+                    ## factor^3, etc
+                    if (length(split.current.row) > 1) {
+                        row.label <- ""
+                        for (vl in 1:length(var.labels)) {
+                            current.term <- var.labels[[vl]]
+                            ## Dealing with an interaction
+                            if (length(current.term) > 1) {
+                                row.cand <- substr(split.current.row, 1,
+                                                   nchar(current.term))
+                                if (all(row.cand == current.term)) {
+                                    row.label <- paste(current.term,
+                                                       collapse = ":")
+                                }
+                            }
+                        }
+                        ## Now that we have the row labels, try
+                        ## printing out all of the level labels
+
+                        ## Inserting the interaction title
+                        if (row.label != rownames(coefs.copy)[i - 1]) {
+                            if (method == "bootstrap") {
+                                pvalue <- F.info$Pvals[row.label]
+                            } else {
+                                tmpaov <- tryCatch(Anova(x.lm, type = 3),
+                                                   error = function(e) NA)
+                                type3pval <- if (all(is.na(tmpaov))) {
+                                    NA
+                                } else {
+                                    tmpaov[which(rownames(tmpaov) ==
+                                                 row.label), 4]
+                                }
+                                pvalue <- type3pval
+                            }
+                            
+                            coefs.copy <-
+                                insert.lines(row.label, i,
+                                             c(rep(NA, 3), pvalue),
+                                             coefs.copy)
+                        }
+                        
+                        counter <- 1
+                        cterms <- strsplit(row.label, ":")[[1]]
+                        
+                        data.sub <- x.data[, cterms]
+                        isf <- lapply(data.sub, class)
+                        level.list <- list()
+                        for (fs in 1:length(isf)) {
+                            if (isf[fs] == "factor") {
+                             ## Always omit base level
+                                l <- levels(data.sub[, fs])[-1] 
+                            } else {
+                                l <- cterms[fs]
+                            }
+                            level.list[[fs]] <- l
+                        }
+                        vars.to.parse <-
+                            expand.grid(level.list,
+                                        stringsAsFactors = FALSE)
+
+                        for (l in 1:nrow(vars.to.parse)) {
+                            row.data <- vars.to.parse[l, ]
+                            int.effect.name <- paste(row.data,
+                                                     collapse = ".")
+                            int.effect.name <- paste("  ", int.effect.name,
+                                                     sep = "")
+                            if (method == "bootstrap") {
+                                rwname = paste(paste(cterms, row.data,
+                                    sep = ""), collapse = ":")
+                                bsrow = c(coefs.copy[i + counter, 1],
+                                    bootCoefs$seCoef[rwname],
+                                    T.info$t[rwname],
+                                    T.info$p[rwname])
+                                coefs.copy <-
+                                    insert.lines(int.effect.name,
+                                                 i + counter, bsrow,
+                                                 coefs.copy, replace = TRUE)
+                            } else {
+                                coefs.copy <-
+                                    insert.lines(int.effect.name,
+                                                 i + counter,
+                                                 coefs.copy[i + counter, ],
+                                                 coefs.copy, replace = TRUE)
+                            }
+                            counter <- counter + 1
+                        }
+                        
+                        nlines.to.add <- counter # Added rows plus var
+                        break
+                    } else {
+                        summary.row.subs <-
+                            substr(summary.row, 1, nchar(current.var))
+                        row.var.level <-
+                            substr(summary.row, nchar(current.var) + 1,
+                                   nchar(summary.row))
+                        ## Is the rest of the string a level of the
+                        ## variable?
+                        is.level.of.cvar <-
+                            nchar(row.var.level) > 0 && row.var.level %in%
+                        levels(x.data[, current.var])
+                        ## The case where we have a row with a
+                        ## substring matching an existing variable
+                        ## name, and there is a level present
+                        if (current.var == summary.row.subs &&
+                            is.level.of.cvar) {
+                            levels.of.cvar <- levels(x.data[, current.var])
+                            base.level <- levels.of.cvar[1]
+                            nlines.to.add <- length(levels.of.cvar) + 1 
+                            new.names <-
+                                c(current.var, paste("  ", levels.of.cvar,
+                                                     sep = ""))
+                            for (k in (0:length(levels.of.cvar) + i)) {
+                                name.k <- new.names[k - i + 1]
+                                ## Var, need to get the p-val
+                                if (k == i) {
+                                    if (method == "bootstrap") {
+                                        pvalue <- F.info$Pvals[summary.row]
+                                    } else {
+                                        tmpaov <-
+                                            tryCatch(Anova(x.lm, type = 3),
+                                                     error = function(e) NA)
+                                        type3pval <-
+                                            if (all(is.na(tmpaov))) {
+                                                NA
+                                            } else {
+                              ## Anova() on glm has different dimensions:
+                              tmpaov[which(rownames(tmpaov) == name.k),
+                                     ifelse(isGlm(x.lm), 3, 4)]
+                                            }
+                                        pvalue <- type3pval
+                                    }
+                                    coefs.copy <-
+                                        insert.lines(name.k, k,
+                                                     c(rep(NA, 3), pvalue),
+                                                     coefs.copy)
+                                }
+                                ## Base level
+                                if (k == (i + 1)) {
+                                    coefs.copy <-
+                                        insert.lines(name.k, k, rep(NA, 4),
+                                                     coefs.copy)
+                                }
+
+                                ## No longer dealing with var or base
+                                if (k > (i + 1)) {
+                                    if (method == "bootstrap") {
+                                        original.name <-
+                                            paste(current.var,
+                                                  substring(name.k, 3),
+                                                  sep = "")
+                                        bsCoefs = c(coefs.copy[k, 1],
+                                            bootCoefs$seCoef[original.name],
+                                            T.info$t[original.name],
+                                            T.info$p[original.name])
+                                        if (all(is.na(bsCoefs)))
+                                            bsCoefs <- rep(" ", 4)
+                                        coefs.copy <-
+                                            insert.lines(name.k, k, bsCoefs,
+                                                         coefs.copy,
+                                                         replace = TRUE)
+                                    } else {
+                                        if (all(is.na(coefs.copy[k, ])))
+                                            coefs.copy[k, ] <- rep(" ", 4)
+                                        coefs.copy <-
+                                            insert.lines(name.k, k,
+                                                         coefs.copy[k, ],
+                                                         coefs.copy,
+                                                         replace = TRUE)
+                                    }
+                                }
+                            }
+                        }
                     }
-                  }
                 }
-                # Now that we have the row labels, try printing out all of the level labels
-
-                # Inserting the interaction title
-                if (row.label != rownames(coefs.copy)[i - 1]) {
-                  if (method == "bootstrap") {
-                    pvalue <- F.info$Pvals[row.label]
-                  } else {
-                    tmpaov <- tryCatch(Anova(x.lm, type = 3), error = function(e) NA)
-                    type3pval <- if (all(is.na(tmpaov))) {
-                        NA
-                      } else {
-                        tmpaov[which(rownames(tmpaov) == row.label), 4]
-                      }
-                    pvalue <- type3pval
-                  }
-
-                  coefs.copy <- insert.lines(row.label, i, c(rep(NA, 3), pvalue), coefs.copy)
-                }
-
-                counter <- 1
-                cterms <- strsplit(row.label, ":")[[1]]
-
-                data.sub <- x.data[, cterms]
-                isf <- lapply(data.sub, class)
-                level.list <- list()
-                for (fs in 1:length(isf)) {
-                  if (isf[fs] == "factor") {
-                    l <- levels(data.sub[, fs])[-1] # Always omit base level
-                  } else {
-                    l <- cterms[fs]
-                  }
-                  level.list[[fs]] <- l
-                }
-                vars.to.parse <- expand.grid(level.list, stringsAsFactors = FALSE)
-
-                for (l in 1:nrow(vars.to.parse)) {
-                  row.data <- vars.to.parse[l, ]
-                  int.effect.name <- paste(row.data, collapse = ".")
-                  int.effect.name <- paste("  ", int.effect.name, sep = "")
-                  if (method == "bootstrap") {
-                    rwname = paste(paste(cterms, row.data, sep = ""), collapse = ":")
-                    bsrow = c(coefs.copy[i + counter, 1],
-                              bootCoefs$seCoef[rwname],
-                              T.info$t[rwname],
-                              T.info$p[rwname])
-                    coefs.copy <- insert.lines(int.effect.name, i + counter, bsrow,
-                                               coefs.copy, replace = TRUE)
-                  } else {
-                    coefs.copy <- insert.lines(int.effect.name, i + counter, coefs.copy[i + counter, ],
-                                               coefs.copy, replace = TRUE)
-                  }
-                  counter <- counter + 1
-                }
-
-                nlines.to.add <- counter # Added rows plus var
-                break
-              } else {
-                summary.row.subs <- substr(summary.row, 1, nchar(current.var))
-                row.var.level <- substr(summary.row, nchar(current.var) + 1, nchar(summary.row))
-                # Is the rest of the string a level of the variable?
-                is.level.of.cvar <- nchar(row.var.level) > 0 && row.var.level %in% levels(x.data[, current.var])
-                # The case where we have a row with a substring matching an
-                # existing variable name, and there is a level present
-                if (current.var == summary.row.subs && is.level.of.cvar) {
-                  levels.of.cvar <- levels(x.data[, current.var])
-                  base.level <- levels.of.cvar[1]
-                  nlines.to.add <- length(levels.of.cvar) + 1 # var + (base + rest)
-                  new.names <- c(current.var, paste("  ", levels.of.cvar, sep = ""))
-                  for (k in (0:length(levels.of.cvar) + i)) {
-                    name.k <- new.names[k - i + 1]
-                    # Var, need to get the p-val
-                    if (k == i) {
-                      if (method == "bootstrap") {
-                        pvalue <- F.info$Pvals[summary.row]
-                      } else {
-                        tmpaov <- tryCatch(Anova(x.lm, type = 3), error = function(e) NA)
-                        type3pval <- if (all(is.na(tmpaov))) {
-                            NA
-                          } else {
-                         ## Anova() on glm has different dimensions:
-                            tmpaov[which(rownames(tmpaov) == name.k),
-                                   ifelse(isGlm(x.lm), 3, 4)]
-                          }
-                        pvalue <- type3pval
-                      }
-                      coefs.copy <- insert.lines(name.k, k, c(rep(NA, 3), pvalue), coefs.copy)
-                    }
-                    # Base level
-                    if (k == (i + 1)) {
-                      coefs.copy <- insert.lines(name.k, k, rep(NA, 4), coefs.copy)
-                    }
-
-                    # No longer dealing with var or base
-                    if (k > (i + 1)) {
-                      if (method == "bootstrap") {
-                        original.name <- paste(current.var, substring(name.k, 3), sep = "")
-                        bsCoefs = c(coefs.copy[k, 1],
-                                    bootCoefs$seCoef[original.name],
-                                    T.info$t[original.name],
-                                    T.info$p[original.name])
-                        if (all(is.na(bsCoefs)))
-                          bsCoefs <- rep(" ", 4)
-                        coefs.copy <- insert.lines(name.k, k, bsCoefs,
-                                                   coefs.copy, replace = TRUE)
-                      } else {
-                        if (all(is.na(coefs.copy[k, ])))
-                           coefs.copy[k, ] <- rep(" ", 4)
-                        coefs.copy <- insert.lines(name.k, k, coefs.copy[k, ],
-                                                   coefs.copy, replace = TRUE)
-                      }
-                    }
-                  }
-                }
-              }
             }
-          }
-          if (summary.row == "(Intercept)" || summary.row %in% varnames){
-            if (method == "bootstrap") {
-              bsrow <- c(coefs.copy[i, 1],
-                         bootCoefs$seCoef[summary.row],
-                         T.info$t[summary.row],
-                         T.info$p[summary.row])
-              coefs.copy <- insert.lines(summary.row, i, bsrow, coefs.copy,
-                                         replace = TRUE)
+            if (summary.row == "(Intercept)" || summary.row %in% varnames){
+                if (method == "bootstrap") {
+                    bsrow <- c(coefs.copy[i, 1],
+                               bootCoefs$seCoef[summary.row],
+                               T.info$t[summary.row],
+                               T.info$p[summary.row])
+                    coefs.copy <- insert.lines(summary.row, i, bsrow,
+                                               coefs.copy,
+                                               replace = TRUE)
+                }
             }
-          }
-          i <- i + nlines.to.add
+            i <- i + nlines.to.add
         }
-        iNZightPrintCoefmat(coefs.copy)
+        iNZightPrintCoefmat(coefs.copy, digits = digits)
 
         ######
         # End iNZight changes
@@ -263,17 +318,21 @@ iNZightSummary <-
     ##
 
     if (isGlm(x.lm)) {
-        cat("\n(Dispersion parameter for ", x.lm$family$family, " family taken to be ",
+        cat("\n(Dispersion parameter for ",
+            x.lm$family$family, " family taken to be ",
             format(x$dispersion), ")\n\n",
-            apply(cbind(paste(format(c("Null", "Residual"), justify = "right"), "deviance:"),
+            apply(cbind(paste(format(c("Null", "Residual"),
+                                     justify = "right"), "deviance:"),
                         format(unlist(x[c("null.deviance", "deviance")]),
                                digits = max(5, digits + 1)), " on",
-                        format(unlist(x[c("df.null", "df.residual")])), " degrees of freedom\n"),
+                        format(unlist(x[c("df.null", "df.residual")])),
+                        " degrees of freedom\n"),
                   1L, paste, collapse = " "), sep = "")
         if (nzchar(mess <- naprint(x$na.action)))
             cat("  (", mess, ")\n", sep = "")
         if (!is.na(x$aic))
-            cat("AIC: ", format(x$aic, digits = max(4, digits + 1)), '\n', sep = '')
+            cat("AIC: ", format(x$aic, digits = max(4, digits + 1)),
+                '\n', sep = '')
         cat("\n", "Number of Fisher Scoring iterations: ", x$iter,
             "\n", sep = "")
         correl <- x$correlation
@@ -293,29 +352,34 @@ iNZightSummary <-
             }
         }
     } else {
-    cat("\nResidual standard error:",
-	format(signif(x$sigma, digits)), "on", rdf, "degrees of freedom\n")
-    if(nzchar(mess <- naprint(x$na.action))) cat("  (",mess, ")\n", sep="")
-    if (!is.null(x$fstatistic)) {
-	cat("Multiple R-squared:", formatC(x$r.squared, digits=digits))
-	cat(",\tAdjusted R-squared:",formatC(x$adj.r.squared,digits=digits), "\n")
-    }
-    correl <- x$correlation
-    if (!is.null(correl)) {
-	p <- NCOL(correl)
-	if (p > 1L) {
-	    cat("\nCorrelation of Coefficients:\n")
-	    if(is.logical(symbolic.cor) && symbolic.cor) {# NULL < 1.7.0 objects
-		print(symnum(correl, abbr.colnames = NULL))
-	    } else {
-                correl <- format(round(correl, 2), nsmall = 2, digits = digits)
-                correl[!lower.tri(correl)] <- ""
-                print(correl[-1, -p, drop=FALSE], quote = FALSE)
+        cat("\nResidual standard error:",
+            format(signif(x$sigma, digits)), "on", rdf,
+            "degrees of freedom\n")
+        if(nzchar(mess <- naprint(x$na.action))) cat("  (",mess, ")\n",
+                                                     sep="")
+        if (!is.null(x$fstatistic)) {
+            cat("Multiple R-squared:", formatC(x$r.squared, digits=digits))
+            cat(",\tAdjusted R-squared:",formatC(x$adj.r.squared,
+                                                 digits=digits), "\n")
+        }
+        correl <- x$correlation
+        if (!is.null(correl)) {
+            p <- NCOL(correl)
+            if (p > 1L) {
+                cat("\nCorrelation of Coefficients:\n")
+                if(is.logical(symbolic.cor) && symbolic.cor) {
+                    print(symnum(correl, abbr.colnames = NULL))
+                } else {
+                    correl <-
+                        format(round(correl, 2), nsmall = 2,
+                               digits = digits)
+                    correl[!lower.tri(correl)] <- ""
+                    print(correl[-1, -p, drop=FALSE], quote = FALSE)
+                }
             }
-	}
-      }
+        }
     }
-    cat("\n")#- not in S
+    cat("\n")
     invisible(x)
 }
 
@@ -331,14 +395,15 @@ iNZightPrintCoefmat <-
              eps.Pvalue = .Machine$double.eps,
 	     na.print = "NA", ...)
 {
-    ## For printing ``coefficient matrices'' as they are in summary.xxx(.) where
-    ## xxx in {lm, glm, aov, ..}. (Note: summary.aov(.) gives a class "anova").
+    ## For printing ``coefficient matrices'' as they are in
+    ## summary.xxx(.) where xxx in {lm, glm, aov, ..}. (Note:
+    ## summary.aov(.) gives a class "anova").
 
-    ## By Default
-    ## Assume: x is a matrix-like numeric object.
-    ## ------  with *last* column = P-values  --iff-- P.values (== TRUE)
-    ##	  columns {cs.ind}= numbers, such as coefficients & std.err  [def.: 1L:k]
-    ##	  columns {tst.ind}= test-statistics (as "z", "t", or "F")  [def.: k+1]
+    ## By Default Assume: x is a matrix-like numeric object.  ------
+    ## with *last* column = P-values --iff-- P.values (== TRUE)
+    ## columns {cs.ind}= numbers, such as coefficients & std.err
+    ## [def.: 1L:k] columns {tst.ind}= test-statistics (as "z", "t",
+    ## or "F") [def.: k+1]
 
     if(is.null(d <- dim(x)) || length(d) != 2L)
 	stop("'x' must be coefficient matrix/data frame")
@@ -346,33 +411,33 @@ iNZightPrintCoefmat <-
     if(is.null(P.values)) {
         scp <- getOption("show.coef.Pvalues")
         if(!is.logical(scp) || is.na(scp)) {
-            warning("option \"show.coef.Pvalues\" is invalid: assuming TRUE")
-            scp <- TRUE
+          warning("option \"show.coef.Pvalues\" is invalid: assuming TRUE")
+          scp <- TRUE
         }
 	P.values <- has.Pvalue && scp
     }
     else if(P.values && !has.Pvalue)
 	stop("'P.values' is TRUE, but 'has.Pvalue' is not")
-
-    # Renaming last column so that we're not using an explicit test stat
+    
+    ## Renaming last column so that we're not using an explicit test stat
     colnames(x)[nc] <- "p-value"
-
+    
     if(has.Pvalue && !P.values) {# P values are there, but not wanted
 	d <- dim(xm <- data.matrix(x[,-nc , drop = FALSE]))
 	nc <- nc - 1
 	has.Pvalue <- FALSE
     } else xm <- data.matrix(x)
-
+    
     k <- nc - has.Pvalue - (if(missing(tst.ind)) 1 else length(tst.ind))
     if(!missing(cs.ind) && length(cs.ind) > k) stop("wrong k / cs.ind")
 
     Cf <- array("", dim=d, dimnames = dimnames(xm))
-
+    
     ok <- !(ina <- is.na(xm))
     ## zap before deciding any formats
     for (i in zap.ind) xm[, i] <- zapsmall(xm[, i], digits)
     if(length(cs.ind)) {
-	acs <- abs(coef.se <- xm[, cs.ind, drop=FALSE])# = abs(coef. , stderr)
+	acs <- abs(coef.se <- xm[, cs.ind, drop=FALSE])
 	if(any(ia <- is.finite(acs))) {
 	    ## #{digits} BEFORE decimal point -- for min/max. value:
 	    digmin <- 1 + if(length(acs <- acs[ia & acs != 0]))
@@ -401,51 +466,53 @@ iNZightPrintCoefmat <-
 	Cf[okP][not.both.0] <- format(xm[okP][not.both.0],
                                       digits = max(1, digits-1))
     }
-
+    
     for (i in 1:nrow(Cf)) {
-      curr.row <- Cf[i, ]
-      # Need to get numbers if possible
-      curr.row <- suppressWarnings(as.numeric(curr.row))
-      na.inds <- which(is.na(curr.row)) # No need for p-val
-      curr.row.name <- rownames(Cf)[i]
-      next.row.name <- if (i != nrow(Cf)) rownames(Cf)[i + 1] else ""
-      prev.row.name <- if (i > 1) rownames(Cf)[i - 1] else ""
-
-      if (i == nrow(Cf)) {
-        curr.start.chars <- substr(curr.row.name, 1, 2)
-        # Only need to test whether this is a level of a factor.
-        # This cannot be a base level
-        if (curr.start.chars == "  " && length(na.inds) > 0)
-          Cf[i, na.inds] <- rep("-", length(na.inds))
-      }
-
-      # We need to test whether current row is a factor var label
-      if (next.row.name != "") {
-        curr.start.chars <- substr(curr.row.name, 1, 2)
-        next.start.chars <- substr(next.row.name, 1, 2)
-        prev.start.chars <- substr(prev.row.name, 1, 2)
-
-        # If there is indentation on the next row but not the current one
-        if (curr.start.chars != "  " & next.start.chars == "  ") {
-          if (length(na.inds) > 0)
-            Cf[i, na.inds] <- " "
+        curr.row <- Cf[i, ]
+        ## Need to get numbers if possible
+        curr.row <- suppressWarnings(as.numeric(curr.row))
+        na.inds <- which(is.na(curr.row)) # No need for p-val
+        curr.row.name <- rownames(Cf)[i]
+        next.row.name <- if (i != nrow(Cf)) rownames(Cf)[i + 1] else ""
+        prev.row.name <- if (i > 1) rownames(Cf)[i - 1] else ""
+        
+        if (i == nrow(Cf)) {
+            curr.start.chars <- substr(curr.row.name, 1, 2)
+            ## Only need to test whether this is a level of a factor.
+            ## This cannot be a base level
+            if (curr.start.chars == "  " && length(na.inds) > 0)
+                Cf[i, na.inds] <- rep("-", length(na.inds))
         }
 
-        # If there is indentation in current line, assume both level of factor
-        if (curr.start.chars == "  " && length(na.inds) > 0) {
-          if (prev.start.chars != "  ") # is base level
-            Cf[i, na.inds] <- c("0", rep("-", length(na.inds) - 1))
-          else # is an error row
-            Cf[i, na.inds] <- rep("-", length(na.inds))
+        ## We need to test whether current row is a factor var label
+        if (next.row.name != "") {
+            curr.start.chars <- substr(curr.row.name, 1, 2)
+            next.start.chars <- substr(next.row.name, 1, 2)
+            prev.start.chars <- substr(prev.row.name, 1, 2)
+            
+            ## If there is indentation on the next row but not the
+            ## current one
+            if (curr.start.chars != "  " & next.start.chars == "  ") {
+                if (length(na.inds) > 0)
+                    Cf[i, na.inds] <- " "
+            }
+            
+            ## If there is indentation in current line, assume both
+            ## level of factor
+            if (curr.start.chars == "  " && length(na.inds) > 0) {
+                if (prev.start.chars != "  ") # is base level
+                    Cf[i, na.inds] <- c("0", rep("-", length(na.inds) - 1))
+                else # is an error row
+                    Cf[i, na.inds] <- rep("-", length(na.inds))
+            }
         }
-      }
     }
-
-    # Need to fix ina because we have modified which are NA values
-    # due to factor levels
+    
+    ## Need to fix ina because we have modified which are NA values
+    ## due to factor levels
     ina <- is.na(suppressWarnings(as.numeric(Cf)) & ! Cf %in% c("-", " "))
     if(any(ina)) Cf[ina] <- na.print
-
+    
     if(P.values) {
         if(!is.logical(signif.stars) || is.na(signif.stars)) {
             warning("option \"show.signif.stars\" is invalid: assuming TRUE")
@@ -453,16 +520,23 @@ iNZightPrintCoefmat <-
         }
 	if(any(okP <- ok[,nc])) {
             orig.pv <- xm[, nc] # keeping copy with names
-            empty.lvl <- Cf[, 1] == "-" # Used for when we cannot use a level
+            empty.lvl <- Cf[, 1] == "-" # Used for when we cannot use
+                                        # a level
             lvl <- substr(names(orig.pv), 1, 2) == "  "
             pv <- as.vector(xm[, nc]) # drop names
             okP[empty.lvl] <- TRUE
-    	    pvals <- format.pval(c(pv[okP & !lvl], pv[okP & lvl]), digits = dig.tst, eps = eps.Pvalue)
+    	    pvals <- format.pval(c(pv[okP & !lvl], pv[okP & lvl]),
+                                 digits = dig.tst, eps = eps.Pvalue)
             reg.pvals <- pvals[1:sum(okP & !lvl)]
             lvl.pvals <- pvals[-(1:sum(okP & !lvl))]
-            lvl.pvals[lvl.pvals == "NA"] <- "-" # when there is no observation on this lvl
-            # Need to indent level values to the right, consequently
-            # regular p-values must be indented to the left
+            lvl.pvals[lvl.pvals == "NA"] <- "-" # when there is no
+                                                # observation on this
+                                                # lvl Need to indent
+                                                # level values to the
+                                                # right, consequently
+                                                # regular p-values
+                                                # must be indented to
+                                                # the left
             reg.pvals <- paste(reg.pvals, "  ", sep = "")
             lvl.pvals <- paste("  ", lvl.pvals, sep = "")
             Cf[okP & !lvl, nc] <- reg.pvals
@@ -483,18 +557,19 @@ iNZightPrintCoefmat <-
 }
 
 insert.lines <- function(name, line.num, linedata, mat, replace = FALSE) {
-  nr <- nrow(mat)
-  mat.copy <- mat
-  mat[line.num, ] <- linedata
-  mat <- mat[1:line.num, ]
-  mat <- rbind(mat, mat.copy[line.num:nr, ])
-  rns <- rownames(mat)
-  # Remove the line following the one we just added
-  if (replace) {
-    mat <- mat[-(line.num + 1), ]
-    rownames(mat)[line.num] <- name
-  } else {
-    rownames(mat) <- c(rns[1:(line.num - 1)], name, rns[line.num:nr + 1])
-  }
-  mat
+    nr <- nrow(mat)
+    mat.copy <- mat
+    mat[line.num, ] <- linedata
+    mat <- mat[1:line.num, ]
+    mat <- rbind(mat, mat.copy[line.num:nr, ])
+    rns <- rownames(mat)
+    ## Remove the line following the one we just added
+    if (replace) {
+        mat <- mat[-(line.num + 1), ]
+        rownames(mat)[line.num] <- name
+    } else {
+        rownames(mat) <- c(rns[1:(line.num - 1)], name,
+                           rns[line.num:nr + 1])
+    }
+    mat
 }

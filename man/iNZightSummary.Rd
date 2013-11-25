@@ -94,5 +94,16 @@ iNZightSummary(x,
   type III sums of squares.
 }
 \examples{
-  x <- runif(1)
+# Example of how factor levels are printed
+x <- runif(100, 0, 40)
+factor <- sample(factor(c('A', 'B')), 100, TRUE)
+y <- 50 + 0.5 * x + 5 * (factor == 'B') + rnorm(100, sd = 2)
+fit <- lm(y ~ x + factor)
+iNZightSummary(fit, digits = 3)
+
+# Example of GLM output, using bootstrap
+x <- runif(100, 0, 10)
+y <-  rpois(100, exp(2 + 0.1 * x + 0.3 * (factor == 'B')))
+fit2 <- glm(y ~ x + factor, family = poisson)
+iNZightSummary(fit2, method = 'bootstrap')
 }
