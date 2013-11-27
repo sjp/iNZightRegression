@@ -1,12 +1,12 @@
 \name{iNZightSummary}
 \alias{iNZightSummary}
 \title{
-  Informative summary information for (general) linear models
+  Informative Summary Information for Regression Models
 }
 \description{
-  The iNZightSummary improves upon the base R summary output for
-  (general) linear models. More information is provided and displayed in
-  a more intuitive format. This function both creates and returns a
+  The iNZight summary improves upon the base R summary output for
+  fitted regression models. More information is provided and displayed
+  in a more intuitive format. This function both creates and returns a
   summary object, as well as printing it.
 }
 \usage{
@@ -26,26 +26,25 @@ iNZightSummary(x,
   \item{method}{
     one of either \code{"standard"} or \code{"bootstrap"}. If
     \code{"bootstrap"}, then bootstrapped estimates and standard errors
-    are calculated; otherwise, uses the standard estimtes.
+    are calculated; otherwise, uses the standard estimates.
 }
   \item{reorder.factors}{
-    if there are factors present in the model, and \code{TRUE} is give
-    to this argument, then the most common level of the factor is set to
-    be the baseline.
+    logical, if \code{TRUE}, and there are factors present in the model,
+    then the most common level of the factor is set to be the baseline.
 }
   \item{digits}{
     the number of significant digits to use when printing.
 }
   \item{symbolic.cor}{
-    logical: if \code{TRUE}, print the correlations in a symbolic form
+    logical, if \code{TRUE}, print the correlations in a symbolic form
     (see \code{\link{symnum}}), rather than as numbers.
 }
   \item{signif.stars}{
-    logical: if \code{TRUE}, \sQuote{significance stars} are printed for
+    logical, if \code{TRUE}, \sQuote{significance stars} are printed for
     each coefficient.
 }
   \item{\dots}{
-    further arguments paseed to and from other methods.
+    further arguments passed to and from other methods.
 }
 }
 \details{
