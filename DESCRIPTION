@@ -13,3 +13,8 @@ Imports: grid, car
 Suggests: iNZight
 Description: Core functions for iNZight
 License: GPL-2
+Packaged: 2013-11-27 22:28:06 UTC; tell029
+Author: Simon Potter [aut, cre],
+  David Banks [aut],
+  Tom Elliott [aut]
+Maintainer: Simon Potter <spot023@aucklanduni.ac.nz>
