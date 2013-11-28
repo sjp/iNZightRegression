@@ -1,4 +1,4 @@
-bootstrapModels = function(fit, nBootstraps = 30) {
+bootstrapModels <- function(fit, nBootstraps = 30) {
     ### Variables for adding bootstrap lowess lines
     nr = nrow(fit$model)
     # Call needs to remove data = ...
@@ -24,7 +24,7 @@ bootstrapModels = function(fit, nBootstraps = 30) {
     invisible(listOfModels)
 }
 
-modifyModelCall = function(fit, newDataName) {
+modifyModelCall <- function(fit, newDataName) {
     call <- fit$call
     callValues <- as.character(call)
     callNames <- names(call)
@@ -70,8 +70,20 @@ bootstrapData <-
 
         } else {
             ## Simply bootstrap the data.
+
             out <- fit$model[id, ]
         }
 
+     ## Issue with GLMs defined as count/total ~ x
+        if ('(weights)' %in% names(out)) {
+            match <-grepl('/', names(out)) 
+            if (any(match)) {
+                p <- unlist(strsplit(names(out)[match], '/'))
+                out[p[1]] <- out[, 1] * out[, '(weights)']
+                out[p[2]] <- out[, '(weights)']
+            } else {
+                stop('I\'m not sure what you are doing ...')
+            }
+        }
         out
     }

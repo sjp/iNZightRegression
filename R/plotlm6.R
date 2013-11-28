@@ -389,7 +389,8 @@ normCheck <-
     function (x, col = NULL, shapiroWilk = TRUE, plot = TRUE, ...) {
      ## Note: this is a bit nasty, consider rewriting
      ## If 'main' has been passed in, use it, otherwise leave as
-     ## empty moreargs <- list(...)
+     ## empty
+        moreargs <- list(...)
         qqp =
             if ("main" %in% names(moreargs))
                 qqnorm(x, plot.it = plot, ...)
