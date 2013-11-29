@@ -1,0 +1,3 @@
+Branch to try and solve issues regarding bootstrap samples for plotlm6, bootstrapCoef, and other functions involving bootstrapping.
+
+The main issues (so far) are for glm(count / total ~ x, family=binomial, weights=total), and for survey designs.
