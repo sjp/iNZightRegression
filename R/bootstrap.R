@@ -3,19 +3,11 @@ bootstrapModels <- function(fit, nBootstraps = 30) {
     nr = nrow(fit$model)
     # Call needs to remove data = ...
     modifiedCall = modifyModelCall(fit, "bootstrapSample")
-
-    # rename the weights column in the model:
-    if ('(weights)' %in% names(fit$model)) {
-        Wt <- fit$weights
-        fit <- renameWeights(fit)
-    } else {
-        Wt <- rep(1, nrow(fit$model))
-    }
     
     listOfModels = vector("list", nBootstraps)
     i = 1
     while (i <= nBootstraps) {
-        bootstrapID <- sample(1:nr, replace = TRUE, prob = Wt)
+        bootstrapID <- sample(1:nr, replace = TRUE)#, prob = Wt)
         bootstrapSample <- bootstrapData(fit, bootstrapID)
         mod <- suppressWarnings(eval(parse(text = modifiedCall)))
         if (isGlm(fit)) {
@@ -70,10 +62,24 @@ bootstrapData.glm <- function(fit, id) {
     ## so just convert count/total to count
     if (grepl('/', colnames(fit$model)[1])) {
       # In this case, need to do some complicated stuff ...
-        stop('Beta development version cannot *yet* support binomial bootstrapping.')
+        mod <- fit$model
+
+      # Get the names of the counts and totals:
+        response <- strsplit(names(mod), '/')[[1]]
+        total <- mod[, '(weights)']
+
+      # Bootstrap the number of succese based on La Place ...
+        bs.tot <- total#rpois(nrow(mod), total)
+        mod[, response[1]] <- rbinom(nrow(mod),
+                                     bs.tot,
+                                     #(mod[, 1] * total + 1) / (total + 2))
+                                     (mod[, 1] * total) / (total))
+        mod[, response[2]] <- bs.tot
+        out <- mod
+    } else {
+        out <- fit$model[id, ]
     }
     
-    out <- fit$model[id, ]
     out
 }
 

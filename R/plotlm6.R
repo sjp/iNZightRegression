@@ -216,6 +216,7 @@ plotlm6 <-
             dev.flush()
         }
         if (showPlot[2]) {
+            
             sqrtabsr <- sqrt(abs(rs))
             ylim <- c(0, max(sqrtabsr, na.rm = TRUE))
             yl <- as.expression(substitute(sqrt(abs(YL)),
@@ -240,7 +241,7 @@ plotlm6 <-
             sm = loess(sqrtabsr ~ yhn0)
             smOrd = order(sm$x)
             lines(sm$x[smOrd], sm$fitted[smOrd], col = smColour, lwd = 2)
-            
+
             if (one.fig)
                 title(sub = sub.caption, ...)
             mtext(getCaption(2), 3, 0.25, cex = cex.caption)

@@ -36,6 +36,7 @@ fit2 <- glm(Survived / Total ~ Class + Sex + Age,
 
 iNZightSummary(fit2)
 iNZightSummary(fit2, method = 'bootstrap')
+
 plotlm6(fit2, which = 7)
 plotlm6(fit2, which = 7, showBootstraps = TRUE)
 
