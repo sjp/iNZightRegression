@@ -1,26 +1,50 @@
 bootstrapModels <- function(fit, nBootstraps = 30) {
+    if (isSurvey(fit)) {
+        #cat('NOTE: Bootstrapping for survey models is still in beta.\n')
+        #cat('-------------------------------------------------------\n\n')
+        warning('Bootstrapping for survey glms is still under development.')
+    }
     ### Variables for adding bootstrap lowess lines
     nr = nrow(fit$model)
     # Call needs to remove data = ...
     modifiedCall = modifyModelCall(fit, "bootstrapSample")
     
     listOfModels = vector("list", nBootstraps)
-    i = 1
-    while (i <= nBootstraps) {
-        bootstrapID <- sample(1:nr, replace = TRUE)#, prob = Wt)
-        bootstrapSample <- bootstrapData(fit, bootstrapID)
-        mod <- suppressWarnings(eval(parse(text = modifiedCall)))
-        if (isGlm(fit)) {
-            if (mod$conv) {
-                listOfModels[[i]] <- mod
-                i <- i + 1
-            }
-        } else {
-            listOfModels[[i]] = mod
-            i <- i + 1
-        }
-    }
+    #i = 1
+    #while (i <= nBootstraps) {
+    #    bootstrapID <- sample(1:nr, replace = TRUE)#, prob = Wt)
+    #    bootstrapSample <- bootstrapData(fit, bootstrapID)
+    #    mod <- suppressWarnings(eval(parse(text = modifiedCall)))
+    #    if (isGlm(fit)) {
+    #        if (mod$conv) {
+    #            listOfModels[[i]] <- mod
+    #            i <- i + 1
+    #        }
+    #    } else {
+    #        listOfModels[[i]] = mod
+    #        i <- i + 1
+    #    }
+    #}
 
+    bootstrapID <- replicate(nBootstraps, sample(1:nr, replace = TRUE))
+    invisible(lapply(1:nBootstraps,
+        function(i) {
+            conv <- FALSE
+            while (!conv) {
+                bootstrapSample <- bootstrapData(fit, bootstrapID[, i])
+                mod <- suppressWarnings(eval(parse(text = modifiedCall)))
+                if (isGlm(fit)) {
+                    if (mod$conv) {
+                        listOfModels[[i]] <<- mod
+                        conv <- TRUE
+                    }
+                } else {
+                    listOfModels[[i]] <<- mod
+                    conv <- TRUE
+                }
+            }
+        }))
+    
     invisible(listOfModels)
 }
 
@@ -52,6 +76,8 @@ bootstrapData <- function(fit, id)
     UseMethod("bootstrapData")
 
 bootstrapData.lm <- function(fit, id) {
+    if ('weights' %in% names(fit$call))
+        fit <- renameWeights(fit)
     out <- fit$model[id, ]
 }
 
@@ -85,9 +111,6 @@ bootstrapData.glm <- function(fit, id) {
 
 bootstrapData.svyglm <- function(fit, id) {
   # To do: account for sample design when doing bootstrap resample.
-    
-    cat('NOTE: Bootstrapping for survey models is still in beta.\n')
-    cat('-------------------------------------------------------\n\n')
     
     ## Survey glm: bootstrap the data in the design,
     ## then recreate the design object and return.

@@ -8,6 +8,7 @@ plotlm6 <-
               cex.id = 0.75, qqline = TRUE, cook.levels = c(0.5, 1),
               add.smooth = getOption("add.smooth"), label.pos = c(4, 2),
               cex.caption = 1, showBootstraps = nrow(x$model) >= 30, ...) {
+        
     smColour = "orangered"      # colour of data loess line
     bsmColour = "lightgreen"    # colour of bootstrap loess lines
         
@@ -63,9 +64,7 @@ plotlm6 <-
         ylab23 <- if (isGlm(x))
             "Std. deviance resid."
         else "Standardized residuals"
-        r.w <- if (is.null(w))
-            r
-        else sqrt(w) * r
+        r.w <- if (is.null(w)) r else sqrt(w) * r
         rs <- dropInf(r.w/(s * sqrt(1 - hii)), hii)
     }
     if (show[3]) {
@@ -74,12 +73,10 @@ plotlm6 <-
             mean(hii, na.rm = TRUE)
     }
     if (any(show[1:2]))
-        l.fit <- if (isGlm(x))
-            "Predicted values"
-        else "Fitted values"
-    if (is.null(id.n))
+        l.fit <- ifelse(isGlm(x), "Predicted values", "Fitted values")
+    if (is.null(id.n)) {
         id.n <- 0
-    else {
+    } else {
         id.n <- as.integer(id.n)
         if (id.n < 0 || id.n > n)
             stop(gettextf("'id.n' must be in {1,..,%d}", n),
@@ -137,10 +134,19 @@ plotlm6 <-
         bsModels = bootstrapModels(x)
         nBootstraps = length(bsModels)
         ## New bootstrapped values (bs suffix stands for bootstrap)
-        rbs = rsbs = yhbs = sbs = hiibs = vector("list", nBootstraps)
+        rbs = rsbs = rbs.w = wbs = wbsind = yhbs = sbs = hiibs =
+            sbs = vector("list", nBootstraps)
         for (i in 1:nBootstraps) {
             rbs[[i]] = residuals(bsModels[[i]])
             yhbs[[i]] = predict(bsModels[[i]])
+            wbs[i] = list(weights(bsModels[[i]]))  # list() prevents
+                                                   # deletion if NULL
+            if (!is.null(wbs[[i]])) {
+                wbsind[[i]] <- wbs[[i]] != 0
+                rbs[[i]] <- rbs[[i]][wind]
+                yhbs[[i]] <- yhbs[[i]][wind]
+                wbs[[i]] <- wbs[[i]][wind]
+            }
             sbs[[i]] = if (inherits(x, "rlm"))
                 bsModels[[i]]$s
             else if (isGlm(x))
@@ -149,10 +155,17 @@ plotlm6 <-
             if (any(show[2:6]))
                 hiibs[[i]] <- lm.influence(bsModels[[i]],
                                            do.coef = FALSE)$hat
-            if (any(show[2:3]))
-                rsbs[[i]] <- dropInf(rbs[[i]]/(sbs[[i]] *
-                                               sqrt(1 - hiibs[[i]])),
+            if (any(show[2:3])) {
+                rbs.w[[i]] <-
+                    if (is.null(wbs[[i]])) {
+                        rbs[[i]]
+                    } else {
+                        sqrt(wbs[[i]]) * rbs[[i]]
+                    }
+                rsbs[[i]] <- dropInf(rbs.w[[i]] /
+                                     (sbs[[i]] * sqrt(1 - hiibs[[i]])),
                                      hiibs[[i]])
+            }
         }
     }
     
@@ -216,7 +229,6 @@ plotlm6 <-
             dev.flush()
         }
         if (showPlot[2]) {
-            
             sqrtabsr <- sqrt(abs(rs))
             ylim <- c(0, max(sqrtabsr, na.rm = TRUE))
             yl <- as.expression(substitute(sqrt(abs(YL)),
