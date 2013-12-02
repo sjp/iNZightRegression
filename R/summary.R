@@ -3,7 +3,12 @@ iNZightSummary <-
               digits = max(3, getOption("digits") - 3),
               symbolic.cor = x$symbolic.cor,
               signif.stars= getOption("show.signif.stars"),
+              exclude = NULL,
               ...) {
+
+  # method: 'standard' or 'bootstrap'
+  # reorder.factors: TRUE - most common level as baseline
+  # exclude: variables to be excluded from output (eg. confounders)
         
     if (reorder.factors) {
         varsAreFactors = which(sapply(x$model, class) %in%
@@ -32,7 +37,8 @@ iNZightSummary <-
             }
             
             if (reorder.factors) {
-                txt <- "Not enough baseline cases in one or more factors even after reordering."
+                txt <-
+ "Not enough baseline cases in one or more factors even after reordering."
                 cat(parwrap(paste(txt, init = "Error: ",
                                   indent = "       ")), "\n")
                 txt <- "Use standard output instead."
@@ -105,12 +111,16 @@ iNZightSummary <-
         coefs.copy <- coefs
         rowns <- rownames(coefs)
         varnames <- names(x.data)
+        if (!is.null(exclude)) {
+            include <- !varnames %in% exclude
+            coefs.copy <- coefs.copy[include, ]
+        }
         na.line <- rep(NA, 4)
         i <- 1
         while (i <= nrow(coefs.copy)) {
          ## If the name has been modified, we know we're not dealing
          ## with a numeric variable, or it is crossed with some factor
-            summary.row <- rownames(coefs.copy)[i]
+            summary.row <- rownames(coefs.copy)[i]            
             split.current.row <- strsplit(summary.row, ":")[[1]]
             nlines.to.add <- 1
             if (! summary.row %in% varnames) {
