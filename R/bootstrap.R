@@ -27,7 +27,7 @@ bootstrapModels <- function(fit, nBootstraps = 30) {
     #}
 
     bootstrapID <- replicate(nBootstraps, sample(1:nr, replace = TRUE))
-    invisible(lapply(1:nBootstraps,
+    listOfModels <- invisible(lapply(1:nBootstraps,
         function(i) {
             conv <- FALSE
             while (!conv) {
@@ -35,14 +35,15 @@ bootstrapModels <- function(fit, nBootstraps = 30) {
                 mod <- suppressWarnings(eval(parse(text = modifiedCall)))
                 if (isGlm(fit)) {
                     if (mod$conv) {
-                        listOfModels[[i]] <<- mod
+                        #listOfModels[[i]] <<- mod
                         conv <- TRUE
                     }
                 } else {
-                    listOfModels[[i]] <<- mod
+                    #listOfModels[[i]] <<- mod
                     conv <- TRUE
                 }
             }
+            mod
         }))
     
     invisible(listOfModels)
