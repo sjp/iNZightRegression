@@ -112,15 +112,15 @@ iNZightSummary <-
         rowns <- rownames(coefs)
         varnames <- names(x.data)
         if (!is.null(exclude)) {
-            include <- !varnames %in% exclude
-            coefs.copy <- coefs.copy[include, ]
+            excl <- grepl(exclude, rowns)
+            coefs.copy <- coefs.copy[!excl, ]
         }
         na.line <- rep(NA, 4)
         i <- 1
         while (i <= nrow(coefs.copy)) {
          ## If the name has been modified, we know we're not dealing
          ## with a numeric variable, or it is crossed with some factor
-            summary.row <- rownames(coefs.copy)[i]            
+            summary.row <- rownames(coefs.copy)[i]
             split.current.row <- strsplit(summary.row, ":")[[1]]
             nlines.to.add <- 1
             if (! summary.row %in% varnames) {
