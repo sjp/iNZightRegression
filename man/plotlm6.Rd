@@ -22,8 +22,7 @@ plotlm6(x,
         panel = if (add.smooth) panel.smooth else points,
         sub.caption = NULL,
         main = "",
-        ask = prod(par("mfcol")) < length(which) &&
-              dev.interactive(), ...,
+        ask = prod(par("mfcol")) < length(which) && dev.interactive(),
         id.n = 3,
         labels.id = names(residuals(x)),
         cex.id = 0.75,
@@ -32,7 +31,8 @@ plotlm6(x,
         add.smooth = getOption("add.smooth"),
         label.pos = c(4, 2),
         cex.caption = 1,
-        showBootstraps = nrow(x$model) >= 30)
+        showBootstraps = nrow(x$model) >= 30,
+        ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -66,9 +66,6 @@ plotlm6(x,
   see \code{\link{par}(ask=.)}. Ignored when only one plot is being
   shown.
 }
-  \item{\dots}{
-    other arguments to be passed to through to plotting functions.
-}
   \item{id.n}{
     number of points to be labelled in each plot, starting with the most
     extreme. 
@@ -101,6 +98,9 @@ plotlm6(x,
   \item{showBootstraps}{
     logical, if \code{TRUE}, bootstrap loess smoothers are drawn in the
   first 4 plots. By default, only drawn for sample sizes of at least 30.
+}
+  \item{\dots}{
+    other arguments to be passed to through to plotting functions.
 }
 }
 \details{

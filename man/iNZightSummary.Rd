@@ -16,6 +16,7 @@ iNZightSummary(x,
                digits = max(3, getOption("digits") - 3),
                symbolic.cor = x$symbolic.cor,
                signif.stars = getOption("show.signif.stars"),
+               exclude = NULL,
                ...)
 }
 \arguments{
@@ -42,6 +43,10 @@ iNZightSummary(x,
   \item{signif.stars}{
     logical, if \code{TRUE}, \sQuote{significance stars} are printed for
     each coefficient.
+}
+  \item{exclude}{
+    a character vector of names of variables to be exluded from the
+    summary output (i.e., confounding variables).
 }
   \item{\dots}{
     further arguments passed to and from other methods.
@@ -105,4 +110,7 @@ x <- runif(100, 0, 10)
 y <-  rpois(100, exp(2 + 0.1 * x + 0.3 * (factor == 'B')))
 fit2 <- glm(y ~ x + factor, family = poisson)
 iNZightSummary(fit2, method = 'bootstrap')
+
+# If factor is a confounding variable,
+iNZightSummary(fit2, exclude = 'factor')
 }
