@@ -9,6 +9,8 @@ iNZightSummary <-
   # method: 'standard' or 'bootstrap'
   # reorder.factors: TRUE - most common level as baseline
   # exclude: variables to be excluded from output (eg. confounders)
+    if (!is.null(exclude))
+        exclude <- paste(exclude, collapse = '|')
         
     if (reorder.factors) {
         varsAreFactors = which(sapply(x$model, class) %in%
