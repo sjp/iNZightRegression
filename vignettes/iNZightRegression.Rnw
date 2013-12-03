@@ -1,0 +1,77 @@
+\documentclass{article}
+\usepackage{url}
+%\VignetteIndexEntry{A Regression Example using iNZightRegression}
+\usepackage{Sweave}
+\usepackage[utf8x]{inputenc}
+
+\author{Simon Potter, David Banks, Tom Elliott\\The University of AucklandX}
+\title{A Regression Example using iNZightRegression}
+
+\begin{document}
+\maketitle
+
+The \verb+iNZightRegression+ package was created to provide additional
+functions which provide modified output, as well as some additional
+functionality. This document will demonstrate the use of
+\verb+iNZightRegression+ for modelling some regression data.
+
+\section{Linear Models}
+\label{sec:linearmods}
+
+Here, we will be using the \verb+course.df+ dataset from the
+\verb+s20x+ library, which contains data collected from STATS 20x
+students. The first function is \verb+iNZightSummary()+, which is
+shown below:
+<<>>=
+library(iNZightRegression)
+library(s20x)
+data(course.df)
+model_1 <- lm(Exam ~ Test + Assign + Attend, data = course.df)
+iNZightSummary(model_1)
+@
+
+If compared to the basic \verb+summary()+ function provided by base R,
+there are several differences. The main difference is the way in which
+factors are printed. The baseline is included with an estimate of 0,
+and Type III Anova p-values are given for each factor.
+
+Several additional arguments are demonstrated below, which allow
+bootstrap simulation of estimates, reordering of factors (use the most
+common level as the baseline), and excluding confounding variables
+from the output. If, for example, we are \emph{only} insterested in
+the effect of not attending lectures on exam marks, we could use the
+following function call:
+
+<<>>=
+iNZightSummary(model_1, method = 'bootstrap',
+               reorder.factors = TRUE, exclude = c('Test', 'Assign'))
+@ 
+
+Summary and diagnostic plots can be produced simply by using the new
+\verb+plotlm6+ function, which takes several arguments. It provides 6
+plots, which can be selected by the \verb+which+ argument (7 means
+all-in-one). Each residual plot shows a loess curve through the data,
+as well as a bootstrap sample of loess curves which are calculated
+from non-parametric bootstrap samples. The number of smoothers can be
+adjusted, or disabled completely as desired.
+
+<<fig=TRUE>>=
+plotlm6(model_1, which = 7, main = 'Residual Plots')
+@ 
+
+For normal data, there are also the \verb+histogramArray+ and
+\verb+qqplotArray+ functions, which display normally distributed (by
+simulation) datasets with the same mean and variance as those from the
+fitted model, which allow users to easy decide if the normality
+assumption is satisfied.
+
+<<fig=TRUE>>=
+histogramArray(model_1)
+@ 
+<<fig=TRUE>>=
+qqplotArray(model_1)
+@ 
+
+
+
+\end{document}
