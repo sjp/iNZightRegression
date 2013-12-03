@@ -416,12 +416,20 @@ normCheck <-
             dev.hold()
             abline(c(mx, sx), col = "gray50")
             if (shapiroWilk) {
-                stest <- shapiro.test(x)
-                txt <- paste("Shapiro-Wilk normality test", "\n", "W = ",
-                             round(stest$statistic, 4), "\n", "P-value = ",
-                             round(stest$p.value, 3), sep = "")
-                text(sort(qqp$x)[2], 0.99 * max(qqp$y, na.rm = TRUE), txt,
-                     adj = c(0, 1))
+                if (length(x) <= 5000) {
+                    stest <- shapiro.test(x)
+                    txt <- paste("Shapiro-Wilk normality test",
+                                 "\n", "W = ", round(stest$statistic, 4),
+                                 "\n", "P-value = ",
+                                 round(stest$p.value, 3), sep = "")
+                    
+                }
+                else {
+                    txt <- paste('Shapiro-Wilk normality test requires',
+                                 'sample size less than 5000.', sep = '\n')
+                }
+                text(sort(qqp$x)[2], 0.99 * max(qqp$y, na.rm = TRUE),
+                     txt, adj = c(0, 1))
             }
             dev.flush()
         }
