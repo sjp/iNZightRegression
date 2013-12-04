@@ -1,47 +1,22 @@
 bootstrapModels <- function(fit, nBootstraps = 30) {
-    if (isSurvey(fit)) {
-        #cat('NOTE: Bootstrapping for survey models is still in beta.\n')
-        #cat('-------------------------------------------------------\n\n')
+    if (isSurvey(fit))
         warning('Bootstrapping for survey glms is still under development.')
-    }
-    ### Variables for adding bootstrap lowess lines
-    nr = nrow(fit$model)
-    # Call needs to remove data = ...
-    modifiedCall = modifyModelCall(fit, "bootstrapSample")
     
-    listOfModels = vector("list", nBootstraps)
-    #i = 1
-    #while (i <= nBootstraps) {
-    #    bootstrapID <- sample(1:nr, replace = TRUE)#, prob = Wt)
-    #    bootstrapSample <- bootstrapData(fit, bootstrapID)
-    #    mod <- suppressWarnings(eval(parse(text = modifiedCall)))
-    #    if (isGlm(fit)) {
-    #        if (mod$conv) {
-    #            listOfModels[[i]] <- mod
-    #            i <- i + 1
-    #        }
-    #    } else {
-    #        listOfModels[[i]] = mod
-    #        i <- i + 1
-    #    }
-    #}
-
+  # Variables for adding bootstrap lowess lines
+    nr = nrow(fit$model)
+    modifiedCall <- modifyModelCall(fit)
     bootstrapID <- replicate(nBootstraps, sample(1:nr, replace = TRUE))
     listOfModels <- invisible(lapply(1:nBootstraps,
         function(i) {
             conv <- FALSE
             while (!conv) {
                 bootstrapSample <- bootstrapData(fit, bootstrapID[, i])
-                mod <- suppressWarnings(eval(parse(text = modifiedCall)))
+                mod <- suppressWarnings(eval(modifiedCall))
                 if (isGlm(fit)) {
-                    if (mod$conv) {
-                        #listOfModels[[i]] <<- mod
+                    if (mod$conv) 
                         conv <- TRUE
-                    }
-                } else {
-                    #listOfModels[[i]] <<- mod
-                    conv <- TRUE
-                }
+                } else 
+                conv <- TRUE
             }
             mod
         }))
@@ -49,99 +24,82 @@ bootstrapModels <- function(fit, nBootstraps = 30) {
     invisible(listOfModels)
 }
 
-modifyModelCall <- function(fit, newDataName) {
-    call <- fit$call
-    callValues <- as.character(call)
-    callNames <- names(call)
-
-    ## First piece is the function name:
-    fn <- callValues[1]
-
-    ## lm and glm have data part that needs to be changed,
-    ## while survey objects have a design argument:
-    dataK <- ifelse(isSurvey(fit), 'design', 'data')
-
-    ## The other parts need to all be kept:
-    o <- !callNames %in% c('', 'design', 'data')
-    other <- paste(callNames[o], ' = ', callValues[o], ', ', sep = '',
-                   collapse = '')
-
-    ## Paste everything together:
-    modifiedCall <- paste(fn, '(', other, dataK, ' = ',
-                          newDataName, ')', sep = '')
-
-    modifiedCall
-}
-
 bootstrapData <- function(fit, id)
     UseMethod("bootstrapData")
 
 bootstrapData.lm <- function(fit, id) {
-    if ('weights' %in% names(fit$call))
-        fit <- renameWeights(fit)
-    out <- fit$model[id, ]
+    ## Try just use the data set in the R session ...
+    call <- fit$call
+    callValues <- as.character(call)
+    callNames <- names(call)
+    dataName <-callValues[callNames == 'data']
+    bsData <- eval(parse(text = dataName))[id, ]
+    bsData
 }
 
 bootstrapData.glm <- function(fit, id) {
-    ## Issue with GLMs defined as count/total ~ x
-
-    ## (weights) will already have been renamed to total,
-    ## so just convert count/total to count
-    if (grepl('/', colnames(fit$model)[1])) {
-      # In this case, need to do some complicated stuff ...
-        mod <- fit$model
-
-      # Get the names of the counts and totals:
-        response <- strsplit(names(mod), '/')[[1]]
-        total <- mod[, '(weights)']
-
-      # Bootstrap the number of succese based on La Place ...
-        bs.tot <- total#rpois(nrow(mod), total)
-        mod[, response[1]] <- rbinom(nrow(mod),
-                                     bs.tot,
-                                     #(mod[, 1] * total + 1) / (total + 2))
-                                     (mod[, 1] * total) / (total))
-        mod[, response[2]] <- bs.tot
-        out <- mod
-    } else {
-        out <- fit$model[id, ]
-    }
+    call <- fit$call
+    callValues <- as.character(call)
+    callNames <- names(call)
+    dataName <-callValues[callNames == 'data']
+    bsData <- eval(parse(text = dataName))
     
-    out
+    if (grepl('/', colnames(fit$model)[1])) {
+      # In this case, resample the number of successes
+        mod <- fit$model
+        response <- strsplit(names(mod), '/')[[1]]
+        y <- bsData[, response[1]]
+        n <- bsData[, response[2]]
+        p <- ifelse(n == 0, 0, y / n)
+        
+        bsData[, response[1]] <- rbinom(nrow(bsData), n, p)
+    } else {
+      # otherwise, simply resample the data
+        bsData <- bsData[id, ]
+    }
+
+    bsData
 }
 
 bootstrapData.svyglm <- function(fit, id) {
   # To do: account for sample design when doing bootstrap resample.
+
+  # Returns a bootstrapped survey design object
     
-    ## Survey glm: bootstrap the data in the design,
-    ## then recreate the design object and return.
-    data <- fit$survey.design$variables  # a data.frame
-    newData <- data[id, ]
+  # First, get the survey design name, then the dataset name:
+    call <- fit$call
+    callValues <- as.character(call)
+    callNames <- names(call)
+    designName <-callValues[callNames == 'design']
+
+    des <- eval(parse(text = designName))
+    descall <- des$call
+    descallValues <- as.character(descall)
+    descallNames <- names(descall)
+    dataName <- descallValues[descallNames == 'data']
+
+  # Rebuild design call with new data:
+    bsData <- eval(parse(text = dataName))[id, ]
     
-    designCall <- fit$survey.design$call
-    desNames <- names(designCall)
-    desVals <- as.character(designCall)
-    xargs <- !desNames %in% 'data'
-    
-    o <- !desNames %in% c('', 'data')
-    args <- paste(desNames[o], ' = ', desVals[o], ', ',
-                  sep = '', collapse = '')
-    newCall <- paste(desVals[1], '(', args,
-                     'data = newData)', sep = '')
-    
-    out <- eval(parse(text = newCall))
-    
-    out
+    o <- !descallNames %in% c('', 'data')
+    other <- paste(descallNames[o], ' = ', descallValues[o], ', ',
+                   sep = '', collapse = '')
+
+    newcall <- paste('svydesign(', other, 'data = bsData)', sep = '')
+    bsDesign <- eval(parse(text = newcall))
 }
 
 
 
-renameWeights <- function(fit) {
-    call <- fit$call
-    callValues <- as.character(call)
-    callNames <- names(call)
-    wtName <- callValues[callNames == 'weights']
+modifyModelCall <- function(fit) {
+    if (isSurvey(fit)) {
+        modifiedCall <- update(fit, . ~ .,
+                               design = bootstrapSample,                               evaluate = FALSE)
+    } else {
+        modifiedCall <- update(fit, . ~ .,
+                               data = bootstrapSample,
+                               evaluate = FALSE)
+    }
 
-    names(fit$model)[names(fit$model) == '(weights)'] <- wtName
-    fit
+    modifiedCall
 }
