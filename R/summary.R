@@ -114,7 +114,8 @@ iNZightSummary <-
         rowns <- rownames(coefs)
         varnames <- names(x.data)
         if (!is.null(exclude)) {
-            excl <- rowns %in% exclude
+            excl <- apply(sapply(exclude,
+                                 function(x) grepl(x, rowns)), 1, any)
             coefs.copy <- coefs.copy[!excl, ]
         }
         na.line <- rep(NA, 4)
