@@ -70,7 +70,7 @@ bootstrapData.svyglm <- function(fit, id) {
     call <- fit$call
     callValues <- as.character(call)
     callNames <- names(call)
-    designName <-callValues[callNames == 'design']
+    designName <- callValues[callNames == 'design']
 
     des <- eval(parse(text = designName))
     descall <- des$call
@@ -94,7 +94,8 @@ bootstrapData.svyglm <- function(fit, id) {
 modifyModelCall <- function(fit) {
     if (isSurvey(fit)) {
         modifiedCall <- update(fit, . ~ .,
-                               design = bootstrapSample,                               evaluate = FALSE)
+                               design = bootstrapSample,
+                               evaluate = FALSE)
     } else {
         modifiedCall <- update(fit, . ~ .,
                                data = bootstrapSample,
