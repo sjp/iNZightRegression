@@ -19,20 +19,21 @@ histogramArray = function(x, n = 7) {
   xmin <- min(rx[1], mx - 3.5 * sx, h$breaks[1])
   xmax <- max(rx[2], mx + 3.5 * sx, h$breaks[length(h$breaks)])
 
-  newdat = bootstrapData(x, 1:nrow(x$model))
+  bootstrapSample <- newdat <- bootstrapData(x, 1:nrow(x$model))
   response = rownames(attr(x$terms, "factors"))[1]
-  newcall = modifyModelCall(x, "newdat")
+  newcall = modifyModelCall(x)#, "newdat")
 
   n.obs = nrow(x$model)
   resList = list()
   breaksList = list()
   for (i in 1:n) {
     sd <- ifelse(isGlm(x),
-                 sqrt(1 / (nrow(x$model) - ncol(x$model)) * sum((x$residuals)^2)),
+                 sqrt(1 / (nrow(x$model) - ncol(x$model)) *
+                      sum((x$residuals)^2)),
                  summary(x)$sigma)
     rNormal = rnorm(n.obs, sd = sd)
     newdat[, response] = x$fitted.values + rNormal
-    newlm = eval(parse(text = newcall))
+    newlm = eval(newcall)
     r = residuals(newlm)
     resList[[i]] = r
     h = hist(r, plot = FALSE)

@@ -24,19 +24,20 @@ qqplotArray = function(x, n = 7) {
   qq = normCheck(rs, plot = FALSE)
   ylims = range(qq$y)
 
-  newdat = bootstrapData(x, 1:nrow(x$model))
+  bootstrapSample <- newdat <- bootstrapData(x, 1:nrow(x$model))
   response = rownames(attr(x$terms, "factors"))[1]
-  newcall = modifyModelCall(x, "newdat")
+  newcall = modifyModelCall(x)
 
   n.obs = nrow(x$model)
   rsList = list()
   for (i in 1:n) {
     sd <- ifelse(isGlm(x),
-                 sqrt(1 / (nrow(x$model) - ncol(x$model)) * sum((x$residuals)^2)),
+                 sqrt(1 / (nrow(x$model) - ncol(x$model)) *
+                      sum((x$residuals)^2)),
                  summary(x)$sigma)
     rNormal = rnorm(n.obs, sd = sd)
     newdat[, response] = x$fitted.values + rNormal
-    newlm = eval(parse(text = newcall))
+    newlm = eval(newcall)
     r = residuals(newlm)
     s = sqrt(deviance(newlm) / df.residual(newlm))
     hii <- lm.influence(newlm, do.coef = FALSE)$hat
