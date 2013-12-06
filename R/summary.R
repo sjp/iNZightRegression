@@ -70,6 +70,17 @@ iNZightSummary <-
     genlin <- ifelse(isGlm(x.lm), 'Generalised Linear ', '')
     cat("\n", surv, genlin, "Model for: ", attr(x.data, "names")[1],
         "\n\n", sep = "")
+
+  # Print out a description of the confounding variables excluded from
+  # output;
+    if (!is.null(exclude)) {
+        cat('The model has been adjusted for the',
+            'following confounder(s):\n', sep = ' ')
+        cat('\t')
+        cat(exclude, sep = ', ')
+        cat('\n\n')
+    }
+    
     var.classes <- attr(x$terms, "dataClasses")[-1]
     var.labels <- attr(x$terms, "term.labels")
     var.labels <- strsplit(var.labels, ":")
