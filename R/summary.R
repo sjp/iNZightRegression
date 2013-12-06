@@ -71,6 +71,12 @@ iNZightSummary <-
     cat("\n", surv, genlin, "Model for: ", attr(x.data, "names")[1],
         "\n\n", sep = "")
 
+    if (isSurvey(x.lm)) {
+        cat("Survey design:\n")
+        print(x$survey.design$call)
+        cat("\n")
+    }
+
   # Print out a description of the confounding variables excluded from
   # output;
     if (!is.null(exclude)) {
