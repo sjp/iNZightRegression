@@ -65,15 +65,15 @@ iNZightQQplot <- function(x, n = 5) {
   # Plot the n random qq values
     for (i in 1:n)
         points(qqList[[i]], pch = 19, cex = 0.8,
-               col = hcl(240, 90, 40, alpha = 0.4))
+               col = hcl(240, 80, 80, alpha = 0.4))
 
   # Overlay the true values
     points(qq, pch = 19, cex = 0.6,
-           col = hcl(0, 0, 0))
+           col = hcl(240, 80, 30))
 
   # Add a legend
     legend("topleft", c("Original Data", "Sampled Normal Errors"),
-           pch = 19, pt.cex = 0.8, col = hcl(240, 90, c(0, 40)),
+           pch = 19, pt.cex = 0.8, col = hcl(240, 80, c(30, 80)),
            bty = "n")
 }
   
