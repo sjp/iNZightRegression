@@ -16,9 +16,13 @@ iNZightSummary <-
         varsAreFactors = which(sapply(x$model, class) %in%
             c("factor", "ordered"))
         if (length(varsAreFactors) > 0) {
-            dat = reorderFactors(x$model)
-            newCall = modifyModelCall(x, "dat")
-            x = eval(parse(text = newCall))
+            dataName <- modelDataName(x)
+            old <- eval(parse(text = dataName))
+            assign(dataName, reorderFactors(x$model))
+           # newCall = modifyModelCall(x)
+           # x = eval(newCall)
+            x <- update(x)
+            assign(dataName, old)  # reset the original dataset
         }
     }
     

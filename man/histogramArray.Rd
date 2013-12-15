@@ -34,7 +34,7 @@ histogramArray(x, n = 7)
 }
 
 \seealso{
-  \code{\link{qqplotArray}}
+  \code{\link{iNZightQQplot}}
 }
 \examples{
 fit <- lm(Volume ~ Height + Girth, data = trees)

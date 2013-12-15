@@ -104,3 +104,12 @@ modifyModelCall <- function(fit) {
 
     modifiedCall
 }
+
+
+modelDataName <- function(fit) {
+    call <- fit$call
+    callValues <- as.character(call)
+    callNames <- names(call)
+    dataName <-callValues[callNames == 'data']
+    dataName
+}

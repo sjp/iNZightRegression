@@ -83,6 +83,10 @@ iNZightSummary(x,
   If any level is not observed in a factor, no p-values will be printed
   on all factors. This is because we cannot calculate Type III sums of
   squares when this is the case.
+
+  The fitted model currently requires that the data are stored in a
+  dataframe, which is pointed at by the \code{data} argument to
+  \code{lm} (or equivalent).
 }
 
 \seealso{
@@ -98,19 +102,20 @@ iNZightSummary(x,
   type III sums of squares.
 }
 \examples{
-# Example of how factor levels are printed
+# Example of how factor levels are printe
 x <- runif(100, 0, 40)
-factor <- sample(factor(c('A', 'B')), 100, TRUE)
-y <- 50 + 0.5 * x + 5 * (factor == 'B') + rnorm(100, sd = 2)
-fit <- lm(y ~ x + factor)
+group <- sample(factor(c('A', 'B')), 100, TRUE)
+y <- 50 + 0.5 * x + 5 * (group == 'B') + rnorm(100, sd = 2)
+mydata <- data.frame(x = x, group = group, y = y)
+fit <- lm(y ~ x + group, data = mydata)
 iNZightSummary(fit, digits = 3)
 
 # Example of GLM output, using bootstrap
-x <- runif(100, 0, 10)
-y <-  rpois(100, exp(2 + 0.1 * x + 0.3 * (factor == 'B')))
-fit2 <- glm(y ~ x + factor, family = poisson)
+mydata$x <- runif(100, 0, 10)
+mydata$y <-  rpois(100, exp(2 + 0.1 * x + 0.3 * (group == 'B')))
+fit2 <- glm(y ~ x + group, family = poisson, data = mydata)
 iNZightSummary(fit2, method = 'bootstrap')
 
 # If factor is a confounding variable,
-iNZightSummary(fit2, exclude = 'factor')
+iNZightSummary(fit2, exclude = 'group')
 }

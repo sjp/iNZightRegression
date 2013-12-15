@@ -116,7 +116,7 @@ plotlm6(x,
   \code{plot.lm} are John Maindonald and Martin Maechler.
 }
 \seealso{
-  \code{\link{histogramArray}}, \code{\link{qqplotArray}}
+  \code{\link{histogramArray}}, \code{\link{iNZightQQplot}}
 }
 \examples{
 fit <- lm(Volume ~ Height + Girth, data = trees)

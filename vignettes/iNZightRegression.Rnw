@@ -69,7 +69,7 @@ assumption is satisfied.
 histogramArray(model_1)
 @ 
 <<fig=TRUE>>=
-qqplotArray(model_1)
+iNZightQQplot(model_1)
 @ 
 
 
