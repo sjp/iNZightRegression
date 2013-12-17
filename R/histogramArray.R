@@ -74,7 +74,7 @@ histogramArray = function(x, n = 7) {
   for (i in 1:n) {
     hist(resList[[i]], breaks = breaks, prob = TRUE, ylim = c(0, ymax),
          xlim = c(xmin, xmax), xlab = xlab,
-         col = hcl(240, 80, 30), main = NULL)
+         col = hcl(0, 80, 80), main = NULL)
     mtext(paste("Normal errors: sample", i), 3, font = 2,
           col = "navy", line = 1)
     box()
