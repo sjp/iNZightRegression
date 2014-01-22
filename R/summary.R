@@ -128,12 +128,15 @@ iNZightSummary <-
                             dimnames = list(cn, colnames(coefs)))
             coefs[!aliased, ] <- x$coefficients
         }
-        ########
-        # iNZight changes start here
-        ########
+        
+        ### ------------------------------------------------------------ ###
+         #                   iNZight changes start here                   #
+        ### ------------------------------------------------------------ ###
+        
         coefs.copy <- coefs
         rowns <- rownames(coefs)
         varnames <- names(x.data)
+
         if (!is.null(exclude)) {
             excl <- apply(sapply(exclude,
                                  function(x) grepl(x, rowns)), 1, any)
@@ -144,24 +147,28 @@ iNZightSummary <-
         while (i <= nrow(coefs.copy)) {
          ## If the name has been modified, we know we're not dealing
          ## with a numeric variable, or it is crossed with some factor
+           
             summary.row <- rownames(coefs.copy)[i]
+           
             split.current.row <- strsplit(summary.row, ":")[[1]]
             nlines.to.add <- 1
             if (! summary.row %in% varnames) {
-             ## Need to test whether the var is indeed a factor
-             ## and that the factor contains the level we want
+              # Need to test whether the var is indeed a factor
+              # and that the factor contains the level we want
                 for (j in 1:length(varnames)) {
                     current.var <- varnames[j]
-                    ## Need to account for the fact that there may be
-                    ## an interaction
-                    ## term being included, need to account for cases like:
-                    ## numeric*factor, factor*numeric, factor*factor,
-                    ## factor^3, etc
+                   
+                  # Need to account for the fact that there may be
+                  # an interaction
+                  # term being included, need to account for cases like:
+                  # numeric*factor, factor*numeric, factor*factor,
+                  # factor^3, etc
+                    
                     if (length(split.current.row) > 1) {
                         row.label <- ""
                         for (vl in 1:length(var.labels)) {
                             current.term <- var.labels[[vl]]
-                            ## Dealing with an interaction
+                          # Dealing with an interaction
                             if (length(current.term) > 1) {
                                 row.cand <- substr(split.current.row, 1,
                                                    nchar(current.term))
@@ -171,22 +178,24 @@ iNZightSummary <-
                                 }
                             }
                         }
-                        ## Now that we have the row labels, try
-                        ## printing out all of the level labels
-
-                        ## Inserting the interaction title
+                        
+                      # Now that we have the row labels, try
+                      # printing out all of the level labels
+                        
+                      # Inserting the interaction title
                         if (row.label != rownames(coefs.copy)[i - 1]) {
                             if (method == "bootstrap") {
                                 pvalue <- F.info$Pvals[row.label]
                             } else {
                                 tmpaov <- tryCatch(Anova(x.lm, type = 3),
                                                    error = function(e) NA)
-                                type3pval <- if (all(is.na(tmpaov))) {
-                                    NA
-                                } else {
-                                    tmpaov[which(rownames(tmpaov) ==
-                                                 row.label), 4]
-                                }
+                                type3pval <-
+                                    if (all(is.na(tmpaov))) {
+                                        NA
+                                    } else {
+                                        tmpaov[which(rownames(tmpaov) == row.label),
+                                               ifelse(isGlm(x.lm), 3, 4)]
+                                    }
                                 pvalue <- type3pval
                             }
                             
@@ -245,19 +254,23 @@ iNZightSummary <-
                         nlines.to.add <- counter # Added rows plus var
                         break
                     } else {
+                      # Just a factor:
                         summary.row.subs <-
                             substr(summary.row, 1, nchar(current.var))
                         row.var.level <-
                             substr(summary.row, nchar(current.var) + 1,
                                    nchar(summary.row))
-                        ## Is the rest of the string a level of the
-                        ## variable?
+                        
+                      # Is the rest of the string a level of the
+                      # variable?
                         is.level.of.cvar <-
                             nchar(row.var.level) > 0 && row.var.level %in%
                         levels(x.data[, current.var])
-                        ## The case where we have a row with a
-                        ## substring matching an existing variable
-                        ## name, and there is a level present
+                        
+                      # The case where we have a row with a
+                      # substring matching an existing variable
+                      # name, and there is a level present
+                        
                         if (current.var == summary.row.subs &&
                             is.level.of.cvar) {
                             levels.of.cvar <- levels(x.data[, current.var])
