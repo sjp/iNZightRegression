@@ -33,8 +33,12 @@ iNZightQQplot <- function(x, n = 5) {
   # Generate n bootstrap samples with normal errors
     n.obs <- nrow(x$model)
     bootstrapSample <- bootstrapData(x, sample(1:n.obs, replace = TRUE))
-    response <- rownames(attr(x$terms, "factors"))[1]
+    response <- "response"  #rownames(attr(x$terms, "factors"))[1]
     newcall <- modifyModelCall(x)
+
+  # Need something here to change "log(age)" to "response" ...
+    xvars <- as.character(newcall$formula)[3]
+    newcall$formula <- as.formula(paste("response", xvars, sep = " ~ "))
 
     qqList <- vector("list", length = n)
     sd <- ifelse(isGlm(x),

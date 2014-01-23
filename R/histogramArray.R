@@ -34,8 +34,12 @@ histogramArray <- function(x, n = 7) {
     xmax <- max(rx[2], mx + 3.5 * sx, h$breaks[length(h$breaks)])
 
     bootstrapSample <- bootstrapData(x, 1:nrow(x$model))
-    response <- rownames(attr(x$terms, "factors"))[1]
-    newcall <- modifyModelCall(x)#, "newdat")
+    response <- "response"  #rownames(attr(x$terms, "factors"))[1]
+    newcall <- modifyModelCall(x)
+
+  # Need something here to change "log(age)" to "response" ...
+    xvars <- as.character(newcall$formula)[3]
+    newcall$formula <- as.formula(paste("response", xvars, sep = " ~ "))
 
     n.obs <- nrow(x$model)
     resList <- list()
@@ -48,7 +52,7 @@ histogramArray <- function(x, n = 7) {
                      summary(x)$sigma)
         rNormal <- rnorm(n.obs, sd = sd)
         bootstrapSample[, response] <- x$fitted.values + rNormal
-        newlm <- eval(newcall)
+        newlm <- eval(newcall)        
         r <- residuals(newlm)
         resList[[i]] <- r
         h <- hist(r, plot = FALSE)
@@ -153,7 +157,6 @@ histogramArray <- function(x, n = 7) {
 
         if (row == nRows & (col %% 2 == 1))
             grid.xaxis(gp = gpar(cex = 0.8))
-        print(row %% 2)
         if (row == 1 & (col %% 2 == 0))
             grid.xaxis(main = FALSE, gp = gpar(cex = 0.8))
 
