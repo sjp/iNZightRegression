@@ -166,7 +166,7 @@ histogramArray <- function(x, n = 7) {
 
   # Add a title
     pushViewport(viewport(layout.pos.row = 1, gp = gpar(cex = 1.2)))
-    grid.text("Histrograms of Residuals",
+    grid.text("Histograms of Residuals",
               x = 0.5, y = unit(3.1, "lines"))
     grid.text("Actual data cf. Generated Normal-Error Data",
               x = 0.5, y = unit(2.5, "lines"), gp = gpar(cex = 0.8))
