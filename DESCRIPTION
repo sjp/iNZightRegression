@@ -3,10 +3,10 @@ Type: Package
 Title: iNZightRegression
 Version: 1.1
 Date: 2013-11-25
-Authors@R: c(person("Simon", "Potter", role = c("aut", "cre"),
+Authors@R: c(person("Simon", "Potter", role = c("aut"),
                     email = "spot023@aucklanduni.ac.nz"),
              person("David", "Banks", role = "aut"),
-	     person("Tom", "Elliott", role = "aut",
+	     person("Tom", "Elliott", role = c("cre", "aut"),
                     email = "tell029@aucklanduni.ac.nz"))
 Depends: R (>= 2.13)
 Imports: grid, car
