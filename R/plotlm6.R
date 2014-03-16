@@ -7,7 +7,8 @@ plotlm6 <-
               id.n = 3, labels.id = names(residuals(x)),
               cex.id = 0.75, qqline = TRUE, cook.levels = c(0.5, 1),
               add.smooth = getOption("add.smooth"), label.pos = c(4, 2),
-              cex.caption = 1, showBootstraps = nrow(x$model) >= 30, ...) {
+              cex.caption = 1,
+              showBootstraps = nrow(x$model) >= 30 && nrow(x$model) < 4000, ...) {
         
     smColour = "orangered"      # colour of data loess line
     bsmColour = "lightgreen"    # colour of bootstrap loess lines
