@@ -18,8 +18,8 @@ plotlm6 <-
                     cex.id = cex.id, qqline = qqline, cooks.levels = cooks.levels,
                     add.smooth = add.smooth, label.pos = label.pos,
                     cex.caption = cex.caption, showBootstraps = showBootstraps,
-                    ...)
-        return(inivisble(NULL))
+                    ...) -> a
+        return(invisible(a))
     }
         
     smColour = "orangered"      # colour of data loess line
@@ -377,6 +377,7 @@ plotlm6 <-
             if (one.fig)
                 title(sub = sub.caption, ...)
             mtext(getCaption(5), 3, 0.25, cex = cex.caption)
+            print(show.rs)
             if (id.n > 0)
                 text.id(qq$x[show.rs], qq$y[show.rs], show.rs)
             dev.flush()

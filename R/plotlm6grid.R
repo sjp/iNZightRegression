@@ -99,8 +99,8 @@ plotlm6grid <- function(x, which = 1:6,
                 label.pos[1 + as.numeric(x > mean(range(x)))]
             else 3
             grid.text(labels.id[ind], x, y, default.units = "native",
-                      just = "right",
-                      gp = gpar(cex = cex.id))
+                      just = "left", hjust = unit(-0.5, "char"),
+                      gp = gpar(cex = cex.id / 2))
         }
     }
     
@@ -559,18 +559,15 @@ plotlm6grid <- function(x, which = 1:6,
         pushViewport(viewport(layout.pos.row = 2, layout.pos.col = 2))
 
       # calculate qq-values
-        z <- (rs - mean(rs)) / sd(rs)
-        z.ord <- sort(z)
-        q <- qnorm(ppoints(length(z)))
-        print(z.ord)
+        qq <- qqnorm(rs, plot.it = FALSE)
 
         opts$LOE <- TRUE
         largesample <- opts$largesample
         opts$largesample <- FALSE
-        ylim <- getLim(z)
+        ylim <- getLim(qq$y)
         ylim[2] <- ylim[2] + diff(ylim) * 0.075
-        iNZightPlots:::iNZscatterplot(q, z.ord, axis = c(2, 2, 0, 0),
-                                      xlim = getLim(q), ylim = ylim,
+        iNZightPlots:::iNZscatterplot(qq$x, qq$y, axis = c(2, 2, 0, 0),
+                                      xlim = getLim(qq$x), ylim = ylim,
                                       layout = scatter.layout, opts = opts)
         opts$LOE <- FALSE
         opts$largesample <- largesample
@@ -578,9 +575,9 @@ plotlm6grid <- function(x, which = 1:6,
         seekViewport("SCATTERVP")
 
         ## Label extreme points
+
         if (id.n > 0) {
-            print(names(z.ord))
-            grid.text(show.rs, q[names(z.ord) %in% show.rs], z[show.rs],
+            grid.text(show.rs, qq$x[show.rs], qq$y[show.rs],
                       default.units = "native",
                       just = "left", hjust = unit(-0.5, "char"),
                       gp = gpar(cex = cex.id / 2))
@@ -590,14 +587,12 @@ plotlm6grid <- function(x, which = 1:6,
         popViewport()
         seekViewport(paste("VP", plotID, sep = "-"))
         
-        drawLabs(xlab = "Observation Number", ylab = "Cook's Distance",
-                 main = getCaption(3))
+        drawLabs(xlab = "Theoretical Quantiles", ylab = "Observed Quantiles",
+                 main = getCaption(5))
         dev.flush()
 
         plotID <- plotID + 1
     }
-
-    return(z.ord)
 }
 
 test <- function(x, which = 1:6,
