@@ -591,6 +591,23 @@ plotlm6grid <- function(x, which = 1:6,
             
             text.id(xx, qq$y[show.rs], show.rs, adj.x = FALSE)
         }
+
+        ## Add the shapiro-wilk test text
+        if (length(rs) > 3 & length(rs) < 5000) {
+            stest <- shapiro.test(rs)
+            p.val <- round(stest$p.value, 3)
+            if (p.val == 0)
+                p.val <- "< 0.001"
+            else
+                p.val <- paste("=", p.val)
+            
+            txt <- paste("Shapiro-Wilk Normality Test:", "\n", "W = ",
+                         round(stest$statistic, 4), "\n", "P-value ",
+                         p.val, sep = "")
+            
+            grid.text(txt, x = 0.1, y = 0.9,
+                      gp = gpar(cex = 1 / sqrt(nrow * ncol)), just = "left")
+        }
         
         grid.rect()
         popViewport()
@@ -642,14 +659,14 @@ plotlm6grid <- function(x, which = 1:6,
         xc <- seq(xmin, xmax, length = 101)
         yc <- dnorm(xc, mx, sx)
         grid.lines(xc, yc, default.unit = "native",
-                   gp = gpar(lwd = 1.5, lty = 3))
+                   gp = gpar(lwd = 1.5, lty = 3))        
         
         grid.rect()
         popViewport()
         seekViewport(paste("VP", plotID, sep = "-"))
         
         drawLabs(xlab = "Residuals", ylab = "Density",
-                 main = getCaption(5))
+                 main = getCaption(6))
         dev.flush()
 
         plotID <- plotID + 1

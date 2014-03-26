@@ -12,14 +12,15 @@ plotlm6 <-
 
 
         ## Use grid graphics from iNZightPlots if they're available.
-    if ("package:iNZightPlots" %in% search()) {
+    if ("iNZightPlots" %in% installed.packages()) {
+        library(iNZightPlots)  # naughty, but oh well...
         plotlm6grid(x = x, which = which, panel = panel, sub.caption = sub.caption,
                     main = main, ask = ask, id.n = id.n, labels.id = labels.id,
                     cex.id = cex.id, qqline = qqline, cooks.levels = cooks.levels,
                     add.smooth = add.smooth, label.pos = label.pos,
                     cex.caption = cex.caption, showBootstraps = showBootstraps,
-                    ...) -> a
-        return(invisible(a))
+                    ...)
+        return(invisible(NULL))
     }
         
     smColour = "orangered"      # colour of data loess line
