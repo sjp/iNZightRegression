@@ -4,8 +4,8 @@ plotlm6grid <- function(x, which = 1:6,
                         main = "",
                         ask = prod(par("mfcol")) < length(which) && dev.interactive(),
                         id.n = 3, labels.id = names(residuals(x)),
-                        cex.id = 0.75, qqline = TRUE, cook.levels = c(0.5, 1),
-                        add.smooth = getOption("add.smooth"), label.pos = c(4, 2),
+                        cex.id = 1, qqline = TRUE, cook.levels = c(0.5, 1),
+                        add.smooth = getOption("add.smooth"), label.pos = c(2, 4),
                         cex.caption = 1,
                         showBootstraps = nrow(x$model) >= 30 && nrow(x$model) < 4000, ...) {
     
@@ -95,12 +95,16 @@ plotlm6grid <- function(x, which = 1:6,
         if (any(show[c(2,5)]))
             show.rs <- sort.list(abs(rs), decreasing = TRUE)[iid]
         text.id <- function(x, y, ind, adj.x = TRUE) {
-            labpos <- if (adj.x)
-                label.pos[1 + as.numeric(x > mean(range(x)))]
-            else 3
+            if (adj.x)
+                x <- x + ifelse(x > mean(x), 1, -1) *
+                    (convertWidth(unit(0.4, "char"), "native", TRUE) +
+                     convertWidth(grobWidth(textGrob(as.character(ind),
+                                                       gp =
+                                                     gpar(cex = cex.id / sqrt(nrow * ncol)))),
+                                  "native", TRUE) * 0.5)
+            
             grid.text(labels.id[ind], x, y, default.units = "native",
-                      just = "left", hjust = unit(-0.5, "char"),
-                      gp = gpar(cex = cex.id / 2))
+                      just = "center", gp = gpar(cex = cex.id / sqrt(nrow * ncol)))
         }
     }
     
@@ -183,8 +187,13 @@ plotlm6grid <- function(x, which = 1:6,
     
     N <- length(which)  # if which = 7, then which -> 1:6 -> length = 6
   # layout dimensions
-    ncol <- ceiling(sqrt(N))
-    nrow <- ceiling(N / ncol)
+    if (!showAllPlots) {
+        nrow <- 1
+        ncol <- 1
+    } else {
+        ncol <- ceiling(sqrt(N))
+        nrow <- ceiling(N / ncol)
+    }
 
 
   # Draw plot title:
@@ -222,8 +231,12 @@ plotlm6grid <- function(x, which = 1:6,
 
     plotID <- 1  # increments with each plot
     nextVP <- function(id, nrow, ncol) {
-        wcol <- (id - 1) %% ncol + 1
-        wrow <- (id - 1) %/% ncol + 1
+        if (nrow == 1 & ncol == 1) {
+            wcol <- wrow <- 1
+        } else {
+            wcol <- (id - 1) %% ncol + 1
+            wrow <- (id - 1) %/% ncol + 1
+        }
 
         seekViewport("topVP")
         pushViewport(viewport(layout.pos.row = wrow, layout.pos.col = wcol))
@@ -235,7 +248,7 @@ plotlm6grid <- function(x, which = 1:6,
         mult <- c(-1, 1)
         r + mult * 0.04 * diff(r)
     }
-    drawLabs <- function(xlab, ylab, main) {
+    drawLabs <- function(xlab = "", ylab = "", main = "") {
         pushViewport(viewport(layout.pos.row = 1, layout.pos.col = 2))
         grid.text(main)
         upViewport()
@@ -306,12 +319,9 @@ plotlm6grid <- function(x, which = 1:6,
                    gp = gpar(col = "gray", lty = 2))
 
         ## Label extreme points
-        if (id.n > 0) {
-            grid.text(show.r, yh[show.r], r[show.r], default.units = "native",
-                      just = "left", hjust = unit(-0.5, "char"),
-                      gp = gpar(cex = cex.id / 2))
-        }
-
+        if (id.n > 0)
+            text.id(yh[show.r], r[show.r], show.r, adj.x = TRUE)
+        
         grid.rect()
         popViewport()
         seekViewport(paste("VP", plotID, sep = "-"))
@@ -372,13 +382,9 @@ plotlm6grid <- function(x, which = 1:6,
         }
 
         ## Label extreme points
-        if (id.n > 0) {
-            grid.text(show.rs, yhn0[show.rs], sqrtabsr[show.rs],
-                      default.units = "native",
-                      just = "left", hjust = unit(-0.5, "char"),
-                      gp = gpar(cex = cex.id / 2))
-        }
-
+        if (id.n > 0)
+            text.id(yhn0[show.rs], sqrtabsr[show.rs], show.rs)
+        
         grid.rect()
         popViewport()
         seekViewport(paste("VP", plotID, sep = "-"))
@@ -493,12 +499,8 @@ plotlm6grid <- function(x, which = 1:6,
         
         ## Label extreme points
         if (do.plot) {
-            if (id.n > 0) {
-                grid.text(show.rsp, xx[show.rsp], rsp[show.rsp],
-                          default.units = "native",
-                          just = "left", hjust = unit(-0.5, "char"),
-                          gp = gpar(cex = cex.id / 2))
-            }
+            if (id.n > 0)
+                text.id(xx[show.rsp], rsp[show.rsp], show.rsp)
         }
         upViewport()
         grid.rect()
@@ -533,11 +535,11 @@ plotlm6grid <- function(x, which = 1:6,
         grid.yaxis(gp = gpar(cex = opts$cex.axis))
 
         ## Label extreme points
-        grid.text(show.mx, show.mx,
-                  cdx[show.mx] + 0.4 * convertHeight(unit(0.75, "char"), "native", TRUE),
-                  default.units = "native",
-                  just = "center",
-                  gp = gpar(cex = cex.id * 0.8))
+        yy <- cdx[show.mx] + 0.75 *
+            convertHeight(grobHeight(textGrob("text",
+                                              gp = gpar(cex = cex.id / sqrt(nrow * ncol)))),
+                          "native", TRUE)
+        text.id(show.mx, yy, show.mx, adj.x = FALSE)
         
         grid.rect()
         seekViewport(paste("VP", plotID, sep = "-"))
@@ -565,6 +567,8 @@ plotlm6grid <- function(x, which = 1:6,
         largesample <- opts$largesample
         opts$largesample <- FALSE
         ylim <- getLim(qq$y)
+        if (id.n > 0)
+            ylim <- getLim(ylim)
         ylim[2] <- ylim[2] + diff(ylim) * 0.075
         iNZightPlots:::iNZscatterplot(qq$x, qq$y, axis = c(2, 2, 0, 0),
                                       xlim = getLim(qq$x), ylim = ylim,
@@ -577,10 +581,15 @@ plotlm6grid <- function(x, which = 1:6,
         ## Label extreme points
 
         if (id.n > 0) {
-            grid.text(show.rs, qq$x[show.rs], qq$y[show.rs],
-                      default.units = "native",
-                      just = "left", hjust = unit(-0.5, "char"),
-                      gp = gpar(cex = cex.id / 2))
+            xx <- qq$x[show.rs]
+            xx <- xx + ifelse(xx < mean(qq$x), 1, -1) *
+                (convertWidth(unit(0.4, "char"), "native", TRUE) +
+                 convertWidth(grobWidth(textGrob(as.character(show.rs),
+                                                 gp =
+                                                 gpar(cex = cex.id / sqrt(nrow * ncol)))),
+                              "native", TRUE) * 0.5)
+            
+            text.id(xx, qq$y[show.rs], show.rs, adj.x = FALSE)
         }
         
         grid.rect()
@@ -593,40 +602,56 @@ plotlm6grid <- function(x, which = 1:6,
 
         plotID <- plotID + 1
     }
-}
 
-test <- function(x, which = 1:6,
-                 panel = if (add.smooth) panel.smooth
-                 else points, sub.caption = NULL,
-                 main = "",
-                 ask = prod(par("mfcol")) < length(which) && dev.interactive(),
-                 id.n = 3, labels.id = names(residuals(x)),
-                 cex.id = 0.75, qqline = TRUE, cook.levels = c(0.5, 1),
-                 add.smooth = getOption("add.smooth"), label.pos = c(4, 2),
-                 cex.caption = 1,
-                 showBootstraps = nrow(x$model) >= 30 && nrow(x$model) < 4000, ...) {
-    plotlm6grid(x, which = which, panel = panel, sub.caption = sub.caption,
-                main = main, ask = ask, id.n = id.n, labels.id = labels.id,
-                cex.id = cex.id, qqline = qqline, cooks.levels = cooks.levels,
-                add.smooth = add.smooth, label.pos = label.pos,
-                cex.caption = cex.caption, showBootstraps = showBootstraps,
-                ...)
-}
+    # ----------------------------------------------------------------------------------- #
+  #                                                                             HISTOGRAM
+    if (6 %in% which) {
+        if (showAllPlots) nextVP(plotID, nrow, ncol) else newPlot(plotID)
+        dev.hold()
 
-if (FALSE) {
-    invisible(lapply(list.files('~/iNZight/iNZightRegression/R', full.names = TRUE),
-                     function(x) source(x)))
-    d <- read.csv('~/iNZight/data/Census at School-500.csv')
-    x <- lm(height ~ armspan + gender, data = d)
-    test(x, which = 7) -> eh
-    d2 <- read.csv('~/iNZight/iNZightVIT-WIN/data/NZIncomes03_34000.csv')
-    x2 <- lm(weekly_income ~ weekly_hrs, data = d2)
-    test(x2, which = 7)
-    test(x2, which = 1:2)
-    test(x2, which = 2, showBootstraps = TRUE)
+        pushViewport(viewport(layout.pos.row = 2, layout.pos.col = 2))
+        
+        h <- hist(r, plot = FALSE)
+        xlab <- "Residuals"
+        mx <- mean(r)
+        sx <- sd(r)
+        rx <- range(r)
+        xmin <- min(rx[1], mx - 3.5 * sx, h$breaks[1])
+        xmax <- max(rx[2], mx + 3.5 * sx, h$breaks[length(h$breaks)])
+        ymax <- max(h$density, dnorm(mx, mx, sx)) * 1.05
 
+        pushViewport(viewport(xscale = getLim(c(xmin, xmax)),
+                              yscale = getLim(c(0, ymax))))
+        grid.xaxis(gp = gpar(cex = opts$cex.axis))
+        grid.yaxis(gp = gpar(cex = opts$cex.axis))
 
-    x3 <-lm(height ~ log(armspan), data = d) 
-    test(x3, which = 7)
-    test(x3, which = 3)
+        xx <- h$breaks
+        yy <- h$density
+        
+      # Need to make a vector of points for corners of polygons
+        wx <- diff(xx)[1] / 2
+        x.mid <- xx[-length(xx)] + wx
+        xmat <- sapply(x.mid, function(x) x + c(-1, -1, 1, 1) * wx)
+        ymat <- sapply(yy, function(y) y * c(0, 1, 1, 0))
+        matid <- matrix(rep(1:ncol(xmat), each = 4), nrow = 4)
+
+        grid.polygon(xmat, ymat, id = matid, default.units = "native",
+                     gp = gpar(fill = "light blue"))
+
+      # Overlay the normal curve
+        xc <- seq(xmin, xmax, length = 101)
+        yc <- dnorm(xc, mx, sx)
+        grid.lines(xc, yc, default.unit = "native",
+                   gp = gpar(lwd = 1.5, lty = 3))
+        
+        grid.rect()
+        popViewport()
+        seekViewport(paste("VP", plotID, sep = "-"))
+        
+        drawLabs(xlab = "Residuals", ylab = "Density",
+                 main = getCaption(5))
+        dev.flush()
+
+        plotID <- plotID + 1
+    }
 }
