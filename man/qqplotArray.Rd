@@ -1,37 +1,39 @@
-\name{qqplotArray}
-\alias{qqplotArray}
+\name{iNZightQQplot}
+\alias{iNZightQQplot}
 \title{
-  QQ Plot Array
+  iNZight QQ Plot
 }
 \description{
-  Produces an array of QQ Plots to compare against the QQ plot of a
-  fitted linear model.
+  Produces a sample of QQ-plots based on the fitted values, overlaid by
+  a QQ-plot of the original data.
 }
 \usage{
-qqplotArray(x, n = 7)
+iNZightQQplot(x, n = 5)
 }
 \arguments{
   \item{x}{
-    an \code{lm} or \code{svyglm} object.
+    an \code{lm} or \code{svyglm} object (with \code{family = "Gaussian"}.
 }
   \item{n}{
-    the number of additional QQ plots to display beside the QQ plot of
+    the number of sampled QQ plots to produce beneath the QQ plot of
     \code{x}.
 }
 }
 \details{
-  The QQ plot of the model \code{x} appears in the top-left
-  position. For each of the other QQ plots, the fitted values of
-  \code{x} are taken and normal random errors are added to these. The
-  normal random errors have standard error equal to the estimated
-  residual standard error of \code{x}. A model is then fitted to this
-  altered data and a QQ plot is produced.
+  Multiple bootstrap models are generated from the fitted values of
+  the model, each with different random normal errors with standard 
+  error equal to the estimated residual standard error from the
+  original model. These are plotted, and then overlaid by the QQ plot
+  from the original data.
+
+  This plot can be used to assess the assumption of normality in the
+  residuals for a linear regression model.
 }
 \value{
 None.
 }
 \author{
-  David Banks.
+  David Banks, Tom Elliott.
 }
 
 
@@ -40,5 +42,5 @@ None.
 }
 \examples{
 fit <- lm(Volume ~ Height + Girth, data = trees)
-qqplotArray(fit)
+iNZightQQplot(fit)
 }

@@ -1,5 +1,12 @@
-partialResPlot = function(fit, varname, showBootstraps = nrow(fit$model) >= 30) {
+partialResPlot <-
+    function(fit, varname,
+             showBootstraps = nrow(fit$model) >= 30 & nrow(fit$model) < 4000) {
 
+  # if iNZightPlots is available, use it for plotting:
+    if (inzplots <- "iNZightPlots" %in% installed.packages())
+        library(iNZightPlots)
+    
+    
     xVarterms = attr(fit$terms, "term.labels")
     xVarnames = xVarterms[ ! grepl(":", xVarterms)]
     if (! varname %in% xVarnames)
@@ -15,10 +22,20 @@ partialResPlot = function(fit, varname, showBootstraps = nrow(fit$model) >= 30) 
     Xi = fit$model[, varname]
     Yi = r + Bi*Xi
 
+    ylab <- "Y - estimated effects of other variables"
+    main <- paste("Partial residual plot for", varname)
+
     ## Plot the data points
-    plot(Xi, Yi, xlab = varname,
-         ylab = "Y - estimated effects of other variables",
-         main = paste("Partial residual plot for", varname))
+    if (inzplots) {
+        iNZightPlot(Xi, Yi, xlab = varname, ylab = ylab,
+                    main = main, cex.pt = 0.6)
+        ovp <- current.viewport()
+        pushViewport(viewport(xscale = ovp$xscale, yscale = ovp$yscale,
+                              clip = "on"))
+    } else {
+        plot(Xi, Yi, xlab = varname, ylab = ylab, main = main)
+    }
+    
 
     if (showBootstraps) {
         ## Plot bootstrap smooths
@@ -27,33 +44,54 @@ partialResPlot = function(fit, varname, showBootstraps = nrow(fit$model) >= 30) 
             bsm_r = bsm[[j]]$residuals
             bsm_Bi = bsm[[j]]$coefficients[varname]
             bsm_Xi = bsm[[j]]$model[, varname]
-            bsm_sm = loess(bsm_r + bsm_Bi * bsm_Xi ~ bsm_Xi)
-            bsm_smOrd = order(bsm_sm$x)
-            bsm_smx = bsm_sm$x[bsm_smOrd]
-            bsm_smy = bsm_sm$fitted[bsm_smOrd]
-            lines(bsm_smx, bsm_smy, col = "lightgreen")
+            
+            if (inzplots) {
+                iNZightPlots:::addQuantileSmoother(
+                    bsm_Xi, bsm_r + bsm_Bi * bsm_Xi, quantile = 0.5,
+                    col = "lightgreen", lty = 1, lwd = 1)
+            } else {
+                bsm_sm = loess(bsm_r + bsm_Bi * bsm_Xi ~ bsm_Xi)
+                bsm_smOrd = order(bsm_sm$x)
+                bsm_smx = bsm_sm$x[bsm_smOrd]
+                bsm_smy = bsm_sm$fitted[bsm_smOrd]
+                lines(bsm_smx, bsm_smy, col = "lightgreen")
+            }
         }
     }
 
     ## Plot linear trend we are modelling
     xlims = range(Xi)
-    lines(xlims, Bi * xlims, lty = "dashed", col = "blue", lwd = 2)
+    if (inzplots) {
+        grid.lines(xlims, Bi * xlims, default.units = "native",
+                   gp = gpar(lty = 2, col = "blue", lwd = 2))
+    } else {
+        lines(xlims, Bi * xlims, lty = "dashed", col = "blue", lwd = 2)
+    }
 
     ## Plot original data smooth
-    sm = loess(Yi ~ Xi)
-    smOrd = order(sm$x)
-    smx = sm$x[smOrd]
-    smy = sm$fitted[smOrd]
-    lines(smx, smy, col= "orangered", lwd = 2)
+    
+    
+    if (inzplots) {
+        iNZightPlots:::addQuantileSmoother(Xi, Yi, quantile = 0.5,
+                                           col = "orangered", lty = 1,
+                                           lwd = 2)
+    } else {
+        sm = loess(Yi ~ Xi)
+        smOrd = order(sm$x)
+        smx = sm$x[smOrd]
+        smy = sm$fitted[smOrd]
+        lines(smx, smy, col= "orangered", lwd = 2)
+    }
 }
 
-allPartialResPlots = function(fit) {
-    promptSetting = devAskNewPage(TRUE)
-    xVarterms = attr(fit$terms, "term.labels")
-    xVarnames = xVarterms[ ! grepl(":", xVarterms)]
-    xVartypes = attr(fit$terms, "dataClasses")
-    for (v in xVarnames)
-        if (! xVartypes[v] %in% c("factor", "ordered"))
-            partialResPlot(fit, v)
-   devAskNewPage(promptSetting)
+allPartialResPlots <-
+    function(fit, showBootstraps = nrow(fit$model) >= 30 & nrow(fit$model) < 4000) {
+        promptSetting = devAskNewPage(TRUE)
+        xVarterms = attr(fit$terms, "term.labels")
+        xVarnames = xVarterms[ ! grepl(":", xVarterms)]
+        xVartypes = attr(fit$terms, "dataClasses")
+        for (v in xVarnames)
+            if (! xVartypes[v] %in% c("factor", "ordered"))
+                partialResPlot(fit, v, showBootstraps = showBootstraps)
+        devAskNewPage(promptSetting)
 }

@@ -2,7 +2,100 @@
 \title{NEWS file for the iNZightRegression package}
 \encoding{UTF-8}
 
-\section{Changes in version 0.0.2-20130913}{
+\section{Changes in Version 1.1.2}{
+  \subsection{MINOR CHANGES}{
+    \itemize{
+      \item Continuing on from previous update, the partial residual
+      plots are now modified to make use of the `iNZightPlots` library
+      if it is installed.
+    }
+  }
+}
+
+\section{Changes in version 1.1.1}{
+  \subsection{NEW FEATURES}{
+    \itemize{
+      \item Residual summary plots from `plotlm6` can now make use of
+      the `iNZightPlots` graphics rather than the defaults. It requires
+      the user to have `iNZightPlots` installed to work, but reverts to
+      the old plots if it is not.
+
+      \item In the new `grid` based plots, quantile smoothers are used
+      rather than loess smoothers. This greatly increases efficiency
+      when large data sets are analysed.
+    }
+  }
+
+  \subsection{MINOR CHANGES}{
+    \itemize{
+      \item Maximum sample size for drawing bootstraps implemented
+      (currently at 4000), as over this they don't provide much
+      information (this can be overridded by `showBootstraps = TRUE`).
+
+      \item p-values for normality test are printed as "P < 0.001"
+      rather than "P = 0".
+    }
+  }
+
+  \subsection{BUG FIXES}{
+    \item Shapiro Wilk test not used if sample size > 5000 (resulted in an
+    error).
+  }
+}
+
+\section{Changes in version 1.1}{
+  \subsection{NEW FEATURES}{
+    \itemize{
+      
+      \item Support for generalised lienar models (GLMs) and `svyglm`
+      objects from the `survey` package.
+
+      \item Changes to the `iNZightSummary` output include:
+      \itemize{
+	\item Output now hides output of counfounding
+	variables through the `exclude` argument, and lists these at the
+	top of the output.
+
+	\item Displays the type of fit (e.g., Suvey / Generalised Linear
+	/ Model).
+      }
+
+      \item The QQ-plot array has been replaced by a single plot with
+      the parametric bootstrap data QQ-plots all on a single plot,
+      overlaid by the QQ plot of the true data (this was suggested by
+      Thomas Lumley).
+    }
+  }
+
+  \subsection{CHANGES}{
+    \itemize{
+      \item The Histogram Array has been rewritten using `grid`, and
+      minimises margin whitespace and draws simulated histograms in a
+      different color.
+    }
+  }
+
+  \subsection{BUG FIXES}{
+    \itemize{
+
+      \item The bootstrap models functions have been re-written to
+      account for the `design` option in survey GLMs, as well as the
+      case when the GLM binomial response is SUCCESS / N.TRIALS. This
+      caused errors in the `fit$model` that was previously being used.
+
+      \item The bootstrap lines from `plotlm6` have been fixed so that
+      they now work for `(svy)glm` objects. There is also an optional
+      cut-off if the sample size becomes too small (which can be
+      overridden by the `showBootstraps = TRUE|FALSE` argument.
+
+      \item `factorMeans` and `adjustedMeans` have be fixed so they work
+      for GLMs.
+      
+    }
+  }
+}
+
+\section{Changes in version 1.0.2-20130913}{
   \subsection{NEW FEATURES}{
     \itemize{
 
@@ -13,7 +106,7 @@
   }
 }
 
-\section{Changes in version 0.0.2-20130122}{
+\section{Changes in version 1.0.2-20130122}{
   \subsection{NEW FEATURES}{
     \itemize{
       \item First release of new package. Contains model fitting subset
