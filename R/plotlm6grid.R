@@ -385,7 +385,7 @@ plotlm6grid <- function(x, which = 1:6,
         if (id.n > 0)
             text.id(yhn0[show.rs], sqrtabsr[show.rs], show.rs)
         
-        grid.rect()
+        grid.rect(gp = gpar(fill = "transparent"))
         popViewport()
         seekViewport(paste("VP", plotID, sep = "-"))
         
@@ -503,7 +503,7 @@ plotlm6grid <- function(x, which = 1:6,
                 text.id(xx[show.rsp], rsp[show.rsp], show.rsp)
         }
         upViewport()
-        grid.rect()
+        grid.rect(gp = gpar(fill = "transparent"))
         popViewport()
         seekViewport(paste("VP", plotID, sep = "-"))
         
@@ -541,7 +541,7 @@ plotlm6grid <- function(x, which = 1:6,
                           "native", TRUE)
         text.id(show.mx, yy, show.mx, adj.x = FALSE)
         
-        grid.rect()
+        grid.rect(gp = gpar(fill = "transparent"))
         seekViewport(paste("VP", plotID, sep = "-"))
         
         drawLabs(xlab = "Observation Number", ylab = "Cook's Distance",
@@ -609,7 +609,7 @@ plotlm6grid <- function(x, which = 1:6,
                       gp = gpar(cex = 1 / sqrt(nrow * ncol)), just = "left")
         }
         
-        grid.rect()
+        grid.rect(gp = gpar(fill = "transparent"))
         popViewport()
         seekViewport(paste("VP", plotID, sep = "-"))
         
@@ -661,7 +661,7 @@ plotlm6grid <- function(x, which = 1:6,
         grid.lines(xc, yc, default.unit = "native",
                    gp = gpar(lwd = 1.5, lty = 3))        
         
-        grid.rect()
+        grid.rect(gp = gpar(fill = "transparent"))
         popViewport()
         seekViewport(paste("VP", plotID, sep = "-"))
         
