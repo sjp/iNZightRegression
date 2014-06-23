@@ -322,7 +322,7 @@ plotlm6grid <- function(x, which = 1:6,
         if (id.n > 0)
             text.id(yh[show.r], r[show.r], show.r, adj.x = TRUE)
         
-        grid.rect()
+        grid.rect(gp = gpar(fill = "transparent"))
         popViewport()
         seekViewport(paste("VP", plotID, sep = "-"))
         
