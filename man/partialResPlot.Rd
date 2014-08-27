@@ -34,8 +34,3 @@ partialResPlot(fit, varname, showBootstraps = nrow(fit$model) >= 30)
 \seealso{
   \code{\link{allPartialResPlots}}
 }
-
-\examples{
-fit <- lm(Volume ~ Girth + Height, data = trees)
-partialResPlot(fit, "Girth")
-}

@@ -118,7 +118,3 @@ plotlm6(x,
 \seealso{
   \code{\link{histogramArray}}, \code{\link{iNZightQQplot}}
 }
-\examples{
-fit <- lm(Volume ~ Height + Girth, data = trees)
-plotlm6(fit, which = 7)
-}
