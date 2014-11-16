@@ -1,10 +1,24 @@
-iNZightSummary <-
-    function (x, method = "standard", reorder.factors = FALSE,
-              digits = max(3, getOption("digits") - 3),
-              symbolic.cor = x$symbolic.cor,
-              signif.stars= getOption("show.signif.stars"),
-              exclude = NULL,
-              ...) {
+##' .. content for \description{} (no empty lines) ..
+##'
+##' .. content for \details{} ..
+##' @title 
+##' @param x 
+##' @param method 
+##' @param reorder.factors 
+##' @param digits 
+##' @param symbolic.cor 
+##' @param signif.stars 
+##' @param exclude 
+##' @param ... 
+##' @return 
+##' @author tell029
+##' @export
+iNZightSummary <- function (x, method = "standard", reorder.factors = FALSE,
+                            digits = max(3, getOption("digits") - 3),
+                            symbolic.cor = x$symbolic.cor,
+                            signif.stars= getOption("show.signif.stars"),
+                            exclude = NULL,
+                            ...) {
 
   # method: 'standard' or 'bootstrap'
   # reorder.factors: TRUE - most common level as baseline
