@@ -1,16 +1,44 @@
+##' Produces a sample of QQ-plots based on the fitted values, overlaid by
+##' a QQ-plot of the original data.
+##'
+##' Multiple bootstrap models are generated from the fitted values of
+##' the model, each with different random normal errors with standard
+##' error equal to the estimated residual standard error from the
+##' original model. These are plotted, and then overlaid by the QQ plot
+##' from the original data.
+##' \cr \cr
+##' This plot can be used to assess the assumption of normality in the
+##' residuals for a linear regression model.
+##' @title iNZight QQ Plot
+##'
+##' @param x an \code{lm} or \code{svyglm} object (with \code{family = "Gaussian"}.
+##'
+##' @param n the number of sampled QQ plots to produce beneath the QQ plot of
+##' \code{x}.
+##'
+##' @return None.
+##'
+##' @author David Banks, Tom Elliott.
+##'
+##' @seealso \code{\link{histogramArray}}
+##'
+##' @examples fit <- lm(Volume ~ Height + Girth, data = trees)
+##' iNZightQQplot(fit)
+##' 
+##' @export
 iNZightQQplot <- function(x, n = 5) {
-    
+
   # ------------------------------------------------------------------ #
   # Generates n (= 5) parameteric bootstrap samples with normal errors
   # from the fitted values. These are plotted and overlaid by the qq
   # values from the original data set.
   # ------------------------------------------------------------------ #
-    
+
   # Assumes lm model (gaussian errors only)
     if (isGlm(x))
         if (x$family$family != 'gaussian')
             stop('histrogramArray only works with linear models.')
-    
+
   # Calculate the QQ values for the fitted model
     dropInf <- function(x, h) {
         if (any(isInf <- h >= 1)) {
@@ -45,7 +73,7 @@ iNZightQQplot <- function(x, n = 5) {
                  sqrt(1 / (n.obs - ncol(x$model)) *
                       sum((x$residuals)^2)),
                  summary(x)$sigma)
-    
+
     for (i in 1:n) {
         rNormal <- rnorm(n.obs, sd = sd)
         bootstrapSample[, response] <- x$fitted.values + rNormal
@@ -80,5 +108,5 @@ iNZightQQplot <- function(x, n = 5) {
            pch = c(1, 4), pt.cex = 0.8, col = "black",
            bty = "n")
 }
-  
+
 

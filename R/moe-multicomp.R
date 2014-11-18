@@ -1,3 +1,24 @@
+##' This is a method for \code{moecalc} objects. Most other \code{moecalc}
+##' methods are concerned with how each factor level differs from the
+##' baseline. This does not show the significance of differences between
+##' non-baseline levels of a factor.
+##' \cr\cr
+##' Currently the p-values are not adjusted. As a result, more comparisons
+##' are likely to be significantly different when they shouldn't be.
+##'
+##' @title Multiple Comparisons Between Factor Levels
+##'
+##' @param x an \code{moecalc} object.
+##'
+##' @param ... additional parameters to be passed to the function (currently
+##' ignored).
+##'
+##' @return A \code{multicomp} object, primarily for automatic pretty printing of
+##' the resulting matrix.
+##'
+##' @author Simon Potter.
+##' 
+##' @export
 multicomp <- function(x, ...) {
   UseMethod("multicomp")
 }

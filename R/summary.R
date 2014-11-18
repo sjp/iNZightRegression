@@ -1,17 +1,76 @@
-##' .. content for \description{} (no empty lines) ..
+##' The iNZight summary improves upon the base R summary output for
+##' fitted regression models. More information is provided and displayed
+##' in a more intuitive format. This function both creates and returns a
+##' summary object, as well as printing it.
 ##'
-##' .. content for \details{} ..
-##' @title 
-##' @param x 
-##' @param method 
-##' @param reorder.factors 
-##' @param digits 
-##' @param symbolic.cor 
-##' @param signif.stars 
-##' @param exclude 
-##' @param ... 
-##' @return 
-##' @author tell029
+##' This summary function provides more information in the following ways:
+##'
+##' Factor headers are now given. The base level for a factor is also
+##' listed with an estimate of 0. This is to make it clear what the base
+##' level of a factor is, rather than attempting to work out by deduction
+##' from what has already been printed.
+##'
+##' The p-value of a factor is now given; this is the output from
+##' \code{\link[car]{Anova}}, which calculates the p-value based off of
+##' Type III sums of squares, rather than sequentially as done by
+##' \code{\link{anova}}.
+##'
+##' Each level of a factor is indented by 2 characters for its label and
+##' its p-value to distinguish between a factor, and levels of a factor.
+##'
+##' The labels for each level of an interaction are now just the levels of
+##' the factor (separated by a \code{.}), rather than being prepended with
+##' the factor name also.
+##'
+##' @title Informative Summary Information for Regression Models
+##'
+##' @param x an object of class \code{"lm"}, \code{"glm"} or \code{"svyglm"},
+##' usually the result of a call to the corresponding function.
+##'
+##' @param method one of either \code{"standard"} or \code{"bootstrap"}. If
+##' \code{"bootstrap"}, then bootstrapped estimates and standard errors
+##' are calculated; otherwise, uses the standard estimates.
+##'
+##' @param reorder.factors logical, if \code{TRUE}, and there are factors present in the model,
+##' then the most common level of the factor is set to be the baseline.
+##'
+##' @param digits the number of significant digits to use when printing.
+##'
+##' @param symbolic.cor logical, if \code{TRUE}, print the correlations in a symbolic form
+##' (see \code{\link{symnum}}), rather than as numbers.
+##'
+##' @param signif.stars logical, if \code{TRUE}, \sQuote{significance stars} are printed for
+##' each coefficient.
+##'
+##' @param exclude a character vector of names of variables to be exluded from the
+##' summary output (i.e., confounding variables).
+##'
+##' @param ... further arguments passed to and from other methods.
+##'
+##' @return An object of class \code{summary.lm}, \code{summary.glm}, or
+##' \code{summary.svyglm}.
+##'
+##' @author Simon Potter, Tom Elliott.
+##'
+##' @note   If any level is not observed in a factor, no p-values will be printed
+##' on all factors. This is because we cannot calculate Type III sums of
+##' squares when this is the case.
+##'
+##' The fitted model currently requires that the data are stored in a
+##' dataframe, which is pointed at by the \code{data} argument to
+##' \code{lm} (or equivalent).
+##'
+##' @seealso The model fitting functions \code{\link{lm}}, \code{\link{glm}}, and
+##' \code{\link{summary}}.
+##'
+##' The \code{\link{survey}} package.
+##'
+##' Function \code{\link{coef}} will extract the matrix of coefficients
+##' with standard errors, t-statistics and p-values.
+##'
+##' To calculate p-values for factors, use \code{\link[car]{Anova}} with
+##' type III sums of squares.
+##'
 ##' @export
 iNZightSummary <- function (x, method = "standard", reorder.factors = FALSE,
                             digits = max(3, getOption("digits") - 3),
@@ -25,7 +84,7 @@ iNZightSummary <- function (x, method = "standard", reorder.factors = FALSE,
   # exclude: variables to be excluded from output (eg. confounders)
     #if (!is.null(exclude))
     #    exclude <- paste(exclude, collapse = '|')
-        
+
     if (reorder.factors) {
         varsAreFactors = which(sapply(x$model, class) %in%
             c("factor", "ordered"))
@@ -39,15 +98,15 @@ iNZightSummary <- function (x, method = "standard", reorder.factors = FALSE,
             assign(dataName, old)  # reset the original dataset
         }
     }
-    
+
     ## If method bootstrap, get bootstrap inference
     if (method == "bootstrap") {
         bootCoefs = bootstrapCoefs(x)
         T.info = bootstrapTTests(bootCoefs)
         F.info = bootstrapFTests(bootCoefs)
-        
+
         if (bootCoefs$keptSamples / bootCoefs$N < .95) {
-            
+
             lwd <- getOption("width")
             ind <- paste(rep(" ", floor(0.05 * lwd)), collapse = "")
             header <- paste(rep("=", lwd), collapse = "")
@@ -55,7 +114,7 @@ iNZightSummary <- function (x, method = "standard", reorder.factors = FALSE,
                 paste(strwrap(txt, prefix = indent, initial = init),
                       collapse = "\n")
             }
-            
+
             if (reorder.factors) {
                 txt <-
  "Not enough baseline cases in one or more factors even after reordering."
@@ -80,7 +139,7 @@ iNZightSummary <- function (x, method = "standard", reorder.factors = FALSE,
             }
         }
     }
-    
+
     x.lm <- x
     x.data <- x.lm$model
     x <- summary(x)
@@ -104,7 +163,7 @@ iNZightSummary <- function (x, method = "standard", reorder.factors = FALSE,
         cat(exclude, sep = ', ')
         cat('\n\n')
     }
-    
+
     var.classes <- attr(x$terms, "dataClasses")[-1]
     var.labels <- attr(x$terms, "term.labels")
     var.labels <- strsplit(var.labels, ":")
@@ -142,11 +201,11 @@ iNZightSummary <- function (x, method = "standard", reorder.factors = FALSE,
                             dimnames = list(cn, colnames(coefs)))
             coefs[!aliased, ] <- x$coefficients
         }
-        
+
         ### ------------------------------------------------------------ ###
          #                   iNZight changes start here                   #
         ### ------------------------------------------------------------ ###
-        
+
         coefs.copy <- coefs
         rowns <- rownames(coefs)
         varnames <- names(x.data)
@@ -161,9 +220,9 @@ iNZightSummary <- function (x, method = "standard", reorder.factors = FALSE,
         while (i <= nrow(coefs.copy)) {
          ## If the name has been modified, we know we're not dealing
          ## with a numeric variable, or it is crossed with some factor
-           
+
             summary.row <- rownames(coefs.copy)[i]
-           
+
             split.current.row <- strsplit(summary.row, ":")[[1]]
             nlines.to.add <- 1
             if (! summary.row %in% varnames) {
@@ -171,13 +230,13 @@ iNZightSummary <- function (x, method = "standard", reorder.factors = FALSE,
               # and that the factor contains the level we want
                 for (j in 1:length(varnames)) {
                     current.var <- varnames[j]
-                   
+
                   # Need to account for the fact that there may be
                   # an interaction
                   # term being included, need to account for cases like:
                   # numeric*factor, factor*numeric, factor*factor,
                   # factor^3, etc
-                    
+
                     if (length(split.current.row) > 1) {
                         row.label <- ""
                         for (vl in 1:length(var.labels)) {
@@ -192,10 +251,10 @@ iNZightSummary <- function (x, method = "standard", reorder.factors = FALSE,
                                 }
                             }
                         }
-                        
+
                       # Now that we have the row labels, try
                       # printing out all of the level labels
-                        
+
                       # Inserting the interaction title
                         if (row.label != rownames(coefs.copy)[i - 1]) {
                             if (method == "bootstrap") {
@@ -212,23 +271,23 @@ iNZightSummary <- function (x, method = "standard", reorder.factors = FALSE,
                                     }
                                 pvalue <- type3pval
                             }
-                            
+
                             coefs.copy <-
                                 insert.lines(row.label, i,
                                              c(rep(NA, 3), pvalue),
                                              coefs.copy)
                         }
-                        
+
                         counter <- 1
                         cterms <- strsplit(row.label, ":")[[1]]
-                        
+
                         data.sub <- x.data[, cterms]
                         isf <- lapply(data.sub, class)
                         level.list <- list()
                         for (fs in 1:length(isf)) {
                             if (isf[fs] == "factor") {
                              ## Always omit base level
-                                l <- levels(data.sub[, fs])[-1] 
+                                l <- levels(data.sub[, fs])[-1]
                             } else {
                                 l <- cterms[fs]
                             }
@@ -264,7 +323,7 @@ iNZightSummary <- function (x, method = "standard", reorder.factors = FALSE,
                             }
                             counter <- counter + 1
                         }
-                        
+
                         nlines.to.add <- counter # Added rows plus var
                         break
                     } else {
@@ -274,22 +333,22 @@ iNZightSummary <- function (x, method = "standard", reorder.factors = FALSE,
                         row.var.level <-
                             substr(summary.row, nchar(current.var) + 1,
                                    nchar(summary.row))
-                        
+
                       # Is the rest of the string a level of the
                       # variable?
                         is.level.of.cvar <-
                             nchar(row.var.level) > 0 && row.var.level %in%
                         levels(x.data[, current.var])
-                        
+
                       # The case where we have a row with a
                       # substring matching an existing variable
                       # name, and there is a level present
-                        
+
                         if (current.var == summary.row.subs &&
                             is.level.of.cvar) {
                             levels.of.cvar <- levels(x.data[, current.var])
                             base.level <- levels.of.cvar[1]
-                            nlines.to.add <- length(levels.of.cvar) + 1 
+                            nlines.to.add <- length(levels.of.cvar) + 1
                             new.names <-
                                 c(current.var, paste("  ", levels.of.cvar,
                                                      sep = ""))
@@ -479,21 +538,21 @@ iNZightPrintCoefmat <-
     }
     else if(P.values && !has.Pvalue)
 	stop("'P.values' is TRUE, but 'has.Pvalue' is not")
-    
+
     ## Renaming last column so that we're not using an explicit test stat
     colnames(x)[nc] <- "p-value"
-    
+
     if(has.Pvalue && !P.values) {# P values are there, but not wanted
 	d <- dim(xm <- data.matrix(x[,-nc , drop = FALSE]))
 	nc <- nc - 1
 	has.Pvalue <- FALSE
     } else xm <- data.matrix(x)
-    
+
     k <- nc - has.Pvalue - (if(missing(tst.ind)) 1 else length(tst.ind))
     if(!missing(cs.ind) && length(cs.ind) > k) stop("wrong k / cs.ind")
 
     Cf <- array("", dim=d, dimnames = dimnames(xm))
-    
+
     ok <- !(ina <- is.na(xm))
     ## zap before deciding any formats
     for (i in zap.ind) xm[, i] <- zapsmall(xm[, i], digits)
@@ -527,7 +586,7 @@ iNZightPrintCoefmat <-
 	Cf[okP][not.both.0] <- format(xm[okP][not.both.0],
                                       digits = max(1, digits-1))
     }
-    
+
     for (i in 1:nrow(Cf)) {
         curr.row <- Cf[i, ]
         ## Need to get numbers if possible
@@ -536,7 +595,7 @@ iNZightPrintCoefmat <-
         curr.row.name <- rownames(Cf)[i]
         next.row.name <- if (i != nrow(Cf)) rownames(Cf)[i + 1] else ""
         prev.row.name <- if (i > 1) rownames(Cf)[i - 1] else ""
-        
+
         if (i == nrow(Cf)) {
             curr.start.chars <- substr(curr.row.name, 1, 2)
             ## Only need to test whether this is a level of a factor.
@@ -550,14 +609,14 @@ iNZightPrintCoefmat <-
             curr.start.chars <- substr(curr.row.name, 1, 2)
             next.start.chars <- substr(next.row.name, 1, 2)
             prev.start.chars <- substr(prev.row.name, 1, 2)
-            
+
             ## If there is indentation on the next row but not the
             ## current one
             if (curr.start.chars != "  " & next.start.chars == "  ") {
                 if (length(na.inds) > 0)
                     Cf[i, na.inds] <- " "
             }
-            
+
             ## If there is indentation in current line, assume both
             ## level of factor
             if (curr.start.chars == "  " && length(na.inds) > 0) {
@@ -568,12 +627,12 @@ iNZightPrintCoefmat <-
             }
         }
     }
-    
+
     ## Need to fix ina because we have modified which are NA values
     ## due to factor levels
     ina <- is.na(suppressWarnings(as.numeric(Cf)) & ! Cf %in% c("-", " "))
     if(any(ina)) Cf[ina] <- na.print
-    
+
     if(P.values) {
         if(!is.logical(signif.stars) || is.na(signif.stars)) {
             warning("option \"show.signif.stars\" is invalid: assuming TRUE")

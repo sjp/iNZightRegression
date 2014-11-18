@@ -1,47 +1,80 @@
-## Margin of Error help:
-## if x is model:
-##   must has factorname or coefficient index(coef.idx)
-##   if input factorname
-##     will compute ErrBars by factorname (for given model)
-##   if input coefficient index
-##     will compute ErrBars simply by index only (even they are not factor)
-## if x is ses.moecalc object
-##   will compute ErrBars simply by given ses.moecalc object
-##
-## Arguments:
-## x          : can be model or ses.moecalc object
-## factorname : name of factor
-## levelnames : name of each level of factor
-## coef.idx   : coefficient index
-## est        : estimate
-## ci         : relevent confidnece interval, only use when length(est)=2
-## base       : has baseline or not. Default TRUE.
-##              Insert a initial zero term in computation if TRUE
-## basename   : label name of base term if base is TRUE
-## conf.level : confidence level for both ErrBars and confidnece interval
-
-moecalc = function(x, factorname = NULL, levelnames = NULL, coef.idx = NULL, 
+##' ...
+##'
+##' @title Margin of Error Calculations
+##'
+##' @param x a model object (i.e. \code{lm}, \code{glm}, \code{svyglm}), or an
+##' \code{ses.moecalc} object.
+##'
+##' @param factorname character, the name of the factor. Can be an interaction.
+##'
+##' @param levelnames the names of each level of the factor.
+##'
+##' @param coef.idx the coefficient index.
+##'
+##' @param est estimate.
+##'
+##' @param ci the relevant confidence interval; only use when the length of
+##' \code{est} is 2. Default is 1.96, default 95\% level.
+##'
+##' @param base logical, whether a baseline level is set. defaults to \code{TRUE}.
+##'
+##' @param basename label name to apply to baseline level if \code{base = TRUE}.
+##'
+##' @param conf.level confidence level for both error bars and confidence intervals.
+##'
+##' @return An \code{moecalc} object, which has the following methods:
+##' \code{plot}, \code{print}, and \code{summary}.
+##'
+##' \code{ses.moecalc} produces an object of class \code{"ses.moecalc"}.
+##'
+##' @author Danny Chang, David Banks
+##' 
+##' @export
+moecalc = function(x, factorname = NULL, levelnames = NULL, coef.idx = NULL,
                    est = NULL, ci = NULL, base = TRUE, basename = "base",
                    conf.level = 1.96){
+
+  ## Margin of Error help:
+  ## if x is model:
+  ##   must has factorname or coefficient index(coef.idx)
+  ##   if input factorname
+  ##     will compute ErrBars by factorname (for given model)
+  ##   if input coefficient index
+  ##     will compute ErrBars simply by index only (even they are not factor)
+  ## if x is ses.moecalc object
+  ##   will compute ErrBars simply by given ses.moecalc object
+  ##
+  ## Arguments:
+  ## x          : can be model or ses.moecalc object
+  ## factorname : name of factor
+  ## levelnames : name of each level of factor
+  ## coef.idx   : coefficient index
+  ## est        : estimate
+  ## ci         : relevent confidnece interval, only use when length(est)=2
+  ## base       : has baseline or not. Default TRUE.
+  ##              Insert a initial zero term in computation if TRUE
+  ## basename   : label name of base term if base is TRUE
+  ## conf.level : confidence level for both ErrBars and confidnece interval
+
   obj <- x
   modelcall = NULL
   ## obtain standard error difference matrix
   if (! inherits(obj, "ses.moecalc")) {
     modelcall = obj$call
-    
+
     if(!xor(is.null(factorname), is.null(coef.idx)))
       stop("must have factorname or coefficient index only")
 
     if (length(unlist(strsplit(factorname, ":"))) > 2)
       stop("Interactions must not have more than 2 terms")
-    
+
     if(is.null(coef.idx))
       coef.idx = coefidx(obj, factorname)
 
     est = obj$coefficients[coef.idx]
     if(base)
       est = c(0, est)
-    
+
     temp = seModel(obj, coef.idx, base)
     ses = temp$ses
     ses.diffs = temp$ses.diffs
@@ -53,19 +86,19 @@ moecalc = function(x, factorname = NULL, levelnames = NULL, coef.idx = NULL,
       if(sum(isfactor) == 1)
         levelnames = obj$xlevels[[names(isfactor)[which(isfactor)]]]
       if(sum(isfactor) == 2) {
-      
+
         ## For now, don't do anything
         stop("Two-factor interactions not supported yet")
-        
+
         levelnames = names(est)
         levelnames = gsub(names(which(isfactor)[1]), "", levelnames)
         levelnames = gsub(names(which(isfactor)[2]), "", levelnames)
         # levelnames = gsub(":", "/", levelnames)
       }
-      
+
       if((length(est) - 1) == length(levelnames)){
         out = paste("length(est) is more than length(factor), may need to set base=FALSE")
-        warning(out, call. = FALSE)          
+        warning(out, call. = FALSE)
         levelnames = c(basename, levelnames)
       }
     }
@@ -87,11 +120,11 @@ moecalc = function(x, factorname = NULL, levelnames = NULL, coef.idx = NULL,
   }
 
   n = if(is.null(est)) NULL else length(est)
-  xlevels = makexlv(factorname, levelnames, n)  
+  xlevels = makexlv(factorname, levelnames, n)
   factorname = names(xlevels)[1]
   levelnames = xlevels[[factorname]]
   if(!is.null(est)) names(est) = levelnames
-  
+
   ## Margins of error for differences
   moe.diffs =
     if (inherits(obj, "ses.moecalc"))
@@ -99,7 +132,7 @@ moecalc = function(x, factorname = NULL, levelnames = NULL, coef.idx = NULL,
     else
       ses.diffs
   dimnames(moe.diffs) = list(levelnames, levelnames)
-  
+
   k = ncol(moe.diffs)
   if (nrow(moe.diffs) != k | !is.matrix(moe.diffs) | k <= 1)
     stop("moe.diffs must be square matrix")
@@ -124,23 +157,23 @@ moecalc = function(x, factorname = NULL, levelnames = NULL, coef.idx = NULL,
     if (!is.null(ci)){
       if (length(ci) != 2)
         stop("When dimension=2, must have length(ci)=2")
-        
+
       ErrBars = moe.diffs[1,2]*ci/sum(ci)
-    } 
+    }
     else
       ErrBars = moe.diffs[1,2] * 0.5 * c(1,1)
   }
-  
+
   moe.diffs.approx = outer(ErrBars,ErrBars,'+')
   diag(moe.diffs.approx) = 0
-  
+
   names(ErrBars) = levelnames
   dimnames(moe.diffs.approx) = list(levelnames, levelnames)
-  
+
   errpercent = 100 * round(((moe.diffs.approx - moe.diffs) / moe.diffs), 2)
   diag(errpercent) = 0
   signiferr = NULL
-    
+
   if (!is.null(est)){
     if (length(est) != k) stop("length(est) must=ncol(moe.diffs)")
     est.diffs = outer(est, est, '-')
@@ -174,11 +207,11 @@ moecalc = function(x, factorname = NULL, levelnames = NULL, coef.idx = NULL,
              moe.diffs.approx = moe.diffs.approx, modelcall = modelcall,
              xlevels = xlevels, ses = ses, ses.diffs = ses.diffs,
              confL = confL, confU = confU, compL = compL, compU = compU)
-  class(ret) = "moecalc"             
-  
+  class(ret) = "moecalc"
+
   if(abs(ret$MaxErrProp) >= 1)
     warningErrProp(ret)
-    
+
   ret
 }
 
@@ -186,7 +219,7 @@ print.moecalc = function(x, ...){
   obj <- x
   if(!is.null(obj$est)){
     out = cbind(obj$est, obj$ErrBars, obj$compL, obj$compU)
-    colnames(out) = c("Est", "ErrBar", "compL", "compU")  
+    colnames(out) = c("Est", "ErrBar", "compL", "compU")
     rownames(out) = obj$xlevels[[1]]
     print(out)
   } else{
@@ -200,21 +233,21 @@ summary.moecalc = function(object, ...){
   obj <- object
   factorname = names(obj$xlevels)[1]
   levelnames = obj$xlevels[[factorname]]
-  
-  if(!is.null(obj$est)){    
+
+  if(!is.null(obj$est)){
     coeff = cbind(obj$est, obj$ErrBars, obj$compL, obj$compU,
                   obj$confL, obj$confU)
-    colnames(coeff) = c("Est", "ErrBar", "compL", "compU", "confL", "confU")  
+    colnames(coeff) = c("Est", "ErrBar", "compL", "compU", "confL", "confU")
     rownames(coeff) = levelnames
   } else{
     coeff = obj
   }
-  
+
   conflict = NULL
   if(!is.null(obj$signiferr))
     if(any(obj$signiferr!=0))
       conflict = typeofconflict(obj$signiferr)
-  
+
   x = list(coeff=coeff, conflict=conflict, modelcall=obj$modelcall,
            MaxErrProp=obj$MaxErrProp, xlevels=obj$xlevels)
   class(x) = "summary.moecalc"
@@ -228,14 +261,14 @@ print.summary.moecalc = function(x, ...){
     print(obj$modelcall)
     cat("\n")
   }
-  
+
   print(obj$coeff)
   out = paste("\nMax error betw. approx. and true moe is ",
                  obj$MaxErrProp, "%", sep="")
-  cat(out, "\n")  
-    
+  cat(out, "\n")
+
   if(!is.null(obj$conflict))
-    warningConflict(obj$xlevels, obj$conflict)    
+    warningConflict(obj$xlevels, obj$conflict)
 }
 
 ## plot moecalc
@@ -253,15 +286,15 @@ plot.moecalc = function(x, horiz=FALSE, xlevels=NULL, ...){
 
   obj <- x
   if(is.null(obj$est)) stop("No estimates, cannot plot interval")
-  
+
   def.par <- par(no.readonly = TRUE)
   on.exit(par(def.par))
   n = length(obj$est)
-  
-  if(is.null(xlevels)) xlevels = obj$xlevels 
+
+  if(is.null(xlevels)) xlevels = obj$xlevels
   factorname = names(xlevels)[1]
   levelnames = xlevels[[factorname]]
-  
+
   ## Special case if we are plotting an interaction
   ## Need to split into panels for each level of one of the factors
   isInteraction = FALSE
@@ -271,7 +304,7 @@ plot.moecalc = function(x, horiz=FALSE, xlevels=NULL, ...){
     ## Number of panels needed
     nPanels = length(levels(obj$fit$model[,twoFactors[1]])) - 1
     sqrt.nPanels = sqrt(nPanels)
-    
+
     ## Make the plot array as square as possible
     nRows = ifelse(sqrt.nPanels == floor(sqrt.nPanels),
                    sqrt.nPanels, ceiling(sqrt.nPanels))
@@ -282,16 +315,16 @@ plot.moecalc = function(x, horiz=FALSE, xlevels=NULL, ...){
                   nrow = nRows + 1, byrow = TRUE),
            widths = rep(1/nRows, nRows),
            heights = c(lcm(1.9), rep(1/nCols, nCols)))
-           
+
   }
-  
+
   if (isInteraction) opar = par(mar = c(2.5, 4.1, 2.1, 2.1))
-  
+
   comparisonCol = "red"
   confidenceCol = "black"
   comparisonLwd = 3
   confidenceLwd = 1
- 
+
   if(horiz){
     if (!isInteraction) {
       ylim = c(1, n) + c(-0.5, 0.5)
@@ -371,7 +404,7 @@ plot.moecalc = function(x, horiz=FALSE, xlevels=NULL, ...){
         ylim = range(obj$confL[indices], obj$confU[indices],
                      obj$compL[indices], obj$compU[indices])
         plot(xlim, ylim, type = "n", axes = F, ylab = "", xlab = "")
-        xlabs = #levelnames[indices] # 
+        xlabs = #levelnames[indices] #
           levels(obj$fit$model[,twoFactors[1]])
         axis(1, at = 1:(nLevelsPerPanel + 1), labels = xlabs)
         axis(2)
@@ -398,7 +431,7 @@ plot.moecalc = function(x, horiz=FALSE, xlevels=NULL, ...){
       }
     }
   }
-  
+
   if (isInteraction) {
     par(opar)
     opar = par(mar = rep(0.3, 4))
@@ -409,7 +442,7 @@ plot.moecalc = function(x, horiz=FALSE, xlevels=NULL, ...){
     title(paste("Factor level effects of", factorname, "on",
                 attr(obj$fit$model, "names")[1]))
   }
-  
+
   ## Legend
   legendNames = "Comparison interval      "
   legendCols = comparisonCol
@@ -434,7 +467,7 @@ plot.moecalc = function(x, horiz=FALSE, xlevels=NULL, ...){
   legend(x = legendX, y = legendY, legendNames, col = legendCols,
          lwd = legendLwds, bty = "n", horiz = TRUE, xjust = xjust,
          cex = legendCex)
-    
+
   if(obj$MaxErrProp >= 1)
     warningErrProp(obj)
 }
@@ -442,7 +475,7 @@ plot.moecalc = function(x, horiz=FALSE, xlevels=NULL, ...){
 warningErrProp = function(obj){
   out = paste("Max error betw. approx. and true moe is ",
                 obj$MaxErrProp, "%", sep="")
-  warning(out, call. = FALSE)  
+  warning(out, call. = FALSE)
 }
 
 ## obj     : xlevels
@@ -452,7 +485,7 @@ warningConflict = function(xlevels, conflict){
   levelnames = xlevels[[factorname]]
   x = conflict
   cat("Significance conflict: \n")
-      
+
   isovlp = (x$type != 1)
   if(any(isovlp)){
     cat("    should overlap between factor", factorname, ":\n")
@@ -471,7 +504,7 @@ typeofconflict = function(signiferr){
   upper.idx = (signiferr!=0)*(upper.tri(signiferr))!=0
   type  = signiferr[upper.idx]
   idx.r = row(signiferr)[upper.idx]
-  idx.c = col(signiferr)[upper.idx]  
+  idx.c = col(signiferr)[upper.idx]
   ## type ==  1 : CI not overlap, ErrBars     overlap
   ## type == -1 : CI     overlap, ErrBars not overlap
   list(type=type, idx.r=idx.r, idx.c=idx.c)
@@ -481,7 +514,7 @@ typeofconflict = function(signiferr){
 
 ## find coeff. index of model by given names
 coefidx = function(model, labelnames){
-  term = model$terms  
+  term = model$terms
   labelnames.idx = which(attr(term, "term.labels") %in% labelnames)
   ## if interaction, make it work for var1:var2 and var2:var1
   if (grepl(":", labelnames, fixed = TRUE)) {
@@ -507,24 +540,24 @@ chkfactor = function(model, labelnames){
   }
   if(sum(labelnames.idx)!=1)
     stop("not only one labelnames is matched")
-    
+
   vars.idx = (attr(term, "factors")[, labelnames] != 0)
   vars = names(vars.idx)[vars.idx]
   isfactor = attr(term, "dataClasses")[vars.idx] == "factor"
-  isfactor 
+  isfactor
 }
 
 ## generate xlevels by factorname, levelnames or number of levels
 makexlv = function(factorname=NULL, levelnames=NULL, n=NULL){
   if(all(is.null(c(factorname, levelnames, n))))
     return(NULL)
- 
+
   if(is.null(factorname))
     factorname = "Level"
   if(!is.null(n) && is.null(levelnames))
     levelnames = 1:n
-    
+
   temp = list(levelnames)
-  names(temp) = factorname  
+  names(temp) = factorname
   temp
 }

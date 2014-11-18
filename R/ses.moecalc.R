@@ -5,6 +5,23 @@
 ##
 ## can add any other funcitons for any other kind of situation
 
+##' Constructs a standard error object, consisting of standard errors and
+##' a difference matrix. Used in margin of error calculations, see
+##' \code{\link{moecalc}}.
+##'
+##' @title Constructor function for Standard Error Class
+##'
+##' @param ses numeric, vector of standard errors.
+##'
+##' @param ses.diffs matrix of standard error differences.
+##'
+##' @return An object of class \code{ses.moecalc}.
+##'
+##' @author David Banks.
+##'
+##' @seealso \code{\link{moecalc}}, \code{\link{multicomp}}
+##' 
+##' @export
 ## constructor
 ses.moecalc = function(ses, ses.diffs){
   x = list(ses=ses, ses.diffs=ses.diffs)
@@ -52,9 +69,9 @@ seMNprops = function(n, phat){
   if (length(n)!=1) stop("Requires length(n)=1")
   if (abs(sum(phat)-1)>.001) stop("proportions must sum to 1")
   ses.diffs = sqrt((outer(phat,phat,'+') - (outer(phat,phat,'-'))^2)/n)
-  diag(ses.diffs)=0  
+  diag(ses.diffs)=0
   ses = sqrt(phat*(1-phat)/n)
-  
+
   ses.moecalc(ses, ses.diffs)
 }
 
@@ -68,7 +85,7 @@ seBinprops = function(ns, phats){
   ses = sqrt(temp)
   ses.diffs = sqrt(outer(temp,temp,'+'))
   diag(ses.diffs)=0
-  
+
   ses.moecalc(ses, ses.diffs)
 }
 

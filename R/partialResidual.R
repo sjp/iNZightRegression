@@ -1,3 +1,22 @@
+##' This function draws partial residual plots for all continuous
+##' explanatory variables in a given model. Clicking the device
+##' displays the next plot in the sequence.
+##'
+##' @title Draw multiple partial residual plots
+##'
+##' @param fit an \code{lm}, \code{glm} or \code{svyglm} object.
+##'
+##' @param varname
+##'
+##' @param showBootstraps
+##'
+##' @return None.
+##'
+##' @author David Banks, Tom Elliott.
+##'
+##' @seealso \code{\link{partialResPlot}}
+##' 
+##' @export
 partialResPlot <-
     function(fit, varname,
              showBootstraps = nrow(fit$model) >= 30 & nrow(fit$model) < 4000) {
@@ -5,8 +24,8 @@ partialResPlot <-
   # if iNZightPlots is available, use it for plotting:
     if (inzplots <- "iNZightPlots" %in% installed.packages())
         library(iNZightPlots)
-    
-    
+
+
     xVarterms = attr(fit$terms, "term.labels")
     xVarnames = xVarterms[ ! grepl(":", xVarterms)]
     if (! varname %in% xVarnames)
@@ -35,7 +54,7 @@ partialResPlot <-
     } else {
         plot(Xi, Yi, xlab = varname, ylab = ylab, main = main)
     }
-    
+
 
     if (showBootstraps) {
         ## Plot bootstrap smooths
@@ -44,7 +63,7 @@ partialResPlot <-
             bsm_r = bsm[[j]]$residuals
             bsm_Bi = bsm[[j]]$coefficients[varname]
             bsm_Xi = bsm[[j]]$model[, varname]
-            
+
             if (inzplots) {
                 iNZightPlots:::addQuantileSmoother(
                     bsm_Xi, bsm_r + bsm_Bi * bsm_Xi, quantile = 0.5,
@@ -69,8 +88,8 @@ partialResPlot <-
     }
 
     ## Plot original data smooth
-    
-    
+
+
     if (inzplots) {
         iNZightPlots:::addQuantileSmoother(Xi, Yi, quantile = 0.5,
                                            col = "orangered", lty = 1,

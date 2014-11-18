@@ -1,3 +1,80 @@
+##' These plots are an extension of the original plots provided by
+##' \code{plot.lm}.
+##' \cr \cr
+##' Six plots are currently available: residuals versus fitted,
+##' Scale-Location of \eqn{\sqrt{| residuals|}}{sqrt{|residual|}} against
+##' fitted values, residuals against leverages, Cook's distance, Normal
+##' Q-Q plot and histogram of residuals.
+##' \cr \cr
+##' Also privided is the summary plot which shows all diagnostic plots
+##' arranged in a 2 by 3 grid. By default, this is shown first, then each
+##' of the individual plots in turn.
+##'
+##' For the residuals versus fitted values plot, we add bootstrapped
+##' smoothers to illustrate variance. The smoother is also added to the
+##' Scale-Location plot.
+##' \cr \cr
+##' The Normal Q-Q and histogram plots are taken from the \code{normcheck}
+##' function in the \code{s20x} package.
+##'
+##' @title Extended Plot Diagnostics for (g)lm Models
+##'
+##' @param x an \code{lm} object, typically the result of
+##' \code{\link{lm}} or \code{\link{glm}}. Can also take
+##' \code{\link[survey]{svyglm}} objects.
+##'
+##' @param which numeric, if a subset of the plots is required, specify a subset of
+##' the numbers \code{1:6}. \code{7} will produce a summary plot showing
+##' all of the plots arranged ina a grid. \code{1:6} will show the
+##' summary plot followed by each of the single plots one by one
+##' (default).
+##'
+##' @param panel panel function. the useful alternative to \code{\link{points}},
+##' \code{\link{panel.smooth}} can be chosen by \code{add.smooth = TRUE}.
+##'
+##' @param sub.caption common title. Above the figures if there are more than one; used as
+##' \code{sub} (s.\code{\link{title}}) otherwise. If \code{NULL}, as by
+##' default, a possible abbreviated version of \code{deparse(x$call)} is
+##' used.
+##'
+##' @param main title to each plot, in addition to \code{caption}.
+##'
+##' @param ask logical, if \code{TRUE}, the user is \emph{ask}ed before each plot,
+##' see \code{\link{par}(ask=.)}. Ignored when only one plot is being
+##' shown.
+##'
+##' @param id.n number of points to be labelled in each plot, starting with the most
+##' extreme.
+##'
+##' @param labels.id vector of labels, from which the labels for extreme plots will be
+##' chosen. \code{NULL} uses observation numbers.
+##'
+##' @param cex.id magnification of point labels.
+##'
+##' @param qqline logical, if \code{TRUE}, a \code{\link{qqline}()} is added to the
+##' normal QQ plot.
+##'
+##' @param cook.levels levels of the Cook's distance at which to draw contours.
+##'
+##' @param add.smooth logical, if \code{TRUE}, a smoother is drawn to the appropriate
+##' plots; see also \code{panel} above.
+##'
+##' @param label.pos positioning of labels, for the left half and right half of the graph
+##' respectively, for plots 1--3.
+##'
+##' @param cex.caption controls the size of \code{caption}.
+##'
+##' @param showBootstraps logical, if \code{TRUE}, bootstrap loess smoothers are drawn in the
+##' first 4 plots. By default, only drawn for sample sizes of at least 30.
+##'
+##' @param ... other arguments to be passed to through to plotting functions.
+##'
+##' @author Simon Potter, David Banks, Tom Elliott. Original authors of
+##' \code{plot.lm} are John Maindonald and Martin Maechler.
+##'
+##' @seealso \code{\link{histogramArray}}, \code{\link{iNZightQQplot}}
+##' 
+##' @export
 plotlm6 <-
     function(x, which = 1:6,
              panel = if (add.smooth) panel.smooth
@@ -22,10 +99,10 @@ plotlm6 <-
                     ...)
         return(invisible(NULL))
     }
-        
+
     smColour = "orangered"      # colour of data loess line
     bsmColour = "lightgreen"    # colour of bootstrap loess lines
-        
+
     dropInf <- function(x, h) {
         if (any(isInf <- h >= 1)) {
             warning("Not plotting observations with leverage one:\n  ",
@@ -36,10 +113,10 @@ plotlm6 <-
     }
     if (!inherits(x, "lm"))
         stop("use only with \"lm\" objects")
-    
+
     if (!is.numeric(which) || any(which < 1) || any(which > 7))
         stop("'which' must be in 1:7")
-    
+
     ## Are we only showing the summary plot?
     if (7 %in% which) {
         onlyShowAll <- TRUE
@@ -111,7 +188,7 @@ plotlm6 <-
                  pos = labpos, offset = 0.25)
         }
     }
-    
+
     caption = list("Residuals vs Fitted", "Scale-Location",
                    "Residuals vs Leverage","Cook's distance",
                    "Normal Q-Q", "Histogram")
@@ -134,7 +211,7 @@ plotlm6 <-
             paste(substr(cc[1], 1, min(75, nc)), "...")
         else cc[1]
     }
-    
+
     one.fig <- length(which) == 1 || onlyShowAll
     if (ask) {
         oask <- devAskNewPage(! one.fig)
@@ -143,7 +220,7 @@ plotlm6 <-
         oask <- devAskNewPage(FALSE)
         on.exit(devAskNewPage(oask))
     }
-    
+
     if (showBootstraps) {
         bsModels = bootstrapModels(x)
         nBootstraps = length(bsModels)
@@ -182,7 +259,7 @@ plotlm6 <-
             }
         }
     }
-    
+
     ## If we want to show all of the plots, assume "all" is the
     ## seventh plot
     showAllPlots = all(show)
@@ -190,7 +267,7 @@ plotlm6 <-
     ## Ensure par is not globally modified
     origpar = par(mfrow = c(1, 1))
     on.exit(par(origpar))
-    
+
     for (plotNum in 1:7) {
         if (showAllPlots & plotNum == 1) {
             ## We are showing all plots
@@ -208,7 +285,7 @@ plotlm6 <-
             showPlot[plotNum - 1] = show[plotNum - 1]
             par(mfrow = c(1, 1))
         }
-        
+
         if (showPlot[1]) {
             ylim <- range(r, na.rm = TRUE)
             if (id.n > 0)
@@ -216,7 +293,7 @@ plotlm6 <-
             dev.hold()
             plot(yh, r, xlab = l.fit, ylab = "Residuals", main = main,
                  ylim = ylim, ...)
-            
+
             if (showBootstraps) {
                 ## Draw bootstrap sample loess lines
                 for (i in 1:nBootstraps) {
@@ -230,7 +307,7 @@ plotlm6 <-
             sm = loess(r ~ yh)
             smOrd = order(sm$x)
             lines(sm$x[smOrd], sm$fitted[smOrd], col = smColour, lwd = 2)
-            
+
             if (one.fig)
                 title(sub = sub.caption, ...)
             mtext(getCaption(1), 3, 0.25, cex = cex.caption)
@@ -253,7 +330,7 @@ plotlm6 <-
             dev.hold()
             plot(yhn0, sqrtabsr, xlab = l.fit, ylab = yl, main = main,
                  ylim = ylim, ...)
-            
+
             if (showBootstraps) {
                 ## Draw bootstrap sample loess lines
                 for (i in 1:nBootstraps) {
@@ -293,14 +370,14 @@ plotlm6 <-
                              sqrt(1 - hiibs[[i]])), hiibs[[i]])
                 }
             }
-            
+
             ylim <- range(rsp, na.rm = TRUE)
             if (id.n > 0) {
                 ylim <- extendrange(r = ylim, f = 0.08)
                 show.rsp <- order(-cook)[iid]
             }
             do.plot <- TRUE
-            
+
             xx <- hii
             xx[xx >= 1] <- NA
             dev.hold()
@@ -322,7 +399,7 @@ plotlm6 <-
             sm = loess(rsp ~ xx)
             smOrd = order(sm$x)
             lines(sm$x[smOrd], sm$fitted[smOrd], col = smColour, lwd = 2)
-            
+
             if (one.fig)
                 title(sub = sub.caption, ...)
             if (length(cook.levels)) {
@@ -347,7 +424,7 @@ plotlm6 <-
                      tck = 0, cex.axis = cex.id, col.axis = 2)
             }
             dev.flush()
-            
+
             if (do.plot) {
                 mtext(getCaption(3), 3, 0.25, cex = cex.caption)
                 if (id.n > 0) {
@@ -408,7 +485,7 @@ plotlm6 <-
 
     if (!one.fig && par("oma")[3] >= 1)
         mtext(sub.caption, outer = TRUE, cex = 1.25)
-    
+
     invisible()
 }
 
@@ -437,7 +514,7 @@ normCheck <-
                                  "\n", "W = ", round(stest$statistic, 4),
                                  "\n", "P-value = ",
                                  round(stest$p.value, 3), sep = "")
-                    
+
                 }
                 else {
                     txt <- paste('Shapiro-Wilk normality test requires',
