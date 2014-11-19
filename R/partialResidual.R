@@ -8,14 +8,16 @@
 ##'
 ##' @param varname explanatory variable
 ##'
-##' @param showBootstraps logical. If there are more than than or equal to 30 and less than 4000 samples in the model, plot bootstrap smoothers, by default.
+##' @param showBootstraps logical. If there are more than than or
+##' equal to 30 and less than 4000 samples in the model, plot
+##' bootstrap smoothers, by default.
 ##'
 ##' @return None.
 ##'
 ##' @author David Banks, Tom Elliott.
 ##'
 ##' @seealso \code{\link{partialResPlot}}
-##' 
+##'
 ##' @export
 partialResPlot <-
     function(fit, varname,
@@ -103,6 +105,19 @@ partialResPlot <-
     }
 }
 
+##' This function draws partial residual plots for all continuous
+##' explanatory variables in a given model. Clicking the device
+##' displays the next plot in the sequence.
+##'
+##' @title Draw multiple partial residual plots
+##' 
+##' @inheritParams partialResPlot
+##'
+##' @return None.
+##'
+##' @author David Banks, Tom Elliott.
+##'
+##' @seealso \code{\link{partialResPlot}}
 allPartialResPlots <-
     function(fit, showBootstraps = nrow(fit$model) >= 30 & nrow(fit$model) < 4000) {
         promptSetting = devAskNewPage(TRUE)
