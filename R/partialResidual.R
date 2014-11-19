@@ -6,9 +6,9 @@
 ##'
 ##' @param fit an \code{lm}, \code{glm} or \code{svyglm} object.
 ##'
-##' @param varname
+##' @param varname explanatory variable
 ##'
-##' @param showBootstraps
+##' @param showBootstraps logical. If there are more than than or equal to 30 and less than 4000 samples in the model, plot bootstrap smoothers, by default.
 ##'
 ##' @return None.
 ##'

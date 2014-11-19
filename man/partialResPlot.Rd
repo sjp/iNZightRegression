@@ -9,9 +9,9 @@ partialResPlot(fit, varname, showBootstraps = nrow(fit$model) >= 30 &
 \arguments{
 \item{fit}{an \code{lm}, \code{glm} or \code{svyglm} object.}
 
-\item{varname}{}
+\item{varname}{explanatory variable}
 
-\item{showBootstraps}{}
+\item{showBootstraps}{logical. If there are more than than or equal to 30 and less than 4000 samples in the model, plot bootstrap smoothers, by default.}
 }
 \value{
 None.
