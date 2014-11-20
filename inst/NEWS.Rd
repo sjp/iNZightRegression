@@ -1,8 +1,8 @@
-\name{NEWS}
-\title{NEWS file for the iNZightRegression package}
+\name{Change Log}
+\title{Change Log for iNZightRegression}
 \encoding{UTF-8}
 
-\section{Changes in Version 1.1.3}{
+\section{Changes in version 1.1.3}{
   \subsection{BUG FIXES}{
     \itemize{
       \item on some graphics devices (eg. RStudio) grid.rect() is not
@@ -11,7 +11,7 @@
   }
 }
 
-\section{Changes in Version 1.1.2}{
+\section{Changes in version 1.1.2}{
   \subsection{MINOR CHANGES}{
     \itemize{
       \item Continuing on from previous update, the partial residual
@@ -47,8 +47,10 @@
   }
 
   \subsection{BUG FIXES}{
-    \item Shapiro Wilk test not used if sample size > 5000 (resulted in an
-    error).
+    \itemize{
+      \item Shapiro Wilk test not used if sample size > 5000 (resulted in an
+      error).
+    }
   }
 }
 
