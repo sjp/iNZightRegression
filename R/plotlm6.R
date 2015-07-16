@@ -67,6 +67,9 @@
 ##' @param showBootstraps logical, if \code{TRUE}, bootstrap loess smoothers are drawn in the
 ##' first 4 plots. By default, only drawn for sample sizes of at least 30.
 ##'
+##' @param use.inzightplots logical, if set to \code{TRUE}, the \code{\link{iNZightPlots}}
+##' package will be used for plotting, rather than base R graphics.
+##' 
 ##' @param ... other arguments to be passed to through to plotting functions.
 ##'
 ##' @author Simon Potter, David Banks, Tom Elliott. Original authors of
@@ -86,7 +89,7 @@ plotlm6 <-
              add.smooth = getOption("add.smooth"), label.pos = c(4, 2),
              cex.caption = 1,
              showBootstraps = nrow(x$model) >= 30 && nrow(x$model) < 4000,
-             use.inzightplots = TRUE, ...) {
+             use.inzightplots = FALSE, ...) {
 
 
         ## Use grid graphics from iNZightPlots if they're available.
