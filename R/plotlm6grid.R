@@ -262,7 +262,7 @@ plotlm6grid <- function(x, which = 1:6,
         upViewport()
     }
 
-    opts <- inzPlotDefaults()
+    opts <- inzpar()
     opts$cex.pt <- 0.4
     opts$cex.axis <- 0.7
     opts$col.pt <- "black"
