@@ -85,11 +85,12 @@ plotlm6 <-
              cex.id = 0.75, qqline = TRUE, cook.levels = c(0.5, 1),
              add.smooth = getOption("add.smooth"), label.pos = c(4, 2),
              cex.caption = 1,
-             showBootstraps = nrow(x$model) >= 30 && nrow(x$model) < 4000, ...) {
+             showBootstraps = nrow(x$model) >= 30 && nrow(x$model) < 4000,
+             use.inzightplots = TRUE, ...) {
 
 
         ## Use grid graphics from iNZightPlots if they're available.
-    if ("iNZightPlots" %in% installed.packages()) {
+    if ("iNZightPlots" %in% installed.packages() & user.inzightplots) {
         library(iNZightPlots)  # naughty, but oh well...
         plotlm6grid(x = x, which = which, panel = panel, sub.caption = sub.caption,
                     main = main, ask = ask, id.n = id.n, labels.id = labels.id,
