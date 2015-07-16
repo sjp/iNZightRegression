@@ -93,7 +93,7 @@ plotlm6 <-
 
 
         ## Use grid graphics from iNZightPlots if they're available.
-    if ("iNZightPlots" %in% installed.packages() & user.inzightplots) {
+    if ("iNZightPlots" %in% installed.packages() & use.inzightplots) {
         library(iNZightPlots)  # naughty, but oh well...
         plotlm6grid(x = x, which = which, panel = panel, sub.caption = sub.caption,
                     main = main, ask = ask, id.n = id.n, labels.id = labels.id,
