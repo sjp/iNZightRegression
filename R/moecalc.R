@@ -1,4 +1,6 @@
-##' ...
+##' Compute margin of error for a given model. The function accepts \code{lm},
+##' \code{glm} and \code{svyglm} objects, as well as \code{ses.moecalc} objects
+##' from the \code{iNZightMR} package.
 ##'
 ##' @title Margin of Error Calculations
 ##'
@@ -28,7 +30,8 @@
 ##' \code{ses.moecalc} produces an object of class \code{"ses.moecalc"}.
 ##'
 ##' @author Danny Chang, David Banks
-##' 
+##'
+##' @rdname moecalc
 ##' @export
 moecalc = function(x, factorname = NULL, levelnames = NULL, coef.idx = NULL,
                    est = NULL, ci = NULL, base = TRUE, basename = "base",
@@ -215,6 +218,8 @@ moecalc = function(x, factorname = NULL, levelnames = NULL, coef.idx = NULL,
   ret
 }
 
+
+##' @export
 print.moecalc = function(x, ...){
   obj <- x
   if(!is.null(obj$est)){
@@ -229,6 +234,8 @@ print.moecalc = function(x, ...){
 }
 
 
+##' @describeIn moecalc Obtain a summary of a margin of error calculation
+##' @export
 summary.moecalc = function(object, ...){
   obj <- object
   factorname = names(obj$xlevels)[1]
@@ -254,6 +261,7 @@ summary.moecalc = function(object, ...){
   x
 }
 
+##' @export
 print.summary.moecalc = function(x, ...){
   obj <- x
   if(!is.null(obj$modelcall)){
@@ -271,17 +279,19 @@ print.summary.moecalc = function(x, ...){
     warningConflict(obj$xlevels, obj$conflict)
 }
 
-## plot moecalc
-## x        : moecalc object
-## horiz    : horizontal plot or not
-## conf     : has confidence interval bar or not
-## xlevels  : factor name
 
-
-
+##' @param x \code{moecalc} object
+##' @param horiz logical, if \code{TRUE}, the plot will be horizontal
+##' @param xlevels factor name
+##' @param ... additional arguments
+##' @return \code{NULL}
+##' @author Tom Elliott
+##' @describeIn moecalc Plot an moecalc object
+##' @export
 plot.moecalc = function(x, horiz=FALSE, xlevels=NULL, ...){
 
   ## Disable confidence intervals for now
+  ## conf     : has confidence interval bar or not
   conf = FALSE
 
   obj <- x

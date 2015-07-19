@@ -118,6 +118,8 @@ partialResPlot <-
 ##' @author David Banks, Tom Elliott.
 ##'
 ##' @seealso \code{\link{partialResPlot}}
+##'
+##' @export
 allPartialResPlots <-
     function(fit, showBootstraps = nrow(fit$model) >= 30 & nrow(fit$model) < 4000) {
         promptSetting = devAskNewPage(TRUE)

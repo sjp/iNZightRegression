@@ -13,9 +13,6 @@
 ##' @param ... additional parameters to be passed to the function (currently
 ##' ignored).
 ##'
-##' @return A \code{multicomp} object, primarily for automatic pretty printing of
-##' the resulting matrix.
-##'
 ##' @author Simon Potter.
 ##' 
 ##' @export
@@ -23,6 +20,11 @@ multicomp <- function(x, ...) {
   UseMethod("multicomp")
 }
 
+##' @return A \code{multicomp} object, primarily for automatic pretty printing of
+##' the resulting matrix.
+##'
+##' @describeIn multicomp
+##' @export
 multicomp.moecalc <- function(x, ...) {
   if (! is.null(x$est)) {
     cols <- c("Estimate", "Lower", "Upper", "p-value (unadj.)")
@@ -55,6 +57,7 @@ multicomp.moecalc <- function(x, ...) {
   }
 }
 
+##' @export
 print.multicomp <- function(x, ...) {
   printCoefmat(x, P.values = TRUE, has.Pvalue = TRUE, ...)
   invisible(x)
