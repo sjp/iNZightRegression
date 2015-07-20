@@ -4,7 +4,7 @@
 \title{Draw multiple partial residual plots}
 \usage{
 partialResPlot(fit, varname, showBootstraps = nrow(fit$model) >= 30 &
-  nrow(fit$model) < 4000)
+  nrow(fit$model) < 4000, use.inzightplots = FALSE)
 }
 \arguments{
 \item{fit}{an \code{lm}, \code{glm} or \code{svyglm} object.}
@@ -14,6 +14,9 @@ partialResPlot(fit, varname, showBootstraps = nrow(fit$model) >= 30 &
 \item{showBootstraps}{logical. If there are more than than or
 equal to 30 and less than 4000 samples in the model, plot
 bootstrap smoothers, by default.}
+
+\item{use.inzightplots}{logical, if \code{TRUE}, the iNZightPlots package will be used for
+plotting.}
 }
 \value{
 None.

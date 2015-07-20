@@ -12,6 +12,9 @@
 ##' equal to 30 and less than 4000 samples in the model, plot
 ##' bootstrap smoothers, by default.
 ##'
+##' @param use.inzightplots logical, if \code{TRUE}, the iNZightPlots package will be used for
+##' plotting.
+##' 
 ##' @return None.
 ##'
 ##' @author David Banks, Tom Elliott.
@@ -21,10 +24,11 @@
 ##' @export
 partialResPlot <-
     function(fit, varname,
-             showBootstraps = nrow(fit$model) >= 30 & nrow(fit$model) < 4000) {
+             showBootstraps = nrow(fit$model) >= 30 & nrow(fit$model) < 4000,
+             use.inzightplots = FALSE) {
 
   # if iNZightPlots is available, use it for plotting:
-    if (inzplots <- "iNZightPlots" %in% installed.packages())
+    if (inzplots <- "iNZightPlots" %in% installed.packages() & use.inzightplots)
         library(iNZightPlots)
 
 
