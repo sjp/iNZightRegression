@@ -91,8 +91,13 @@ plotlm6 <-
              showBootstraps = nrow(x$model) >= 30 && nrow(x$model) < 4000,
              use.inzightplots = FALSE, ...) {
 
+    
+    ## disable bootstraps for survey designs:
+    if (inherits(x, "glm"))
+        showBootstraps <- FALSE
+        
 
-        ## Use grid graphics from iNZightPlots if they're available.
+    ## Use grid graphics from iNZightPlots if they're available.
     if ("iNZightPlots" %in% installed.packages() & use.inzightplots) {
         library(iNZightPlots)  # naughty, but oh well...
         plotlm6grid(x = x, which = which, panel = panel, sub.caption = sub.caption,
