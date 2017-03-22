@@ -69,14 +69,14 @@
 ##'
 ##' @param use.inzightplots logical, if set to \code{TRUE}, the \code{\link{iNZightPlots}}
 ##' package will be used for plotting, rather than base R graphics.
-##' 
+##'
 ##' @param ... other arguments to be passed to through to plotting functions.
 ##'
 ##' @author Simon Potter, David Banks, Tom Elliott. Original authors of
 ##' \code{plot.lm} are John Maindonald and Martin Maechler.
 ##'
 ##' @seealso \code{\link{histogramArray}}, \code{\link{iNZightQQplot}}
-##' 
+##'
 ##' @export
 plotlm6 <-
     function(x, which = 1:6,
@@ -91,11 +91,11 @@ plotlm6 <-
              showBootstraps = nrow(x$model) >= 30 && nrow(x$model) < 4000,
              use.inzightplots = FALSE, ...) {
 
-    
+
     ## disable bootstraps for survey designs:
     if (inherits(x, "glm"))
         showBootstraps <- FALSE
-        
+
 
     ## Use grid graphics from iNZightPlots if they're available.
     if ("iNZightPlots" %in% installed.packages() & use.inzightplots) {
