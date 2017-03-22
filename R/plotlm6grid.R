@@ -1,3 +1,5 @@
+##' @import grid
+##' @export
 plotlm6grid <- function(x, which = 1:6,
                         panel = if (add.smooth) panel.smooth
                         else points, sub.caption = NULL,
@@ -8,7 +10,7 @@ plotlm6grid <- function(x, which = 1:6,
                         add.smooth = getOption("add.smooth"), label.pos = c(2, 4),
                         cex.caption = 1,
                         showBootstraps = nrow(x$model) >= 30 && nrow(x$model) < 4000, ...) {
-    
+
   # This is a grid-graphics implementation of the summary plots, however is only
   # invoked when the iNZightPlots package is present. This means users can still
   # use iNZightRegression as a completely standalone package, but the version used
@@ -16,7 +18,7 @@ plotlm6grid <- function(x, which = 1:6,
 
     smColour = "orangered"      # colour of data loess line
     bsmColour = "lightgreen"    # colour of bootstrap loess lines
-    
+
     dropInf <- function(x, h) {
         if (any(isInf <- h >= 1)) {
             warning("Not plotting observations with leverage one:\n  ",
@@ -27,10 +29,10 @@ plotlm6grid <- function(x, which = 1:6,
     }
     if (!inherits(x, "lm"))
         stop("use only with \"lm\" objects")
-    
+
     if (!is.numeric(which) || any(which < 1) || any(which > 7))
         stop("'which' must be in 1:7")
-    
+
     ## Are we only showing the summary plot?
     if (7 %in% which) {
         onlyShowAll <- TRUE
@@ -102,12 +104,12 @@ plotlm6grid <- function(x, which = 1:6,
                                                        gp =
                                                      gpar(cex = cex.id / sqrt(nrow * ncol)))),
                                   "native", TRUE) * 0.5)
-            
+
             grid.text(labels.id[ind], x, y, default.units = "native",
                       just = "center", gp = gpar(cex = cex.id / sqrt(nrow * ncol)))
         }
     }
-    
+
     caption = list("Residuals vs Fitted", "Scale-Location",
                    "Residuals vs Leverage","Cook's distance",
                    "Normal Q-Q", "Histogram")
@@ -184,7 +186,7 @@ plotlm6grid <- function(x, which = 1:6,
     showAllPlots = all(show)
 
   # Start setting up the graphics window:
-    
+
     N <- length(which)  # if which = 7, then which -> 1:6 -> length = 6
   # layout dimensions
     if (!showAllPlots) {
@@ -207,7 +209,7 @@ plotlm6grid <- function(x, which = 1:6,
                               name = "titleVP"))
         pushViewport(viewport(layout.pos.row = 2))
         grid.text(sub.caption, gp = gpar(cex = 0.8))
-        
+
         seekViewport("titleVP")
         pushViewport(viewport(layout.pos.row = 1))
         main.layout <- if (showAllPlots) grid.layout(nrow, ncol) else grid.layout(1, 1)
@@ -279,7 +281,7 @@ plotlm6grid <- function(x, which = 1:6,
     if (1 %in% which) {
         if (showAllPlots) nextVP(plotID, nrow, ncol) else newPlot(plotID)
         dev.hold()
-        
+
         pushViewport(viewport(layout.pos.row = 2, layout.pos.col = 2))
         ylim <- getLim(r)
         if (id.n > 0)
@@ -321,11 +323,11 @@ plotlm6grid <- function(x, which = 1:6,
         ## Label extreme points
         if (id.n > 0)
             text.id(yh[show.r], r[show.r], show.r, adj.x = TRUE)
-        
+
         grid.rect(gp = gpar(fill = "transparent"))
         popViewport()
         seekViewport(paste("VP", plotID, sep = "-"))
-        
+
         drawLabs(xlab = l.fit, ylab = "Residuals", main = getCaption(1))
         dev.flush()
 
@@ -384,11 +386,11 @@ plotlm6grid <- function(x, which = 1:6,
         ## Label extreme points
         if (id.n > 0)
             text.id(yhn0[show.rs], sqrtabsr[show.rs], show.rs)
-        
+
         grid.rect(gp = gpar(fill = "transparent"))
         popViewport()
         seekViewport(paste("VP", plotID, sep = "-"))
-        
+
         drawLabs(xlab = l.fit, ylab = yl, main = getCaption(2))
         dev.flush()
 
@@ -422,7 +424,7 @@ plotlm6grid <- function(x, which = 1:6,
         xx <- hii
         xx[xx >= 1] <- NA
         xlim <- getLim(c(0, max(xx, na.rm = TRUE)))
-        
+
         iNZightPlots:::iNZscatterplot(xx, rsp, layout = scatter.layout,
                                       xlim = xlim, ylim = ylim,
                                       axis = c(2, 2, 0, 0),
@@ -440,7 +442,7 @@ plotlm6grid <- function(x, which = 1:6,
 
                 xxbs <- hiibs[[i]]
                 xxbs[xxbs >= 1] <- NA
-                
+
                 if (opts$largesample) {
                     iNZightPlots:::addQuantileSmoother(xxbs, rspbs[[i]],
                                                        0.5, bsmColour, 1, 2)
@@ -477,7 +479,7 @@ plotlm6grid <- function(x, which = 1:6,
             }
 #            legend("bottomleft", legend = "Cook's distance",
 #                   lty = 2, col = 2, bty = "n")
-            
+
             xmax <- min(0.99, usr)
             ymult <- sqrt(p * (1 - xmax) / xmax)
 
@@ -488,7 +490,7 @@ plotlm6grid <- function(x, which = 1:6,
             if (length(aty)) {
                 labs <- paste(c(rev(cook.levels), cook.levels))
                 labs <- labs[waxs]
-            
+
                 cvp <- current.viewport()
                 pushViewport(viewport(clip = "off",
                                       xscale = cvp$xscale, yscale = cvp$yscale))
@@ -496,7 +498,7 @@ plotlm6grid <- function(x, which = 1:6,
                            gp = gpar(lwd = 0, cex = cex.id / 2, col = "red"))
             }
         }
-        
+
         ## Label extreme points
         if (do.plot) {
             if (id.n > 0)
@@ -506,7 +508,7 @@ plotlm6grid <- function(x, which = 1:6,
         grid.rect(gp = gpar(fill = "transparent"))
         popViewport()
         seekViewport(paste("VP", plotID, sep = "-"))
-        
+
         drawLabs(xlab = "Leverage", ylab = "Standardized", main = getCaption(3))
         dev.flush()
 
@@ -540,10 +542,10 @@ plotlm6grid <- function(x, which = 1:6,
                                               gp = gpar(cex = cex.id / sqrt(nrow * ncol)))),
                           "native", TRUE)
         text.id(show.mx, yy, show.mx, adj.x = FALSE)
-        
+
         grid.rect(gp = gpar(fill = "transparent"))
         seekViewport(paste("VP", plotID, sep = "-"))
-        
+
         drawLabs(xlab = "Observation Number", ylab = "Cook's Distance",
                  main = getCaption(3))
         dev.flush()
@@ -588,7 +590,7 @@ plotlm6grid <- function(x, which = 1:6,
                                                  gp =
                                                  gpar(cex = cex.id / sqrt(nrow * ncol)))),
                               "native", TRUE) * 0.5)
-            
+
             text.id(xx, qq$y[show.rs], show.rs, adj.x = FALSE)
         }
 
@@ -600,19 +602,19 @@ plotlm6grid <- function(x, which = 1:6,
                 p.val <- "< 0.001"
             else
                 p.val <- paste("=", p.val)
-            
+
             txt <- paste("Shapiro-Wilk Normality Test:", "\n", "W = ",
                          round(stest$statistic, 4), "\n", "P-value ",
                          p.val, sep = "")
-            
+
             grid.text(txt, x = 0.1, y = 0.9,
                       gp = gpar(cex = 1 / sqrt(nrow * ncol)), just = "left")
         }
-        
+
         grid.rect(gp = gpar(fill = "transparent"))
         popViewport()
         seekViewport(paste("VP", plotID, sep = "-"))
-        
+
         drawLabs(xlab = "Theoretical Quantiles", ylab = "Observed Quantiles",
                  main = getCaption(5))
         dev.flush()
@@ -627,7 +629,7 @@ plotlm6grid <- function(x, which = 1:6,
         dev.hold()
 
         pushViewport(viewport(layout.pos.row = 2, layout.pos.col = 2))
-        
+
         h <- hist(r, plot = FALSE)
         xlab <- "Residuals"
         mx <- mean(r)
@@ -644,7 +646,7 @@ plotlm6grid <- function(x, which = 1:6,
 
         xx <- h$breaks
         yy <- h$density
-        
+
       # Need to make a vector of points for corners of polygons
         wx <- diff(xx)[1] / 2
         x.mid <- xx[-length(xx)] + wx
@@ -659,12 +661,12 @@ plotlm6grid <- function(x, which = 1:6,
         xc <- seq(xmin, xmax, length = 101)
         yc <- dnorm(xc, mx, sx)
         grid.lines(xc, yc, default.unit = "native",
-                   gp = gpar(lwd = 1.5, lty = 3))        
-        
+                   gp = gpar(lwd = 1.5, lty = 3))
+
         grid.rect(gp = gpar(fill = "transparent"))
         popViewport()
         seekViewport(paste("VP", plotID, sep = "-"))
-        
+
         drawLabs(xlab = "Residuals", ylab = "Density",
                  main = getCaption(6))
         dev.flush()

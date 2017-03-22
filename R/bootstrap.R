@@ -1,7 +1,7 @@
 bootstrapModels <- function(fit, nBootstraps = 30) {
     if (isSurvey(fit))
         warning('Bootstrapping for survey glms is still under development.')
-    
+
   # Variables for adding bootstrap lowess lines
     nr = nrow(fit$model)
     modifiedCall <- modifyModelCall(fit)
@@ -13,14 +13,14 @@ bootstrapModels <- function(fit, nBootstraps = 30) {
                 bootstrapSample <- bootstrapData(fit, bootstrapID[, i])
                 mod <- suppressWarnings(eval(modifiedCall))
                 if (isGlm(fit)) {
-                    if (mod$conv) 
+                    if (mod$conv)
                         conv <- TRUE
-                } else 
+                } else
                 conv <- TRUE
             }
             mod
         }))
-    
+
     invisible(listOfModels)
 }
 
@@ -28,6 +28,7 @@ bootstrapData <- function(fit, id)
     UseMethod("bootstrapData")
 
 bootstrapData.lm <- function(fit, id) {
+    return(fit$model[id, ])
     ## Try just use the data set in the R session ...
     call <- fit$call
     callValues <- as.character(call)
@@ -43,7 +44,7 @@ bootstrapData.glm <- function(fit, id) {
     callNames <- names(call)
     dataName <-callValues[callNames == 'data']
     bsData <- eval(parse(text = dataName))
-    
+
     if (grepl('/', colnames(fit$model)[1])) {
       # In this case, resample the number of successes
         mod <- fit$model
@@ -51,7 +52,7 @@ bootstrapData.glm <- function(fit, id) {
         y <- bsData[, response[1]]
         n <- bsData[, response[2]]
         p <- ifelse(n == 0, 0, y / n)
-        
+
         bsData[, response[1]] <- rbinom(nrow(bsData), n, p)
     } else {
       # otherwise, simply resample the data
@@ -65,7 +66,7 @@ bootstrapData.svyglm <- function(fit, id) {
   # To do: account for sample design when doing bootstrap resample.
 
   # Returns a bootstrapped survey design object
-    
+
   # First, get the survey design name, then the dataset name:
     call <- fit$call
     callValues <- as.character(call)
@@ -80,7 +81,7 @@ bootstrapData.svyglm <- function(fit, id) {
 
   # Rebuild design call with new data:
     bsData <- eval(parse(text = dataName))[id, ]
-    
+
     o <- !descallNames %in% c('', 'data')
     other <- paste(descallNames[o], ' = ', descallValues[o], ', ',
                    sep = '', collapse = '')

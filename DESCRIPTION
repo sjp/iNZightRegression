@@ -20,3 +20,4 @@ Suggests:
 Description: Core functions for iNZight Model Fitting module, and can also be
     used as a standalone package called directly from R.
 License: GPL-2
+RoxygenNote: 5.0.1
