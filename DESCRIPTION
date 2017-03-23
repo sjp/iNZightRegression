@@ -1,8 +1,8 @@
 Package: iNZightRegression
 Type: Package
 Title: iNZightRegression
-Version: 1.1.5
-Date: 2017-01-09
+Version: 1.1.6
+Date: 2017-03-23
 Authors@R: c(person("Simon", "Potter", role = c("aut"),
     email = "spot023@aucklanduni.ac.nz"),
     person("David", "Banks", role = "aut"),
