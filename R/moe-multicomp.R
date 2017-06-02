@@ -23,7 +23,7 @@ multicomp <- function(x, ...) {
 ##' @return A \code{multicomp} object, primarily for automatic pretty printing of
 ##' the resulting matrix.
 ##'
-##' @describeIn multicomp
+##' @describeIn multicomp description needs to be added
 ##' @export
 multicomp.moecalc <- function(x, ...) {
   if (! is.null(x$est)) {

@@ -2,15 +2,22 @@
 % Please edit documentation in R/moe-multicomp.R
 \name{multicomp}
 \alias{multicomp}
+\alias{multicomp.moecalc}
 \title{Multiple Comparisons Between Factor Levels}
 \usage{
 multicomp(x, ...)
+
+\method{multicomp}{moecalc}(x, ...)
 }
 \arguments{
 \item{x}{an \code{moecalc} object.}
 
 \item{...}{additional parameters to be passed to the function (currently
 ignored).}
+}
+\value{
+A \code{multicomp} object, primarily for automatic pretty printing of
+the resulting matrix.
 }
 \description{
 This is a method for \code{moecalc} objects. Most other \code{moecalc}
@@ -21,6 +28,10 @@ non-baseline levels of a factor.
 Currently the p-values are not adjusted. As a result, more comparisons
 are likely to be significantly different when they shouldn't be.
 }
+\section{Methods (by class)}{
+\itemize{
+\item \code{moecalc}: description needs to be added
+}}
 \author{
 Simon Potter.
 }
