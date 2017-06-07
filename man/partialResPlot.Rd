@@ -27,10 +27,9 @@ This function draws partial residual plots for all continuous
 explanatory variables in a given model. Clicking the device
 displays the next plot in the sequence.
 }
-\author{
-David Banks, Tom Elliott.
-}
 \seealso{
 \code{\link{partialResPlot}}
 }
-
+\author{
+David Banks, Tom Elliott.
+}

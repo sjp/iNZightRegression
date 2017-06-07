@@ -45,7 +45,7 @@ histogramArray <- function(x, n = 7) {
 
     layout <- grid.layout(nrow = nRows + 2, ncol = nCols + 2,
                           widths = unit.c(wl, wp, wr),
-                          height = unit.c(ht, hp, hb))
+                          heights = unit.c(ht, hp, hb))
 
     r <- residuals(x)
     h <- hist(r, plot = FALSE)
@@ -125,7 +125,7 @@ histogramArray <- function(x, n = 7) {
                   height = yy[b],
                   default.units = "native",
                   just = c("left", "bottom"),
-                  gp = gpar(fill = hcl(240, 80, 80)))
+                  gp = gpar(fill = grDevices::hcl(240, 80, 80)))
     }
     grid.yaxis(gp = gpar(cex = 0.8))
 
@@ -167,7 +167,7 @@ histogramArray <- function(x, n = 7) {
                       height = yy[b],
                       default.units = "native",
                       just = c("left", "bottom"),
-                      gp = gpar(fill = hcl(0, 80, 80)))
+                      gp = gpar(fill = grDevices::hcl(0, 80, 80)))
         }
 
         grid.lines(x1, y1, default.units = "native",

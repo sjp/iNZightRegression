@@ -26,10 +26,9 @@ normal residual standard errors have standard error equal to the
 estimated residual standard error of \code{x}. A model is then fitted
 to this altered data and a histogram is produced.
 }
-\author{
-David Banks
-}
 \seealso{
 \code{\link{iNZightQQplot}}
 }
-
+\author{
+David Banks
+}

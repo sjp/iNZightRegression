@@ -71,9 +71,6 @@ The fitted model currently requires that the data are stored in a
 dataframe, which is pointed at by the \code{data} argument to
 \code{lm} (or equivalent).
 }
-\author{
-Simon Potter, Tom Elliott.
-}
 \seealso{
 The model fitting functions \code{\link{lm}}, \code{\link{glm}}, and
 \code{\link{summary}}.
@@ -86,4 +83,6 @@ with standard errors, t-statistics and p-values.
 To calculate p-values for factors, use \code{\link[car]{Anova}} with
 type III sums of squares.
 }
-
+\author{
+Simon Potter, Tom Elliott.
+}

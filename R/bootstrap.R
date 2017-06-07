@@ -95,11 +95,11 @@ bootstrapData.svyglm <- function(fit, id) {
 modifyModelCall <- function(fit) {
     if (isSurvey(fit)) {
         modifiedCall <- update(fit, . ~ .,
-                               design = bootstrapSample,
+                               design = eval(parse(text = "bootstrapSample")),
                                evaluate = FALSE)
     } else {
         modifiedCall <- update(fit, . ~ .,
-                               data = bootstrapSample,
+                               data = eval(parse(text = "bootstrapSample")),
                                evaluate = FALSE)
     }
 

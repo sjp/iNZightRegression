@@ -2,8 +2,8 @@
 % Please edit documentation in R/moecalc.R
 \name{moecalc}
 \alias{moecalc}
-\alias{plot.moecalc}
 \alias{summary.moecalc}
+\alias{plot.moecalc}
 \title{Margin of Error Calculations}
 \usage{
 moecalc(x, factorname = NULL, levelnames = NULL, coef.idx = NULL,
@@ -35,21 +35,19 @@ moecalc(x, factorname = NULL, levelnames = NULL, coef.idx = NULL,
 
 \item{conf.level}{confidence level for both error bars and confidence intervals.}
 
+\item{object}{an object of class moecalc}
+
 \item{...}{additional arguments}
 
 \item{horiz}{logical, if \code{TRUE}, the plot will be horizontal}
 
 \item{xlevels}{factor name}
-
-\item{x}{\code{moecalc} object}
 }
 \value{
 An \code{moecalc} object, which has the following methods:
 \code{plot}, \code{print}, and \code{summary}.
 
 \code{ses.moecalc} produces an object of class \code{"ses.moecalc"}.
-
-\code{NULL}
 }
 \description{
 Compute margin of error for a given model. The function accepts \code{lm},
@@ -62,9 +60,7 @@ from the \code{iNZightMR} package.
 
 \item \code{plot}: Plot an moecalc object
 }}
+
 \author{
 Danny Chang, David Banks
-
-Tom Elliott
 }
-

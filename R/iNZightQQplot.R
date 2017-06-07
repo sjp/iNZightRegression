@@ -24,7 +24,7 @@
 ##'
 ##' @examples fit <- lm(Volume ~ Height + Girth, data = trees)
 ##' iNZightQQplot(fit)
-##' 
+##'
 ##' @export
 iNZightQQplot <- function(x, n = 5) {
 
@@ -108,5 +108,3 @@ iNZightQQplot <- function(x, n = 5) {
            pch = c(1, 4), pt.cex = 0.8, col = "black",
            bty = "n")
 }
-
-

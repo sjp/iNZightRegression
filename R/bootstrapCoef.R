@@ -1,31 +1,31 @@
 bootstrapCoefs = function(fit, N = 1000) {
     ## list of N models
     models = bootstrapModels(fit, N)
-    
+
     ## names/types of explanatory variables
     xVarterms = attr(fit$terms, "term.labels")
     xVarnames = xVarterms[ ! grepl(":", xVarterms)]
     xVartypes = attr(fit$terms, "dataClasses")[-1]
-    
+
     ## Coefficients of original model
     fitCoefs = coef(fit)
     coefNames = names(fitCoefs)
     nCoefs = length(fitCoefs)
-    
+
     ## a matrix to fill in using coefficients of N bootstrap models
     coefmatrix = matrix(0, nrow = N, ncol = nCoefs)
-    
+
     ## Initialise counter for number of retained samples
     keptSamples = 0
     ## Debugging
     errors = character(0)
-    
+
     for (i in 1:N) {
         ## Coefficients of current bootstrap model
         bootCoefs = coef(models[[i]])
         baselinePresent = TRUE
         newCoefs = bootCoefs
-        
+
         ## Run through the factors in the model
         for (j in seq_along(xVarnames)) {
             if (xVartypes[j] == "factor") {
@@ -37,7 +37,7 @@ bootstrapCoefs = function(fit, N = 1000) {
                 ## Levels present in the current bootstrap model
                 presentLevels = as.character(unique(models[[i]]$model[,facName]))
                 nLevels = length(presentLevels)
-                
+
                 ## Is the original baseline present in the bootstrap model
                 baselinePresent = baseline %in% presentLevels
                 ## If not, store a message and skip to next model
@@ -47,7 +47,7 @@ bootstrapCoefs = function(fit, N = 1000) {
                                              facName, "in sample", i))
                     break
                 }
-                
+
                 ## If some non-baseline level(s) are missing...
                 if (nLevels != length(levels(fit$model[,facName]))) {
                     ## Which levels are missing
@@ -89,7 +89,7 @@ bootstrapCoefs = function(fit, N = 1000) {
         names(seCoefs) = coefNames
         naNames = character()
     }
-    
+
     list(fit = fit, seCoef = seCoefs, covCoef = covCoef, N = N,
          keptSamples = keptSamples, errors = errors, naNames = naNames)
 }
@@ -108,10 +108,10 @@ bootstrapTTests = function(bootcoefs, N = 1000) {
     } else {
         sfcoef = sf$coefficients
     }
-    
+
     tValues = sfcoef[,1] / bootcoefs$seCoef
     pValues = 2 * pt(-abs(tValues), df = fit$df.residual)
-    
+
     list(t = tValues, p = pValues)
 }
 
@@ -121,12 +121,12 @@ bootstrapFTests = function(bootcoefs, N = 1000) {
     coefNames = names(coef(fit))
     ## Names of terms (different to variables) in the model
     xVarterms = attr(fit$terms, "term.labels")
-    
+
     ## Names of variables in the model
     xVarnames = xVarterms[ ! grepl(":", xVarterms)]
-    
+
     ## Types of terms in the model
-    xVartypes = character(0)  
+    xVartypes = character(0)
     tmp = attr(fit$terms, "dataClasses")[-1]
     noninteractions = names(tmp)
     interactions = xVarterms[grepl(":", xVarterms)]
@@ -134,22 +134,22 @@ bootstrapFTests = function(bootcoefs, N = 1000) {
     xVartypes[interactions] = "interaction"
     ## Ordered factors can be treated as normal factors
     xVartypes = gsub("ordered", "factor", xVartypes)
-    
+
     covCoef = bootcoefs$covCoef
     Fvals = Pvals = numeric(0)
-    
+
     ## Records names of terms where F values can be calculated but are
     ## not meaningful.
     setToNA = character(0)
-    
+
     ## Loop through the variables to find factors and calculate p values
-    index = 2   # start at 2, since intercept is at 1   
+    index = 2   # start at 2, since intercept is at 1
     for (v in xVarterms) {
         if ( ! xVartypes[v] %in% c("factor", "interaction")) {
             index = index + 1
             next
         }
-        
+
         ## Calculate umber of coefficients we need to extract
         if (xVartypes[v] == "factor") {
             n = length(levels(fit$model[,v])) - 1
@@ -174,21 +174,21 @@ bootstrapFTests = function(bootcoefs, N = 1000) {
             numerDf = length(coefBlock)
             ## F statistic & P-value
             Fvals[v] = t(coefBlock) %*% solve(covBlock) %*% coefBlock / numerDf
-            Pvals[v] = 1 - pf(Fvals[v], numerDf, fit$df.residual) 
+            Pvals[v] = 1 - pf(Fvals[v], numerDf, fit$df.residual)
             index = index + n
         }
-        
+
         ## If there are missing combinations of factor levels (hence NA interaction
         ## coefficients), F tests for main effects not meaningful. Keep a record of
         ## these terms so we can set to NA later.
         if (xVartypes[v] == "interaction" && is.na(Fvals[v]))
           setToNA = c(setToNA, vars)
     }
-    
+
     ## Set unmeaningful F values to NA
     Fvals[setToNA] = NA
     Pvals[setToNA] = NA
-    
+
     list(Fvals = Fvals, Pvals = Pvals)
 }
 
@@ -207,7 +207,3 @@ reorderFactors = function(dataset, factorNames = "all") {
     }
     invisible(dataset)
 }
-    
-
-    
-    
