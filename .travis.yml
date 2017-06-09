@@ -11,3 +11,8 @@ r:
 
 repos:
   docker: http://r.docker.stat.auckland.ac.nz/R
+
+addons:
+  apt:
+    packages:
+      - r-cran-car
