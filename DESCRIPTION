@@ -17,8 +17,6 @@ Imports:
     grid,
     car
 Suggests:
-    iNZight,
-    s20x,
     iNZightPlots
 Description: Core functions for iNZight Model Fitting module, and can also be
     used as a standalone package called directly from R.
