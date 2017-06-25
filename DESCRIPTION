@@ -19,5 +19,5 @@ Suggests:
     iNZightPlots
 Description: Core functions for iNZight Model Fitting module, and can also be
     used as a standalone package called directly from R.
-License: GPL-2
+License: GPL-3 | file LICENSE
 RoxygenNote: 5.0.1
