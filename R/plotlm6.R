@@ -463,7 +463,7 @@ plotlm6 <-
             if (one.fig)
                 title(sub = sub.caption, ...)
             mtext(getCaption(5), 3, 0.25, cex = cex.caption)
-            print(show.rs)
+            # print(show.rs)
             if (id.n > 0)
                 text.id(qq$x[show.rs], qq$y[show.rs], show.rs)
             dev.flush()
