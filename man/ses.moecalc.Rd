@@ -19,10 +19,9 @@ Constructs a standard error object, consisting of standard errors and
 a difference matrix. Used in margin of error calculations, see
 \code{\link{moecalc}}.
 }
-\author{
-David Banks.
-}
 \seealso{
 \code{\link{moecalc}}, \code{\link{multicomp}}
 }
-
+\author{
+David Banks.
+}

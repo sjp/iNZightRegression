@@ -14,7 +14,7 @@
 ##'
 ##' @param use.inzightplots logical, if \code{TRUE}, the iNZightPlots package will be used for
 ##' plotting.
-##' 
+##'
 ##' @return None.
 ##'
 ##' @author David Banks, Tom Elliott.
@@ -28,8 +28,7 @@ partialResPlot <-
              use.inzightplots = FALSE) {
 
   # if iNZightPlots is available, use it for plotting:
-    if (inzplots <- "iNZightPlots" %in% installed.packages() & use.inzightplots)
-        library(iNZightPlots)
+    inzplots <- use.inzightplots && requireNamespace("iNZightPlots", TRUE)
 
 
     xVarterms = attr(fit$terms, "term.labels")
@@ -52,7 +51,7 @@ partialResPlot <-
 
     ## Plot the data points
     if (inzplots) {
-        iNZightPlot(Xi, Yi, xlab = varname, ylab = ylab,
+        iNZightPlots::iNZightPlot(Xi, Yi, xlab = varname, ylab = ylab,
                     main = main, cex.pt = 0.6)
         ovp <- current.viewport()
         pushViewport(viewport(xscale = ovp$xscale, yscale = ovp$yscale,
@@ -114,7 +113,7 @@ partialResPlot <-
 ##' displays the next plot in the sequence.
 ##'
 ##' @title Draw multiple partial residual plots
-##' 
+##'
 ##' @inheritParams partialResPlot
 ##'
 ##' @return None.
@@ -126,12 +125,12 @@ partialResPlot <-
 ##' @export
 allPartialResPlots <-
     function(fit, showBootstraps = nrow(fit$model) >= 30 & nrow(fit$model) < 4000) {
-        promptSetting = devAskNewPage(TRUE)
+        promptSetting = grDevices::devAskNewPage(TRUE)
         xVarterms = attr(fit$terms, "term.labels")
         xVarnames = xVarterms[ ! grepl(":", xVarterms)]
         xVartypes = attr(fit$terms, "dataClasses")
         for (v in xVarnames)
             if (! xVartypes[v] %in% c("factor", "ordered"))
                 partialResPlot(fit, v, showBootstraps = showBootstraps)
-        devAskNewPage(promptSetting)
+        grDevices::devAskNewPage(promptSetting)
 }

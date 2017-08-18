@@ -61,7 +61,7 @@ respectively, for plots 1--3.}
 \item{showBootstraps}{logical, if \code{TRUE}, bootstrap loess smoothers are drawn in the
 first 4 plots. By default, only drawn for sample sizes of at least 30.}
 
-\item{use.inzightplots}{logical, if set to \code{TRUE}, the \code{\link{iNZightPlots}}
+\item{use.inzightplots}{logical, if set to \code{TRUE}, the iNZightPlots
 package will be used for plotting, rather than base R graphics.}
 
 \item{...}{other arguments to be passed to through to plotting functions.}
@@ -87,11 +87,10 @@ Scale-Location plot.
 The Normal Q-Q and histogram plots are taken from the \code{normcheck}
 function in the \code{s20x} package.
 }
+\seealso{
+\code{\link{histogramArray}}, \code{\link{iNZightQQplot}}
+}
 \author{
 Simon Potter, David Banks, Tom Elliott. Original authors of
 \code{plot.lm} are John Maindonald and Martin Maechler.
 }
-\seealso{
-\code{\link{histogramArray}}, \code{\link{iNZightQQplot}}
-}
-

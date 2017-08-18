@@ -21,4 +21,3 @@ License: \tab GPL-2\cr
 \author{
 Simon Potter, David Banks, Tom Elliott.
 }
-

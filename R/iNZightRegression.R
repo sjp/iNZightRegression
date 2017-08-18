@@ -14,6 +14,8 @@
 ##' @author Simon Potter, David Banks, Tom Elliott.
 ##'
 ##' @docType package
+##' 
+##' @import stats graphics grDevices
 ##'
 ##' @name iNZightRegression
 NULL

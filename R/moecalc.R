@@ -32,7 +32,6 @@
 ##' @author Danny Chang, David Banks
 ##'
 ##' @rdname moecalc
-##' @export
 moecalc = function(x, factorname = NULL, levelnames = NULL, coef.idx = NULL,
                    est = NULL, ci = NULL, base = TRUE, basename = "base",
                    conf.level = 1.96){
@@ -235,6 +234,7 @@ print.moecalc = function(x, ...){
 
 
 ##' @describeIn moecalc Obtain a summary of a margin of error calculation
+##' @param object an object of class moecalc
 ##' @export
 summary.moecalc = function(object, ...){
   obj <- object
@@ -280,13 +280,10 @@ print.summary.moecalc = function(x, ...){
 }
 
 
-##' @param x \code{moecalc} object
+##' @describeIn moecalc Plot an moecalc object
 ##' @param horiz logical, if \code{TRUE}, the plot will be horizontal
 ##' @param xlevels factor name
 ##' @param ... additional arguments
-##' @return \code{NULL}
-##' @author Tom Elliott
-##' @describeIn moecalc Plot an moecalc object
 ##' @export
 plot.moecalc = function(x, horiz=FALSE, xlevels=NULL, ...){
 

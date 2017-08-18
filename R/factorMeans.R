@@ -1,4 +1,3 @@
-
 factorMeans = function(fit) {
   varTypes = attr(fit$terms, "dataClasses")
   isFactor = varTypes %in% c("factor", "ordered")
@@ -118,4 +117,3 @@ adjustedMeans = function(fit) {
       cat('There are no factors in this model.\n')
   }
 }
-

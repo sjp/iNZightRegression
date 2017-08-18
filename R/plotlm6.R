@@ -67,7 +67,7 @@
 ##' @param showBootstraps logical, if \code{TRUE}, bootstrap loess smoothers are drawn in the
 ##' first 4 plots. By default, only drawn for sample sizes of at least 30.
 ##'
-##' @param use.inzightplots logical, if set to \code{TRUE}, the \code{\link{iNZightPlots}}
+##' @param use.inzightplots logical, if set to \code{TRUE}, the iNZightPlots
 ##' package will be used for plotting, rather than base R graphics.
 ##'
 ##' @param ... other arguments to be passed to through to plotting functions.
@@ -98,11 +98,10 @@ plotlm6 <-
 
 
     ## Use grid graphics from iNZightPlots if they're available.
-    if ("iNZightPlots" %in% installed.packages() & use.inzightplots) {
-        library(iNZightPlots)  # naughty, but oh well...
+    if (FALSE && use.inzightplots && requireNamespace("iNZightPlots", TRUE)) {
         plotlm6grid(x = x, which = which, panel = panel, sub.caption = sub.caption,
                     main = main, ask = ask, id.n = id.n, labels.id = labels.id,
-                    cex.id = cex.id, qqline = qqline, cooks.levels = cooks.levels,
+                    cex.id = cex.id, qqline = qqline, cook.levels = cook.levels,
                     add.smooth = add.smooth, label.pos = label.pos,
                     cex.caption = cex.caption, showBootstraps = showBootstraps,
                     ...)
@@ -464,7 +463,7 @@ plotlm6 <-
             if (one.fig)
                 title(sub = sub.caption, ...)
             mtext(getCaption(5), 3, 0.25, cex = cex.caption)
-            print(show.rs)
+            # print(show.rs)
             if (id.n > 0)
                 text.id(qq$x[show.rs], qq$y[show.rs], show.rs)
             dev.flush()

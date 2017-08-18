@@ -260,7 +260,7 @@ iNZightSummary <- function (x, method = "standard", reorder.factors = FALSE,
                             if (method == "bootstrap") {
                                 pvalue <- F.info$Pvals[row.label]
                             } else {
-                                tmpaov <- tryCatch(Anova(x.lm, type = 3),
+                                tmpaov <- tryCatch(car::Anova(x.lm, type = 3),
                                                    error = function(e) NA)
                                 type3pval <-
                                     if (all(is.na(tmpaov))) {
@@ -360,7 +360,7 @@ iNZightSummary <- function (x, method = "standard", reorder.factors = FALSE,
                                         pvalue <- F.info$Pvals[summary.row]
                                     } else {
                                         tmpaov <-
-                                            tryCatch(Anova(x.lm, type = 3),
+                                            tryCatch(car::Anova(x.lm, type = 3),
                                                      error = function(e) NA)
                                         type3pval <-
                                             if (all(is.na(tmpaov))) {

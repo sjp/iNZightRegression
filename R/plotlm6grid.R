@@ -1,5 +1,5 @@
 ##' @import grid
-##' @export
+
 plotlm6grid <- function(x, which = 1:6,
                         panel = if (add.smooth) panel.smooth
                         else points, sub.caption = NULL,
@@ -264,7 +264,7 @@ plotlm6grid <- function(x, which = 1:6,
         upViewport()
     }
 
-    opts <- inzpar()
+    opts <- iNZightPlots::inzpar()
     opts$cex.pt <- 0.4
     opts$cex.axis <- 0.7
     opts$col.pt <- "black"
@@ -286,10 +286,10 @@ plotlm6grid <- function(x, which = 1:6,
         ylim <- getLim(r)
         if (id.n > 0)
             ylim <- extendrange(r = ylim, f = 0.08)
-        iNZightPlots:::iNZscatterplot(yh, r, layout = scatter.layout,
-                                      xlim = getLim(yh), ylim = ylim,
-                                      axis = c(2, 2, 0, 0),
-                                      opts = opts)
+        # iNZightPlots:::iNZscatterplot(yh, r, layout = scatter.layout,
+        #                               xlim = getLim(yh), ylim = ylim,
+        #                               axis = c(2, 2, 0, 0),
+        #                               opts = opts)
       # Add necessary stuff:
         seekViewport("SCATTERVP")
 
@@ -352,10 +352,10 @@ plotlm6grid <- function(x, which = 1:6,
             else
                 yh[w != 0]
 
-        iNZightPlots:::iNZscatterplot(yhn0, sqrtabsr, layout = scatter.layout,
-                                      xlim = getLim(yhn0), ylim = ylim,
-                                      axis = c(2, 2, 0, 0),
-                                      opts = opts)
+        # iNZightPlots:::iNZscatterplot(yhn0, sqrtabsr, layout = scatter.layout,
+        #                               xlim = getLim(yhn0), ylim = ylim,
+        #                               axis = c(2, 2, 0, 0),
+        #                               opts = opts)
       # Add necessary stuff:
         seekViewport("SCATTERVP")
 
@@ -425,10 +425,10 @@ plotlm6grid <- function(x, which = 1:6,
         xx[xx >= 1] <- NA
         xlim <- getLim(c(0, max(xx, na.rm = TRUE)))
 
-        iNZightPlots:::iNZscatterplot(xx, rsp, layout = scatter.layout,
-                                      xlim = xlim, ylim = ylim,
-                                      axis = c(2, 2, 0, 0),
-                                      opts = opts)
+        # iNZightPlots:::iNZscatterplot(xx, rsp, layout = scatter.layout,
+        #                               xlim = xlim, ylim = ylim,
+        #                               axis = c(2, 2, 0, 0),
+        #                               opts = opts)
       # Add necessary stuff:
         seekViewport("SCATTERVP")
 
@@ -572,9 +572,9 @@ plotlm6grid <- function(x, which = 1:6,
         if (id.n > 0)
             ylim <- getLim(ylim)
         ylim[2] <- ylim[2] + diff(ylim) * 0.075
-        iNZightPlots:::iNZscatterplot(qq$x, qq$y, axis = c(2, 2, 0, 0),
-                                      xlim = getLim(qq$x), ylim = ylim,
-                                      layout = scatter.layout, opts = opts)
+        # iNZightPlots:::iNZscatterplot(qq$x, qq$y, axis = c(2, 2, 0, 0),
+        #                               xlim = getLim(qq$x), ylim = ylim,
+        #                               layout = scatter.layout, opts = opts)
         opts$LOE <- FALSE
         opts$largesample <- largesample
 
@@ -660,7 +660,7 @@ plotlm6grid <- function(x, which = 1:6,
       # Overlay the normal curve
         xc <- seq(xmin, xmax, length = 101)
         yc <- dnorm(xc, mx, sx)
-        grid.lines(xc, yc, default.unit = "native",
+        grid.lines(xc, yc, default.units = "native",
                    gp = gpar(lwd = 1.5, lty = 3))
 
         grid.rect(gp = gpar(fill = "transparent"))

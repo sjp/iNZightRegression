@@ -34,10 +34,9 @@ fit <- lm(Volume ~ Height + Girth, data = trees)
 iNZightQQplot(fit)
 
 }
-\author{
-David Banks, Tom Elliott.
-}
 \seealso{
 \code{\link{histogramArray}}
 }
-
+\author{
+David Banks, Tom Elliott.
+}
