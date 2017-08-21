@@ -230,40 +230,47 @@ plotlm6 <-
     }
 
     if (showBootstraps) {
-        bsModels = bootstrapModels(x)
-        nBootstraps = length(bsModels)
-        ## New bootstrapped values (bs suffix stands for bootstrap)
-        rbs = rsbs = rbs.w = wbs = wbsind = yhbs = sbs = hiibs =
-            sbs = vector("list", nBootstraps)
-        for (i in 1:nBootstraps) {
-            rbs[[i]] = residuals(bsModels[[i]])
-            yhbs[[i]] = predict(bsModels[[i]])
-            wbs[i] = list(weights(bsModels[[i]]))  # list() prevents
-                                                   # deletion if NULL
-            if (!is.null(wbs[[i]])) {
-                wbsind[[i]] <- wbs[[i]] != 0
-                rbs[[i]] <- rbs[[i]][wind]
-                yhbs[[i]] <- yhbs[[i]][wind]
-                wbs[[i]] <- wbs[[i]][wind]
-            }
-            sbs[[i]] = if (inherits(x, "rlm"))
-                bsModels[[i]]$s
-            else if (isGlm(x))
-                sqrt(summary(bsModels[[i]])$dispersion)
-            else sqrt(deviance(bsModels[[i]])/df.residual(bsModels[[i]]))
-            if (any(show[2:6]))
-                hiibs[[i]] <- lm.influence(bsModels[[i]],
-                                           do.coef = FALSE)$hat
-            if (any(show[2:3])) {
-                rbs.w[[i]] <-
-                    if (is.null(wbs[[i]])) {
-                        rbs[[i]]
-                    } else {
-                        sqrt(wbs[[i]]) * rbs[[i]]
-                    }
-                rsbs[[i]] <- dropInf(rbs.w[[i]] /
-                                     (sbs[[i]] * sqrt(1 - hiibs[[i]])),
-                                     hiibs[[i]])
+        bsModels = try(bootstrapModels(x), TRUE)
+
+        if (inherits(bsModels, "try-error")) {
+            ## turn off bootstrapping if it fails
+            showBootstraps <- FALSE
+            warning("Could not generate boostraps.")
+        } else {
+            nBootstraps = length(bsModels)
+            ## New bootstrapped values (bs suffix stands for bootstrap)
+            rbs = rsbs = rbs.w = wbs = wbsind = yhbs = sbs = hiibs =
+                sbs = vector("list", nBootstraps)
+            for (i in 1:nBootstraps) {
+                rbs[[i]] = residuals(bsModels[[i]])
+                yhbs[[i]] = predict(bsModels[[i]])
+                wbs[i] = list(weights(bsModels[[i]]))  # list() prevents
+                                                       # deletion if NULL
+                if (!is.null(wbs[[i]])) {
+                    wbsind[[i]] <- wbs[[i]] != 0
+                    rbs[[i]] <- rbs[[i]][wind]
+                    yhbs[[i]] <- yhbs[[i]][wind]
+                    wbs[[i]] <- wbs[[i]][wind]
+                }
+                sbs[[i]] = if (inherits(x, "rlm"))
+                    bsModels[[i]]$s
+                else if (isGlm(x))
+                    sqrt(summary(bsModels[[i]])$dispersion)
+                else sqrt(deviance(bsModels[[i]])/df.residual(bsModels[[i]]))
+                if (any(show[2:6]))
+                    hiibs[[i]] <- lm.influence(bsModels[[i]],
+                                               do.coef = FALSE)$hat
+                if (any(show[2:3])) {
+                    rbs.w[[i]] <-
+                        if (is.null(wbs[[i]])) {
+                            rbs[[i]]
+                        } else {
+                            sqrt(wbs[[i]]) * rbs[[i]]
+                        }
+                    rsbs[[i]] <- dropInf(rbs.w[[i]] /
+                                         (sbs[[i]] * sqrt(1 - hiibs[[i]])),
+                                         hiibs[[i]])
+                }
             }
         }
     }

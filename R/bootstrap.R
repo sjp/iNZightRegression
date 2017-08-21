@@ -3,25 +3,35 @@ bootstrapModels <- function(fit, nBootstraps = 30) {
         warning('Bootstrapping for survey glms is still under development.')
 
   # Variables for adding bootstrap lowess lines
-    nr = nrow(fit$model)
-    modifiedCall <- modifyModelCall(fit)
-    bootstrapID <- replicate(nBootstraps, sample(1:nr, replace = TRUE))
-    listOfModels <- invisible(lapply(1:nBootstraps,
-        function(i) {
-            conv <- FALSE
-            while (!conv) {
-                bootstrapSample <- bootstrapData(fit, bootstrapID[, i])
-                mod <- suppressWarnings(eval(modifiedCall))
-                if (isGlm(fit)) {
-                    if (mod$conv)
-                        conv <- TRUE
-                } else
-                conv <- TRUE
-            }
-            mod
-        }))
+    # nr = nrow(fit$model)
+    # modifiedCall <- modifyModelCall(fit)
+    # bootstrapID <- replicate(nBootstraps, sample(1:nr, replace = TRUE))
+    # listOfModels <- invisible(lapply(1:nBootstraps,
+    #     function(i) {
+    #         conv <- FALSE
+    #         while (!conv) {
+    #             bootstrapSample <- bootstrapData(fit, bootstrapID[, i])
+    #             mod <- suppressWarnings(eval(modifiedCall))
+    #             if (isGlm(fit)) {
+    #                 if (mod$conv)
+    #                     conv <- TRUE
+    #             } else
+    #             conv <- TRUE
+    #         }
+    #         mod
+    #     }))
 
-    invisible(listOfModels)
+    bs.fits <- replicate(nBootstraps, {
+        conv <- FALSE
+        print(".")
+        while (!conv) {
+            bsfit <- suppressWarnings(update(fit, subset = sample(nrow(dat), replace = TRUE)))
+            conv <- !isGlm(fit) || bsfit$conv
+        }
+        bsfit
+    }, simplify = FALSE)
+
+    invisible(bs.fits)
 }
 
 bootstrapData <- function(fit, id)

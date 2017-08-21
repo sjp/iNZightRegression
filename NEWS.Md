@@ -1,3 +1,18 @@
+# Version 1.2
+__Release date__: TBA
+
+This isn't a hugely updated version, however fixing up a bunch of bugs
+to make the Model Fitting module better (over on `iNZightModules`).
+
+
+## Bug fixes:
+
+- catch errors in model bootstrapping so the rest of the plot still works
+- use the `subset` argument to `lm` (via `update()`) to perform bootraps, rather than the long-winded data-bootstrapping call-modifying version that was buggy
+
+
+***
+
 # Changes in version 1.1.7
 __Release date__: 18 August 2017
 
