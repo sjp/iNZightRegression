@@ -1,5 +1,5 @@
 # Version 1.2
-__Release date__: TBA
+__Release date__: 23 August 2017
 
 This isn't a hugely updated version, however fixing up a bunch of bugs
 to make the Model Fitting module better (over on `iNZightModules`).
@@ -8,7 +8,6 @@ to make the Model Fitting module better (over on `iNZightModules`).
 ## Minor changes
 
 - export a `Poly()` function, which is just a `poly()` function that supports `NA`s
--
 
 ## Bug fixes:
 
