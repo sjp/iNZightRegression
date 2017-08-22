@@ -4,12 +4,14 @@
 \alias{histogramArray}
 \title{Histogram Array}
 \usage{
-histogramArray(x, n = 7)
+histogramArray(x, n = 7, env = parent.frame())
 }
 \arguments{
 \item{x}{an \code{lm} or \code{svyglm} object.}
 
 \item{n}{the number of additional histograms to plot alongside the original.}
+
+\item{env}{environment for finding data to bootstrap}
 }
 \value{
 None.
@@ -30,5 +32,5 @@ to this altered data and a histogram is produced.
 \code{\link{iNZightQQplot}}
 }
 \author{
-David Banks
+David Banks, Tom Elliott
 }

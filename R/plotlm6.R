@@ -79,27 +79,26 @@
 ##' @seealso \code{\link{histogramArray}}, \code{\link{iNZightQQplot}}
 ##'
 ##' @export
-plotlm6 <-
-    function(x, which = 1:6,
-             panel = if (add.smooth) panel.smooth
-             else points, sub.caption = NULL,
-             main = "",
-             ask = prod(par("mfcol")) < length(which) && dev.interactive(),
-             id.n = 3, labels.id = names(residuals(x)),
-             cex.id = 0.75, qqline = TRUE, cook.levels = c(0.5, 1),
-             add.smooth = getOption("add.smooth"), label.pos = c(4, 2),
-             cex.caption = 1,
-             showBootstraps = nrow(x$model) >= 30 && nrow(x$model) < 4000,
-             use.inzightplots = FALSE,
-             env = parent.frame(),
-             ...) {
-
-
+plotlm6 <- function(x, which = 1:6,
+                    panel = if (add.smooth) panel.smooth
+                            else points, sub.caption = NULL,
+                    main = "",
+                    ask = prod(par("mfcol")) < length(which) && dev.interactive(),
+                    id.n = 3, labels.id = names(residuals(x)),
+                    cex.id = 0.75, qqline = TRUE, cook.levels = c(0.5, 1),
+                    add.smooth = getOption("add.smooth"), label.pos = c(4, 2),
+                    cex.caption = 1,
+                    showBootstraps = nrow(x$model) >= 30 && nrow(x$model) < 4000,
+                    use.inzightplots = FALSE,
+                    env = parent.frame(),
+                    ...) {
+    
+    
     ## disable bootstraps for survey designs:
     if (inherits(x, "glm"))
         showBootstraps <- FALSE
-
-
+    
+    
     ## Use grid graphics from iNZightPlots if they're available.
     if (FALSE && use.inzightplots && requireNamespace("iNZightPlots", TRUE)) {
         plotlm6grid(x = x, which = which, panel = panel, sub.caption = sub.caption,
@@ -116,8 +115,8 @@ plotlm6 <-
 
     dropInf <- function(x, h) {
         if (any(isInf <- h >= 1)) {
-            warning("Not plotting observations with leverage one:\n  ",
-                    paste(which(isInf), collapse = ", "), call. = FALSE)
+            #warning("Not plotting observations with leverage one:\n  ",
+            #        paste(which(isInf), collapse = ", "), call. = FALSE)
             x[isInf] <- NaN
         }
         x
@@ -231,61 +230,66 @@ plotlm6 <-
         oask <- devAskNewPage(FALSE)
         on.exit(devAskNewPage(oask))
     }
-
+    
     if (showBootstraps) {
         bsModels = try(bootstrapModels(x, env = env), TRUE)
-
+        
         if (inherits(bsModels, "try-error")) {
             ## turn off bootstrapping if it fails
             showBootstraps <- FALSE
             warning("Could not generate boostraps.")
         } else {
-            nBootstraps = length(bsModels)
-            ## New bootstrapped values (bs suffix stands for bootstrap)
-            rbs = rsbs = rbs.w = wbs = wbsind = yhbs = sbs = hiibs =
-                sbs = vector("list", nBootstraps)
-            for (i in 1:nBootstraps) {
-                rbs[[i]] = residuals(bsModels[[i]])
-                yhbs[[i]] = predict(bsModels[[i]])
-                wbs[i] = list(weights(bsModels[[i]]))  # list() prevents
-                                                       # deletion if NULL
-                if (!is.null(wbs[[i]])) {
-                    wbsind[[i]] <- wbs[[i]] != 0
-                    rbs[[i]] <- rbs[[i]][wind]
-                    yhbs[[i]] <- yhbs[[i]][wind]
-                    wbs[[i]] <- wbs[[i]][wind]
+            try({
+                nBootstraps = length(bsModels)
+                ## New bootstrapped values (bs suffix stands for bootstrap)
+                rbs = rsbs = rbs.w = wbs = wbsind = yhbs = sbs = hiibs =
+                    sbs = vector("list", nBootstraps)
+                for (i in 1:nBootstraps) {
+                    rbs[[i]] = residuals(bsModels[[i]])
+                    yhbs[[i]] = predict(bsModels[[i]])
+                    wbs[i] = list(weights(bsModels[[i]]))  # list() prevents
+                    ## deletion if NULL
+                    if (!is.null(wbs[[i]])) {
+                        wbsind[[i]] <- wbs[[i]] != 0
+                        rbs[[i]] <- rbs[[i]][wind]
+                        yhbs[[i]] <- yhbs[[i]][wind]
+                        wbs[[i]] <- wbs[[i]][wind]
+                    }
+                    sbs[[i]] = if (inherits(x, "rlm"))
+                                   bsModels[[i]]$s
+                               else if (isGlm(x))
+                                   sqrt(summary(bsModels[[i]])$dispersion)
+                               else sqrt(deviance(bsModels[[i]])/df.residual(bsModels[[i]]))
+                    if (any(show[2:6]))
+                        hiibs[[i]] <- lm.influence(bsModels[[i]],
+                                                   do.coef = FALSE)$hat
+                    if (any(show[2:3])) {
+                        rbs.w[[i]] <-
+                            if (is.null(wbs[[i]])) {
+                                rbs[[i]]
+                            } else {
+                                sqrt(wbs[[i]]) * rbs[[i]]
+                            }
+                        rsbs[[i]] <- dropInf(rbs.w[[i]] /
+                                             (sbs[[i]] * sqrt(1 - hiibs[[i]])),
+                                             hiibs[[i]])
+                    }
                 }
-                sbs[[i]] = if (inherits(x, "rlm"))
-                    bsModels[[i]]$s
-                else if (isGlm(x))
-                    sqrt(summary(bsModels[[i]])$dispersion)
-                else sqrt(deviance(bsModels[[i]])/df.residual(bsModels[[i]]))
-                if (any(show[2:6]))
-                    hiibs[[i]] <- lm.influence(bsModels[[i]],
-                                               do.coef = FALSE)$hat
-                if (any(show[2:3])) {
-                    rbs.w[[i]] <-
-                        if (is.null(wbs[[i]])) {
-                            rbs[[i]]
-                        } else {
-                            sqrt(wbs[[i]]) * rbs[[i]]
-                        }
-                    rsbs[[i]] <- dropInf(rbs.w[[i]] /
-                                         (sbs[[i]] * sqrt(1 - hiibs[[i]])),
-                                         hiibs[[i]])
-                }
-            }
-        }
-    }
-
+            }, TRUE) ## end try()
+        } ## end else
+    } ## end if showBootstraps
+        
     ## If we want to show all of the plots, assume "all" is the
     ## seventh plot
     showAllPlots = all(show)
 
     ## Ensure par is not globally modified
     origpar = par(mfrow = c(1, 1))
-    on.exit(par(origpar))
-
+    on.exit(par(origpar), add = TRUE)
+    
+    dev.hold()
+    on.exit(dev.flush(), add = TRUE)
+    
     for (plotNum in 1:7) {
         if (showAllPlots & plotNum == 1) {
             ## We are showing all plots
@@ -304,14 +308,13 @@ plotlm6 <-
             par(mfrow = c(1, 1))
         }
 
-        if (showPlot[1]) {
+        if (showPlot[1]) tryOrErrorPlot({
             ylim <- range(r, na.rm = TRUE)
             if (id.n > 0)
                 ylim <- extendrange(r = ylim, f = 0.08)
-            dev.hold()
             plot(yh, r, xlab = l.fit, ylab = "Residuals", main = main,
                  ylim = ylim, ...)
-
+            
             if (showBootstraps) {
                 ## Draw bootstrap sample loess lines
                 for (i in 1:nBootstraps) {
@@ -325,7 +328,7 @@ plotlm6 <-
             sm = loess(r ~ yh)
             smOrd = order(sm$x)
             lines(sm$x[smOrd], sm$fitted[smOrd], col = smColour, lwd = 2)
-
+            
             if (one.fig)
                 title(sub = sub.caption, ...)
             mtext(getCaption(1), 3, 0.25, cex = cex.caption)
@@ -335,17 +338,16 @@ plotlm6 <-
                 text.id(yh[show.r], y.id, show.r)
             }
             abline(h = 0, lty = 3, col = "gray")
-            dev.flush()
-        }
-        if (showPlot[2]) {
+        }, "Unable to plot Residuals vs Fitted :(")
+        
+        if (showPlot[2]) tryOrErrorPlot({
             sqrtabsr <- sqrt(abs(rs))
             ylim <- c(0, max(sqrtabsr, na.rm = TRUE))
             yl <- as.expression(substitute(sqrt(abs(YL)),
                 list(YL = as.name(ylab23))))
             yhn0 <- if (is.null(w))
-                yh
-            else yh[w != 0]
-            dev.hold()
+                        yh
+                    else yh[w != 0]
             plot(yhn0, sqrtabsr, xlab = l.fit, ylab = yl, main = main,
                  ylim = ylim, ...)
 
@@ -368,9 +370,9 @@ plotlm6 <-
             mtext(getCaption(2), 3, 0.25, cex = cex.caption)
             if (id.n > 0)
                 text.id(yhn0[show.rs], sqrtabsr[show.rs], show.rs)
-            dev.flush()
-        }
-        if (showPlot[3]) {
+        }, "Unable to plot Scale-Location :(")
+        
+        if (showPlot[3]) tryOrErrorPlot({
             ylab5 <- if (isGlm(x))
                 "Std. Pearson resid."
             else "Standardized residuals"
@@ -384,8 +386,9 @@ plotlm6 <-
                 rspbs = vector("list", nBootstraps)
                 for (i in 1:nBootstraps) {
                     pearsonResid = residuals(bsModels[[i]], "pearson")
-                    rspbs[[i]] = dropInf(pearsonResid / (sbs[[i]] *
-                             sqrt(1 - hiibs[[i]])), hiibs[[i]])
+                    rspbs[[i]] =  dropInf(
+                        pearsonResid / (sbs[[i]] * sqrt(1 - hiibs[[i]])),
+                        hiibs[[i]])
                 }
             }
 
@@ -398,7 +401,6 @@ plotlm6 <-
 
             xx <- hii
             xx[xx >= 1] <- NA
-            dev.hold()
             plot(xx, rsp, xlim = c(0, max(xx, na.rm = TRUE)),
                  ylim = ylim, main = main, xlab = "Leverage",
                  ylab = ylab5, ...)
@@ -441,7 +443,6 @@ plotlm6 <-
                          cook.levels)), mgp = c(0.25, 0.25, 0), las = 2,
                      tck = 0, cex.axis = cex.id, col.axis = 2)
             }
-            dev.flush()
 
             if (do.plot) {
                 mtext(getCaption(3), 3, 0.25, cex = cex.caption)
@@ -451,23 +452,22 @@ plotlm6 <-
                     text.id(xx[show.rsp], y.id, show.rsp)
                 }
             }
-        }
-        if (showPlot[4]) {
+        }, "Unable to plot Residuals vs Leverage :(")
+        
+        if (showPlot[4]) tryOrErrorPlot({
             ## cooks distance
             cdx <- cooks.distance(x)
             show.mx <- order(-cdx)[1:3]
-            dev.hold()
             plot(1:length(cdx), cdx, type = "h", main = main,
                  xlab = "observation number", ylab = "cook's distance")
             mtext(getCaption(4), 3, 0.25, cex = cex.caption)
             text(show.mx, cdx[show.mx] + 0.4 * 0.75 * strheight(" "),
                  show.mx)
-            dev.flush()
-        }
-        if (showPlot[5]) {
+        }, "Unable to plot Cook's distance :(")
+        
+        if (showPlot[5]) tryOrErrorPlot({
             ylim <- range(rs, na.rm = TRUE)
             ylim[2] <- ylim[2] + diff(ylim) * 0.075
-            dev.hold()
             qq <- normCheck(rs, main = main, ylab = ylab23,
                             ylim = ylim, ...)
             if (one.fig)
@@ -476,9 +476,9 @@ plotlm6 <-
             # print(show.rs)
             if (id.n > 0)
                 text.id(qq$x[show.rs], qq$y[show.rs], show.rs)
-            dev.flush()
-        }
-        if (showPlot[6]) {
+        }, "Unable to plot Normal QQ plot :(")
+        
+        if (showPlot[6]) tryOrErrorPlot({
             ## Histogram
             h <- hist(r, plot = FALSE)
             xlab <- "Residuals"
@@ -488,7 +488,6 @@ plotlm6 <-
             xmin <- min(rx[1], mx - 3.5 * sx, h$breaks[1])
             xmax <- max(rx[2], mx + 3.5 * sx, h$breaks[length(h$breaks)])
             ymax <- max(h$density, dnorm(mx, mx, sx)) * 1.05
-            dev.hold()
             hist(r, prob = TRUE, ylim = c(0, ymax), xlim = c(xmin, xmax),
                  xlab = xlab, col = "light blue",
                  main = main)
@@ -497,13 +496,12 @@ plotlm6 <-
             x1 <- seq(xmin, xmax, length = 100)
             y1 <- dnorm(x1, mx, sx)
             lines(x1, y1, lwd = 1.5, lty = 3)
-            dev.flush()
-        }
+        }, "Unable to plot Histogram :(")
     }
-
+    
     if (!one.fig && par("oma")[3] >= 1)
         mtext(sub.caption, outer = TRUE, cex = 1.25)
-
+    
     invisible()
 }
 
@@ -521,9 +519,8 @@ normCheck <-
                 qqnorm(x, plot.it = plot, main = "", ...)
 
         if (plot) {
-            mx <- mean(x)
-            sx <- sd(x)
-            dev.hold()
+            mx <- 0# mean(x, na.rm = TRUE)
+            sx <- 1# sd(x, na.rm = TRUE)
             abline(c(mx, sx), col = "gray50")
             if (shapiroWilk) {
                 if (length(x) <= 5000) {
@@ -541,7 +538,6 @@ normCheck <-
                 text(sort(qqp$x)[2], 0.99 * max(qqp$y, na.rm = TRUE),
                      txt, adj = c(0, 1))
             }
-            dev.flush()
         }
         qqp
     }

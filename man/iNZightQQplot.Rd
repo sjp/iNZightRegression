@@ -4,13 +4,15 @@
 \alias{iNZightQQplot}
 \title{iNZight QQ Plot}
 \usage{
-iNZightQQplot(x, n = 5)
+iNZightQQplot(x, n = 5, env = parent.frame())
 }
 \arguments{
 \item{x}{an \code{lm} or \code{svyglm} object (with \code{family = "Gaussian"}.}
 
 \item{n}{the number of sampled QQ plots to produce beneath the QQ plot of
 \code{x}.}
+
+\item{env}{environment for finding data to bootstrap}
 }
 \value{
 None.
@@ -38,5 +40,5 @@ iNZightQQplot(fit)
 \code{\link{histogramArray}}
 }
 \author{
-David Banks, Tom Elliott.
+David Banks, Tom Elliott
 }

@@ -10,7 +10,7 @@ plotlm6(x, which = 1:6, panel = if (add.smooth) panel.smooth else points,
   cex.id = 0.75, qqline = TRUE, cook.levels = c(0.5, 1),
   add.smooth = getOption("add.smooth"), label.pos = c(4, 2),
   cex.caption = 1, showBootstraps = nrow(x$model) >= 30 && nrow(x$model) <
-  4000, use.inzightplots = FALSE, ...)
+  4000, use.inzightplots = FALSE, env = parent.frame(), ...)
 }
 \arguments{
 \item{x}{an \code{lm} object, typically the result of
@@ -63,6 +63,8 @@ first 4 plots. By default, only drawn for sample sizes of at least 30.}
 
 \item{use.inzightplots}{logical, if set to \code{TRUE}, the iNZightPlots
 package will be used for plotting, rather than base R graphics.}
+
+\item{env}{environment for performing bootstrap simulations (i.e., to find the dataset!)}
 
 \item{...}{other arguments to be passed to through to plotting functions.}
 }

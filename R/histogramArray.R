@@ -14,14 +14,15 @@
 ##'
 ##' @param n the number of additional histograms to plot alongside the original.
 ##'
+##' @param env environment for finding data to bootstrap
 ##' @return None.
 ##'
-##' @author David Banks
+##' @author David Banks, Tom Elliott
 ##'
 ##' @seealso \code{\link{iNZightQQplot}}
 ##'
 ##' @export
-histogramArray <- function(x, n = 7) {
+histogramArray <- function(x, n = 7, env = parent.frame()) {
     if (isGlm(x))
         if (x$family$family != 'gaussian')
             stop('histrogramArray only works with linear models.')
@@ -56,33 +57,30 @@ histogramArray <- function(x, n = 7) {
     xmin <- min(rx[1], mx - 3.5 * sx, h$breaks[1])
     xmax <- max(rx[2], mx + 3.5 * sx, h$breaks[length(h$breaks)])
 
-    bootstrapSample <- bootstrapData(x, 1:nrow(x$model))
-    response <- "response"  #rownames(attr(x$terms, "factors"))[1]
-    newcall <- modifyModelCall(x)
-
-  # Need something here to change "log(age)" to "response" ...
-    xvars <- as.character(newcall$formula)[3]
-    newcall$formula <- as.formula(paste("response", xvars, sep = " ~ "))
-
+    ## Generate n bootstrap samples with normal errors
     n.obs <- nrow(x$model)
+    xvars <- as.character(x$call$formula)[3]
+    fmla <- as.formula(paste("response", xvars, sep = " ~ "))
+
     resList <- list()
     breaksList <- list()
+    sdhat <- ifelse(isGlm(x),
+                 sqrt(1 / (n.obs - ncol(x$model)) *
+                      sum((x$residuals)^2)),
+                 summary(x)$sigma)
 
+    ## drop rows missing the final model (NAs)
+    .data <- eval(x$call$data, envir = env)[as.numeric(names(predict(x))),]
     for (i in 1:n) {
-        sd <- ifelse(isGlm(x),
-                     sqrt(1 / (nrow(x$model) - ncol(x$model)) *
-                          sum((x$residuals)^2)),
-                     summary(x)$sigma)
-        rNormal <- rnorm(n.obs, sd = sd)
-        bootstrapSample[, response] <- x$fitted.values + rNormal
-        newlm <- eval(newcall)
-        r <- residuals(newlm)
+        .data$response <- x$fitted.values + rnorm(n.obs, sd = sdhat)
+        bslm <- update(x, formula = fmla, data = .data)
+        r <- residuals(bslm)
         resList[[i]] <- r
         h <- hist(r, plot = FALSE)
         breaksList[[i]] <- h$breaks
-        mx <- mean(r)
-        sx <- sd(r)
-        rx <- range(r)
+        mx <- mean(r, na.rm = TRUE)
+        sx <- sd(r, na.rm = TRUE)
+        rx <- range(r, na.rm = TRUE)
         xmin <- min(xmin, min(rx[1], mx - 3.5 * sx, h$breaks[1]))
         xmax <- max(xmax, max(rx[2], mx + 3.5 * sx, h$breaks[length(h$breaks)]))
     }

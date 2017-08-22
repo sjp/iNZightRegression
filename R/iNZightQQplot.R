@@ -16,9 +16,10 @@
 ##' @param n the number of sampled QQ plots to produce beneath the QQ plot of
 ##' \code{x}.
 ##'
+##' @param env environment for finding data to bootstrap
 ##' @return None.
 ##'
-##' @author David Banks, Tom Elliott.
+##' @author David Banks, Tom Elliott
 ##'
 ##' @seealso \code{\link{histogramArray}}
 ##'
@@ -26,7 +27,7 @@
 ##' iNZightQQplot(fit)
 ##'
 ##' @export
-iNZightQQplot <- function(x, n = 5) {
+iNZightQQplot <- function(x, n = 5, env = parent.frame()) {
 
   # ------------------------------------------------------------------ #
   # Generates n (= 5) parameteric bootstrap samples with normal errors
@@ -58,32 +59,28 @@ iNZightQQplot <- function(x, n = 5) {
     }
     qq <- qqVals(x)
 
-  # Generate n bootstrap samples with normal errors
+    ## Generate n bootstrap samples with normal errors
     n.obs <- nrow(x$model)
-    bootstrapSample <- bootstrapData(x, sample(1:n.obs, replace = TRUE))
-    response <- "response"  #rownames(attr(x$terms, "factors"))[1]
-    newcall <- modifyModelCall(x)
-
-  # Need something here to change "log(age)" to "response" ...
-    xvars <- as.character(newcall$formula)[3]
-    newcall$formula <- as.formula(paste("response", xvars, sep = " ~ "))
+    xvars <- as.character(x$call$formula)[3]
+    fmla <- as.formula(paste("response", xvars, sep = " ~ "))
 
     qqList <- vector("list", length = n)
-    sd <- ifelse(isGlm(x),
+    sdhat <- ifelse(isGlm(x),
                  sqrt(1 / (n.obs - ncol(x$model)) *
                       sum((x$residuals)^2)),
                  summary(x)$sigma)
 
-    for (i in 1:n) {
-        rNormal <- rnorm(n.obs, sd = sd)
-        bootstrapSample[, response] <- x$fitted.values + rNormal
-        newlm <- eval(newcall)
-        qqList[[i]] <- qqVals(newlm)
-    }
+    ## drop rows missing the final model (NAs)
+    .data <- eval(x$call$data, envir = env)[as.numeric(names(predict(x))),]
+    qqList <- replicate(n, {
+        .data$response <- x$fitted.values + rnorm(n.obs, sd = sdhat)
+        bslm <- update(x, formula = fmla, data = .data)
+        qqVals(bslm)
+    }, FALSE)
 
-  # Set up a plotting window
-    xlim <- range(qq$x)
-    ylim <- range(sapply(qqList, function(q) q$y))
+    ## Set up a plotting window
+    xlim <- range(qq$x, na.rm = TRUE)
+    ylim <- range(sapply(qqList, function(q) q$y), na.rm = TRUE)
 
     plot.new()
     plot.window(xlim = xlim, ylim = ylim)
@@ -94,17 +91,19 @@ iNZightQQplot <- function(x, n = 5) {
           main = "")
     abline(c(0, 1), lty = 2)
 
-  # Plot the n random qq values
+    ## Plot the n random qq values
     for (i in 1:n)
         points(qqList[[i]], pch = 4, cex = 0.8,
                col = hcl(i/n * 360, 80, 50))
 
-  # Overlay the true values
+    ## Overlay the true values
     points(qq, pch = 1, cex = 0.8, lwd = 2,
            col = hcl(240, 80, 0))
 
-  # Add a legend
+    ## Add a legend
     legend("topleft", c("Original Data", "Sampled Normal Errors"),
            pch = c(1, 4), pt.cex = 0.8, col = "black",
            bty = "n")
+
+    invisible(NULL)
 }
