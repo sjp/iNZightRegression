@@ -1,4 +1,4 @@
-bootstrapModels <- function(fit, nBootstraps = 30) {
+bootstrapModels <- function(fit, nBootstraps = 30, env = parent.frame()) {
     if (isSurvey(fit))
         warning('Bootstrapping for survey glms is still under development.')
 
@@ -23,9 +23,11 @@ bootstrapModels <- function(fit, nBootstraps = 30) {
 
     bs.fits <- replicate(nBootstraps, {
         conv <- FALSE
-        print(".")
         while (!conv) {
-            bsfit <- suppressWarnings(update(fit, subset = sample(nrow(dat), replace = TRUE)))
+            bsfit <- suppressWarnings({
+                call <- update(fit, subset = sample(nrow(fit$model), replace = TRUE), evaluate = FALSE)
+                eval(call, envir = env)
+            })
             conv <- !isGlm(fit) || bsfit$conv
         }
         bsfit

@@ -70,6 +70,7 @@
 ##' @param use.inzightplots logical, if set to \code{TRUE}, the iNZightPlots
 ##' package will be used for plotting, rather than base R graphics.
 ##'
+##' @param env environment for performing bootstrap simulations (i.e., to find the dataset!)
 ##' @param ... other arguments to be passed to through to plotting functions.
 ##'
 ##' @author Simon Potter, David Banks, Tom Elliott. Original authors of
@@ -89,7 +90,9 @@ plotlm6 <-
              add.smooth = getOption("add.smooth"), label.pos = c(4, 2),
              cex.caption = 1,
              showBootstraps = nrow(x$model) >= 30 && nrow(x$model) < 4000,
-             use.inzightplots = FALSE, ...) {
+             use.inzightplots = FALSE,
+             env = parent.frame(),
+             ...) {
 
 
     ## disable bootstraps for survey designs:
@@ -103,7 +106,7 @@ plotlm6 <-
                     main = main, ask = ask, id.n = id.n, labels.id = labels.id,
                     cex.id = cex.id, qqline = qqline, cook.levels = cook.levels,
                     add.smooth = add.smooth, label.pos = label.pos,
-                    cex.caption = cex.caption, showBootstraps = showBootstraps,
+                    cex.caption = cex.caption, showBootstraps = showBootstraps, env = env,
                     ...)
         return(invisible(NULL))
     }
@@ -230,7 +233,7 @@ plotlm6 <-
     }
 
     if (showBootstraps) {
-        bsModels = try(bootstrapModels(x), TRUE)
+        bsModels = try(bootstrapModels(x, env = env), TRUE)
 
         if (inherits(bsModels, "try-error")) {
             ## turn off bootstrapping if it fails
