@@ -1,3 +1,22 @@
+# Version 1.2
+__Release date__: 23 August 2017
+
+This isn't a hugely updated version, however fixing up a bunch of bugs
+to make the Model Fitting module better (over on `iNZightModules`).
+
+
+## Minor changes
+
+- export a `Poly()` function, which is just a `poly()` function that supports `NA`s
+
+## Bug fixes:
+
+- catch errors in model bootstrapping so the rest of the plot still works
+- use the `subset` argument to `lm` (via `update()`) to perform bootraps, rather than the long-winded data-bootstrapping call-modifying version that was buggy
+- fix up bootstrapping algorithms for QQplot and histogram arrays
+
+***
+
 # Changes in version 1.1.7
 __Release date__: 18 August 2017
 

@@ -15,6 +15,7 @@
 ##' @param use.inzightplots logical, if \code{TRUE}, the iNZightPlots package will be used for
 ##' plotting.
 ##'
+##' @param env environment where the data is stored for bootstrapping
 ##' @return None.
 ##'
 ##' @author David Banks, Tom Elliott.
@@ -25,7 +26,7 @@
 partialResPlot <-
     function(fit, varname,
              showBootstraps = nrow(fit$model) >= 30 & nrow(fit$model) < 4000,
-             use.inzightplots = FALSE) {
+             use.inzightplots = FALSE, env = parent.frame()) {
 
   # if iNZightPlots is available, use it for plotting:
     inzplots <- use.inzightplots && requireNamespace("iNZightPlots", TRUE)
@@ -63,22 +64,27 @@ partialResPlot <-
 
     if (showBootstraps) {
         ## Plot bootstrap smooths
-        bsm = bootstrapModels(fit)
-        for (j in seq_along(bsm)) {
-            bsm_r = bsm[[j]]$residuals
-            bsm_Bi = bsm[[j]]$coefficients[varname]
-            bsm_Xi = bsm[[j]]$model[, varname]
-
-            if (inzplots) {
-                iNZightPlots:::addQuantileSmoother(
-                    bsm_Xi, bsm_r + bsm_Bi * bsm_Xi, quantile = 0.5,
-                    col = "lightgreen", lty = 1, lwd = 1)
-            } else {
-                bsm_sm = loess(bsm_r + bsm_Bi * bsm_Xi ~ bsm_Xi)
-                bsm_smOrd = order(bsm_sm$x)
-                bsm_smx = bsm_sm$x[bsm_smOrd]
-                bsm_smy = bsm_sm$fitted[bsm_smOrd]
-                lines(bsm_smx, bsm_smy, col = "lightgreen")
+        bsm = try(bootstrapModels(fit, env = env), TRUE)
+        if (inherits(bsm, "try-error")) {
+            showBootstraps <- FALSE
+            warning("Could not generate bootstraps.")
+        } else {
+            for (j in seq_along(bsm)) {
+                bsm_r = bsm[[j]]$residuals
+                bsm_Bi = bsm[[j]]$coefficients[varname]
+                bsm_Xi = bsm[[j]]$model[, varname]
+                
+                if (inzplots) {
+                    iNZightPlots:::addQuantileSmoother(
+                        bsm_Xi, bsm_r + bsm_Bi * bsm_Xi, quantile = 0.5,
+                        col = "lightgreen", lty = 1, lwd = 1)
+                } else {
+                    bsm_sm = loess(bsm_r + bsm_Bi * bsm_Xi ~ bsm_Xi)
+                    bsm_smOrd = order(bsm_sm$x)
+                    bsm_smx = bsm_sm$x[bsm_smOrd]
+                    bsm_smy = bsm_sm$fitted[bsm_smOrd]
+                    lines(bsm_smx, bsm_smy, col = "lightgreen")
+                }
             }
         }
     }

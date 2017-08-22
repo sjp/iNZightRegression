@@ -5,7 +5,7 @@
 \title{Draw multiple partial residual plots}
 \usage{
 partialResPlot(fit, varname, showBootstraps = nrow(fit$model) >= 30 &
-  nrow(fit$model) < 4000, use.inzightplots = FALSE)
+  nrow(fit$model) < 4000, use.inzightplots = FALSE, env = parent.frame())
 }
 \arguments{
 \item{fit}{an \code{lm}, \code{glm} or \code{svyglm} object.}
@@ -18,6 +18,8 @@ bootstrap smoothers, by default.}
 
 \item{use.inzightplots}{logical, if \code{TRUE}, the iNZightPlots package will be used for
 plotting.}
+
+\item{env}{environment where the data is stored for bootstrapping}
 }
 \value{
 None.
