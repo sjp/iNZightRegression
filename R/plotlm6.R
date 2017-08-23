@@ -519,8 +519,8 @@ normCheck <-
                 qqnorm(x, plot.it = plot, main = "", ...)
 
         if (plot) {
-            mx <- 0# mean(x, na.rm = TRUE)
-            sx <- 1# sd(x, na.rm = TRUE)
+            mx <- mean(x, na.rm = TRUE)
+            sx <- sd(x, na.rm = TRUE)
             abline(c(mx, sx), col = "gray50")
             if (shapiroWilk) {
                 if (length(x) <= 5000) {
