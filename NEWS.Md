@@ -15,6 +15,12 @@ to make the Model Fitting module better (over on `iNZightModules`).
 - use the `subset` argument to `lm` (via `update()`) to perform bootraps, rather than the long-winded data-bootstrapping call-modifying version that was buggy
 - fix up bootstrapping algorithms for QQplot and histogram arrays
 
+
+## Patches
+### Patch 1.2.0-1, 25/08/2017
+
+- remove NAs from qq-plot abline
+
 ***
 
 # Changes in version 1.1.7
