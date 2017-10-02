@@ -21,6 +21,10 @@ to make the Model Fitting module better (over on `iNZightModules`).
 
 - remove NAs from qq-plot abline
 
+### Patch 1.2.0-2, 02/10/2017
+
+- fix bootstrapping algorithm
+
 ***
 
 # Changes in version 1.1.7

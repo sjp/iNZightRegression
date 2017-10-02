@@ -214,12 +214,13 @@ plotlm6 <- function(x, which = 1:6,
             cal <- cal[c(1, m.f)]
             names(cal)[2] <- ""
         }
-        cc <- deparse(cal, 80)
-        nc <- nchar(cc[1], "c")
-        abbr <- length(cc) > 1 || nc > 75
-        sub.caption <- if (abbr)
-            paste(substr(cc[1], 1, min(75, nc)), "...")
-        else cc[1]
+        cc <- deparse(cal, 90)
+        ## nc <- nchar(cc[1], "c")
+        ## abbr <- length(cc) > 1 || nc > 90
+        ## sub.caption <- if (abbr)
+        ##     paste(substr(cc[1], 1, min(90, nc)), "...")
+        ## else cc[1]
+        sub.caption <- cc[1]
     }
 
     one.fig <- length(which) == 1 || onlyShowAll
@@ -284,7 +285,7 @@ plotlm6 <- function(x, which = 1:6,
     showAllPlots = all(show)
 
     ## Ensure par is not globally modified
-    origpar = par(mfrow = c(1, 1))
+    origpar = par(mfrow = c(1, 1), oma = c(0, 0, 0, 0))
     on.exit(par(origpar), add = TRUE)
     
     dev.hold()
@@ -294,7 +295,7 @@ plotlm6 <- function(x, which = 1:6,
         if (showAllPlots & plotNum == 1) {
             ## We are showing all plots
             showPlot = rep(TRUE, 6)
-            par(mfrow = c(2, 3))
+            par(mfrow = c(2, 3), oma = c(2, 0, 0, 0))
         } else {
             ## If we are only showing the summary plot
             ## skip any specific plot
@@ -329,7 +330,7 @@ plotlm6 <- function(x, which = 1:6,
             smOrd = order(sm$x)
             lines(sm$x[smOrd], sm$fitted[smOrd], col = smColour, lwd = 2)
             
-            if (one.fig)
+            if (!onlyShowAll)
                 title(sub = sub.caption, ...)
             mtext(getCaption(1), 3, 0.25, cex = cex.caption)
             if (id.n > 0) {
@@ -365,7 +366,7 @@ plotlm6 <- function(x, which = 1:6,
             smOrd = order(sm$x)
             lines(sm$x[smOrd], sm$fitted[smOrd], col = smColour, lwd = 2)
 
-            if (one.fig)
+            if (!onlyShowAll)
                 title(sub = sub.caption, ...)
             mtext(getCaption(2), 3, 0.25, cex = cex.caption)
             if (id.n > 0)
@@ -420,7 +421,7 @@ plotlm6 <- function(x, which = 1:6,
             smOrd = order(sm$x)
             lines(sm$x[smOrd], sm$fitted[smOrd], col = smColour, lwd = 2)
 
-            if (one.fig)
+            if (!onlyShowAll)
                 title(sub = sub.caption, ...)
             if (length(cook.levels)) {
                 p <- length(coef(x))
@@ -460,6 +461,8 @@ plotlm6 <- function(x, which = 1:6,
             show.mx <- order(-cdx)[1:3]
             plot(1:length(cdx), cdx, type = "h", main = main,
                  xlab = "observation number", ylab = "cook's distance")
+            if (!onlyShowAll)
+                title(sub = sub.caption, ...)
             mtext(getCaption(4), 3, 0.25, cex = cex.caption)
             text(show.mx, cdx[show.mx] + 0.4 * 0.75 * strheight(" "),
                  show.mx)
@@ -470,7 +473,7 @@ plotlm6 <- function(x, which = 1:6,
             ylim[2] <- ylim[2] + diff(ylim) * 0.075
             qq <- normCheck(rs, main = main, ylab = ylab23,
                             ylim = ylim, ...)
-            if (one.fig)
+            if (!onlyShowAll)
                 title(sub = sub.caption, ...)
             mtext(getCaption(5), 3, 0.25, cex = cex.caption)
             # print(show.rs)
@@ -491,6 +494,8 @@ plotlm6 <- function(x, which = 1:6,
             hist(r, prob = TRUE, ylim = c(0, ymax), xlim = c(xmin, xmax),
                  xlab = xlab, col = "light blue",
                  main = main)
+            if (!onlyShowAll)
+                title(sub = sub.caption, ...)
             mtext(getCaption(6), 3, 0.25, cex = cex.caption)
             box()
             x1 <- seq(xmin, xmax, length = 100)
@@ -499,8 +504,8 @@ plotlm6 <- function(x, which = 1:6,
         }, "Unable to plot Histogram :(")
     }
     
-    if (!one.fig && par("oma")[3] >= 1)
-        mtext(sub.caption, outer = TRUE, cex = 1.25)
+    if (onlyShowAll) #!one.fig && par("oma")[3] >= 1)
+        mtext(sub.caption, 1, outer = TRUE, cex = 1)
     
     invisible()
 }
