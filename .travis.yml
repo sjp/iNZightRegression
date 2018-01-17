@@ -1,7 +1,7 @@
 # R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
 
 language: R
-sudo: false
+sudo: true
 cache: packages
 
 r:
@@ -12,9 +12,8 @@ r:
 repos:
   docker: http://r.docker.stat.auckland.ac.nz/R
 
-addons:
-  apt:
-    packages:
-      - r-cran-car
-      - r-cran-sparsem
-      - r-cran-quantreg
+
+r_binary_packages:
+  - car
+  - sparsem
+  - quantreg
