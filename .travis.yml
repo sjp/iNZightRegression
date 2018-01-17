@@ -5,7 +5,7 @@ sudo: false
 cache: packages
 
 r:
-  - 3.2.3
+  - oldrel
   - release
   - devel
 
@@ -16,3 +16,5 @@ addons:
   apt:
     packages:
       - r-cran-car
+      - r-cran-sparsem
+      - r-cran-quantreg
