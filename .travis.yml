@@ -16,6 +16,6 @@ repos:
 addons:
   apt:
     packages:
-      -libnlopt0 
-      -libpaper-utils 
-      -libpaper1
+      - libnlopt0 
+      - libpaper-utils 
+      - libpaper1
