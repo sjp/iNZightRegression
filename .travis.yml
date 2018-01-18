@@ -2,7 +2,6 @@
 
 language: r
 sudo: false
-cache: packages
 
 r:
   - oldrel
@@ -11,11 +10,6 @@ r:
 
 repos:
   docker: http://r.docker.stat.auckland.ac.nz/R
-
-r_packages:
-  - SparseM
-  - car
-  - devtools
 
 addons:
   apt:
