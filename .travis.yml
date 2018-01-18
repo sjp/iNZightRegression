@@ -1,6 +1,6 @@
 # R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
 
-language: R
+language: r
 sudo: false
 cache: packages
 
@@ -12,3 +12,10 @@ r:
 repos:
   docker: http://r.docker.stat.auckland.ac.nz/R
 
+r_packages:
+  - devtools
+
+addons:
+  apt:
+    packages:
+      - libnlopt-dev
