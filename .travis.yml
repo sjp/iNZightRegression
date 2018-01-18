@@ -13,7 +13,7 @@ repos:
   docker: http://r.docker.stat.auckland.ac.nz/R
 
 r_packages:
-  - sparsem
+  - SparseM
   - car
   - devtools
 
