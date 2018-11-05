@@ -1,3 +1,5 @@
+- [fix] summary of model with only confounders (i.e., "adjusted intercept")
+
 # Version 1.2
 __Release date__: 23 August 2017
 

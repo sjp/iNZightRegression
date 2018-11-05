@@ -213,7 +213,7 @@ iNZightSummary <- function (x, method = "standard", reorder.factors = FALSE,
         if (!is.null(exclude)) {
             excl <- apply(sapply(exclude,
                                  function(x) grepl(x, rowns)), 1, any)
-            coefs.copy <- coefs.copy[!excl, ]
+            coefs.copy <- coefs.copy[!excl, , drop = FALSE]
         }
         na.line <- rep(NA, 4)
         i <- 1
