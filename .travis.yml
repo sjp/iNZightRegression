@@ -19,7 +19,7 @@ matrix:
       brew_packages: libgit2
 
 repos:
-  docker: http://r.docker.stat.auckland.ac.nz/R
+  docker: https://r.docker.stat.auckland.ac.nz
 
 addons:
   apt:
