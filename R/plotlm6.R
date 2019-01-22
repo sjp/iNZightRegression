@@ -326,9 +326,9 @@ plotlm6 <- function(x, which = 1:6,
                 }
             }
             ## Draw loess line for original data set
-            sm = loess(r ~ yh)
-            smOrd = order(sm$x)
-            lines(sm$x[smOrd], sm$fitted[smOrd], col = smColour, lwd = 2)
+            # sm = loess(r ~ yh)
+            # smOrd = order(sm$x)
+            # lines(sm$x[smOrd], sm$fitted[smOrd], col = smColour, lwd = 2)
             
             if (!onlyShowAll)
                 title(sub = sub.caption, ...)
