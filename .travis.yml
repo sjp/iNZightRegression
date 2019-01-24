@@ -28,3 +28,15 @@ addons:
 
 before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sudo chown -R $(whoami) /usr/local/share; fi
+
+deploy:
+  provider: releases
+  skip_cleanup: true
+  api_key:
+    secure: i5yDd4lq/W9buLW+qsnyL1mOfJwogRJyj3OyEBLURbf18wO2geeHIWZhaOjI+l05MaMHOixjCkgcLB3z0/pWmiyYQ4n7PoTXi/YR5CtG5gH//fiSHirPF04MIIazZKpl4SLw495q0218uYJnvat1+dg2B0VpdEuU0MXEkTjWQ14=
+  file_glob: true
+  file: iNZightRegression_*.tgz
+  overwrite: true
+  on:
+    tags: true
+    repo: iNZightVIT/iNZightRegression

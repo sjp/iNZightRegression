@@ -1,3 +1,6 @@
+- fix bug where residual plot for null model was painfully slow to draw
+
+
 # Version 1.2
 __Release date__: 23 August 2017
 
