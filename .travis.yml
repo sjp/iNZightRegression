@@ -18,6 +18,8 @@ matrix:
       r: 3.3
       brew_packages: libgit2
 
+r_check_args: "--as-cran --install-args=--build"
+
 repos:
   docker: https://r.docker.stat.auckland.ac.nz
 
