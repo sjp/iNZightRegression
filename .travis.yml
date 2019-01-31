@@ -4,17 +4,41 @@ language: r
 sudo: false
 cache: packages
 latex: false
+pandoc: false
 
+matrix:
+  include:
+    - os: linux
+      r: oldrel
+    - os: linux
+      r: release
+    - os: linux
+      r: devel
+    - os: osx
+      r: 3.3
+      brew_packages: libgit2
 
-r:
-  - oldrel
-  - release
-  - devel
+r_check_args: "--as-cran --install-args=--build"
 
 repos:
-  docker: http://r.docker.stat.auckland.ac.nz/R
+  docker: https://r.docker.stat.auckland.ac.nz
 
 addons:
   apt:
     packages:
       - libnlopt-dev
+
+before_install:
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sudo chown -R $(whoami) /usr/local/share; fi
+
+deploy:
+  provider: releases
+  skip_cleanup: true
+  api_key:
+    secure: i5yDd4lq/W9buLW+qsnyL1mOfJwogRJyj3OyEBLURbf18wO2geeHIWZhaOjI+l05MaMHOixjCkgcLB3z0/pWmiyYQ4n7PoTXi/YR5CtG5gH//fiSHirPF04MIIazZKpl4SLw495q0218uYJnvat1+dg2B0VpdEuU0MXEkTjWQ14=
+  file_glob: true
+  file: iNZightRegression_*.tgz
+  overwrite: true
+  on:
+    tags: true
+    repo: iNZightVIT/iNZightRegression
