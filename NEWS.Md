@@ -1,7 +1,7 @@
 ## iNZightRegression 1.2.2.9000
 __Release date__: TBA
 
-
+- display link function used in binomial regression fits
 
 
 ## iNZightRegression 1.2.2
