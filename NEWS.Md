@@ -2,6 +2,7 @@
 __Release date__: TBA
 
 - display link function used in binomial regression fits
+- suppress warnings from `loess()` calls
 
 
 ## iNZightRegression 1.2.2
