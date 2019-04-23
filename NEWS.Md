@@ -1,5 +1,5 @@
-## iNZightRegression 1.2.2.9000
-__Release date__: TBA
+## iNZightRegression 1.2.3
+__Release date__: 30 April 2019
 
 - display link function used in binomial regression fits
 - suppress warnings from `loess()` calls
