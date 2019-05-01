@@ -146,12 +146,18 @@ iNZightSummary <- function (x, method = "standard", reorder.factors = FALSE,
     surv <- ifelse(isSurvey(x.lm), 'Survey ', '')
     genlin <- ifelse(isGlm(x.lm), 'Generalised Linear ', '')
     baseline <- ""
+    linkfun <- ""
     if (isGlm(x.lm) && x.lm$family$family == "binomial") {
-        baseline <- sprintf(" (baseline = %s)",
-            levels(x.lm$model[,1])[1])
+        if (length(levels(x.lm$model[,1])))
+            baseline <- sprintf(" (baseline = %s)",
+                levels(x.lm$model[,1])[1])
+        linkfun <- sprintf("(using the %s link function)\n",
+            x.lm$family$link)
     }
-    cat(sprintf("\n%s%sModel for: %s%s\n\n",
-                surv, genlin, attr(x.data, "names")[1], baseline))
+    cat(sprintf("\n%s%sModel for: %s%s\n%s\n",
+        surv, genlin, attr(x.data, "names")[1], baseline,
+        linkfun
+    ))
     if (isSurvey(x.lm)) {
         cat("Survey design:\n")
         print(x$survey.design$call)

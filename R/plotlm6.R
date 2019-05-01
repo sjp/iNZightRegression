@@ -92,13 +92,13 @@ plotlm6 <- function(x, which = 1:6,
                     use.inzightplots = FALSE,
                     env = parent.frame(),
                     ...) {
-    
-    
+
+
     ## disable bootstraps for survey designs:
     if (inherits(x, "glm"))
         showBootstraps <- FALSE
-    
-    
+
+
     ## Use grid graphics from iNZightPlots if they're available.
     if (FALSE && use.inzightplots && requireNamespace("iNZightPlots", TRUE)) {
         plotlm6grid(x = x, which = which, panel = panel, sub.caption = sub.caption,
@@ -231,10 +231,10 @@ plotlm6 <- function(x, which = 1:6,
         oask <- devAskNewPage(FALSE)
         on.exit(devAskNewPage(oask))
     }
-    
+
     if (showBootstraps) {
         bsModels = try(bootstrapModels(x, env = env), TRUE)
-        
+
         if (inherits(bsModels, "try-error")) {
             ## turn off bootstrapping if it fails
             showBootstraps <- FALSE
@@ -279,7 +279,7 @@ plotlm6 <- function(x, which = 1:6,
             }, TRUE) ## end try()
         } ## end else
     } ## end if showBootstraps
-        
+
     ## If we want to show all of the plots, assume "all" is the
     ## seventh plot
     showAllPlots = all(show)
@@ -287,10 +287,10 @@ plotlm6 <- function(x, which = 1:6,
     ## Ensure par is not globally modified
     origpar = par(mfrow = c(1, 1), oma = c(0, 0, 0, 0))
     on.exit(par(origpar), add = TRUE)
-    
+
     dev.hold()
     on.exit(dev.flush(), add = TRUE)
-    
+
     for (plotNum in 1:7) {
         if (showAllPlots & plotNum == 1) {
             ## We are showing all plots
@@ -315,11 +315,11 @@ plotlm6 <- function(x, which = 1:6,
                 ylim <- extendrange(r = ylim, f = 0.08)
             plot(yh, r, xlab = l.fit, ylab = "Residuals", main = main,
                  ylim = ylim, ...)
-            
+
             if (showBootstraps) {
                 ## Draw bootstrap sample loess lines
                 for (i in 1:nBootstraps) {
-                    bsm = loess(rbs[[i]] ~ yhbs[[i]])
+                    bsm = suppressWarnings(loess(rbs[[i]] ~ yhbs[[i]]))
                     bsmOrd = order(bsm$x)
                     lines(bsm$x[bsmOrd], bsm$fitted[bsmOrd],
                           col = bsmColour)
@@ -327,11 +327,11 @@ plotlm6 <- function(x, which = 1:6,
             }
             if (ncol(x$model) > 1) {
                 ## Draw loess line for original data set
-                sm = loess(r ~ yh)
+                sm = suppressWarnings(loess(r ~ yh))
                 smOrd = order(sm$x)
                 lines(sm$x[smOrd], sm$fitted[smOrd], col = smColour, lwd = 2)
             }
-            
+
             if (!onlyShowAll)
                 title(sub = sub.caption, ...)
             mtext(getCaption(1), 3, 0.25, cex = cex.caption)
@@ -342,7 +342,7 @@ plotlm6 <- function(x, which = 1:6,
             }
             abline(h = 0, lty = 3, col = "gray")
         }, "Unable to plot Residuals vs Fitted :(")
-        
+
         if (showPlot[2]) tryOrErrorPlot({
             sqrtabsr <- sqrt(abs(rs))
             ylim <- c(0, max(sqrtabsr, na.rm = TRUE))
@@ -357,14 +357,16 @@ plotlm6 <- function(x, which = 1:6,
             if (showBootstraps) {
                 ## Draw bootstrap sample loess lines
                 for (i in 1:nBootstraps) {
-                    bsm = loess(sqrt(abs(rsbs[[i]])) ~ yhbs[[i]])
+                    bsm = suppressWarnings(
+                        loess(sqrt(abs(rsbs[[i]])) ~ yhbs[[i]])
+                    )
                     bsmOrd = order(bsm$x)
                     lines(bsm$x[bsmOrd], bsm$fitted[bsmOrd],
                           col = bsmColour)
                 }
             }
             ## Draw loess line for original data set
-            sm = loess(sqrtabsr ~ yhn0)
+            sm = suppressWarnings(loess(sqrtabsr ~ yhn0))
             smOrd = order(sm$x)
             lines(sm$x[smOrd], sm$fitted[smOrd], col = smColour, lwd = 2)
 
@@ -374,7 +376,7 @@ plotlm6 <- function(x, which = 1:6,
             if (id.n > 0)
                 text.id(yhn0[show.rs], sqrtabsr[show.rs], show.rs)
         }, "Unable to plot Scale-Location :(")
-        
+
         if (showPlot[3]) tryOrErrorPlot({
             ylab5 <- if (isGlm(x))
                 "Std. Pearson resid."
@@ -412,14 +414,14 @@ plotlm6 <- function(x, which = 1:6,
                 for (i in 1:nBootstraps) {
                     xxbs = hiibs[[i]]
                     xxbs[xxbs >= 1] = NA
-                    bsm = loess(rspbs[[i]] ~ xxbs)
+                    bsm = suppressWarnings(loess(rspbs[[i]] ~ xxbs))
                     bsmOrd = order(bsm$x)
                     lines(bsm$x[bsmOrd], bsm$fitted[bsmOrd],
                           col = bsmColour)
                 }
             }
             ## Original data smooth
-            sm = loess(rsp ~ xx)
+            sm = suppressWarnings(loess(rsp ~ xx))
             smOrd = order(sm$x)
             lines(sm$x[smOrd], sm$fitted[smOrd], col = smColour, lwd = 2)
 
@@ -456,7 +458,7 @@ plotlm6 <- function(x, which = 1:6,
                 }
             }
         }, "Unable to plot Residuals vs Leverage :(")
-        
+
         if (showPlot[4]) tryOrErrorPlot({
             ## cooks distance
             cdx <- cooks.distance(x)
@@ -469,7 +471,7 @@ plotlm6 <- function(x, which = 1:6,
             text(show.mx, cdx[show.mx] + 0.4 * 0.75 * strheight(" "),
                  show.mx)
         }, "Unable to plot Cook's distance :(")
-        
+
         if (showPlot[5]) tryOrErrorPlot({
             ylim <- range(rs, na.rm = TRUE)
             ylim[2] <- ylim[2] + diff(ylim) * 0.075
@@ -482,7 +484,7 @@ plotlm6 <- function(x, which = 1:6,
             if (id.n > 0)
                 text.id(qq$x[show.rs], qq$y[show.rs], show.rs)
         }, "Unable to plot Normal QQ plot :(")
-        
+
         if (showPlot[6]) tryOrErrorPlot({
             ## Histogram
             h <- hist(r, plot = FALSE)
@@ -505,10 +507,10 @@ plotlm6 <- function(x, which = 1:6,
             lines(x1, y1, lwd = 1.5, lty = 3)
         }, "Unable to plot Histogram :(")
     }
-    
+
     if (onlyShowAll) #!one.fig && par("oma")[3] >= 1)
         mtext(sub.caption, 1, outer = TRUE, cex = 1)
-    
+
     invisible()
 }
 
