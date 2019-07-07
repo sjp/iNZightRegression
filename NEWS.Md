@@ -1,5 +1,5 @@
-## iNZightRegression 1.2.3.9000
-__Release date__: TBA
+## iNZightRegression 1.2.4
+__Release date__: 8 July 2019
 
 - disable smoother for intercept-only models (`y ~ 1`)
 
