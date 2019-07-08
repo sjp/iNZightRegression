@@ -100,6 +100,7 @@ plotlm6 <- function(x, which = 1:6,
 
     ## disable smoother for intercept-only models
     if (add.smooth && ncol(x$model) == 1) add.smooth <- FALSE
+    if (showBootstraps && !add.smooth) showBootstraps <- FALSE
 
     ## Use grid graphics from iNZightPlots if they're available.
     if (FALSE && use.inzightplots && requireNamespace("iNZightPlots", TRUE)) {
