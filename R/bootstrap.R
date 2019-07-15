@@ -29,9 +29,12 @@ bootstrapModels <- function(fit, nBootstraps = 30, env = parent.frame()) {
                 ## - need to subset the FULL data set (using fit$model excludes missing values!)
                 ## - fit$call$data is the name of the data object, which needs to be evaluated FIRST
                 ## - and THEN the fit update is evaluate in the parent environment (where fit$call$data exists)
-                call <- update(fit, subset = sample(nrow(eval(fit$call$data)), replace = TRUE),
-                               evaluate = FALSE)
-                eval(call, envir = env)
+                tmpdata <- eval(fit$call$data, envir = env)
+                call <- update(fit,
+                    data = tmpdata,
+                    subset = sample(nrow(tmpdata), replace = TRUE),
+                    evaluate = FALSE)
+                eval(call)#, envir = env)
             })
             conv <- !isGlm(fit) || bsfit$conv
         }

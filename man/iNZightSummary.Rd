@@ -5,7 +5,8 @@
 \title{Informative Summary Information for Regression Models}
 \usage{
 iNZightSummary(x, method = "standard", reorder.factors = FALSE,
-  digits = max(3, getOption("digits") - 3), symbolic.cor = x$symbolic.cor,
+  digits = max(3, getOption("digits") - 3),
+  symbolic.cor = x$symbolic.cor,
   signif.stars = getOption("show.signif.stars"), exclude = NULL, ...)
 }
 \arguments{
