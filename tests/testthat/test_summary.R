@@ -4,7 +4,6 @@ dat <- data.frame(x = runif(100, 0, 1))
 dat$y <- rbinom(100, 1, log(dat$x*2 + 1) / log(3))
 
 lm <- lm(y ~ x, data = dat)
-iNZightSummary(lm)
 
 test_that("Probit models supported", {
     lm.logit <- glm(y ~ x, family = binomial, data = dat)
@@ -17,3 +16,4 @@ test_that("Probit models supported", {
     expect_equal(sum(grepl("AIC", smry)), 1)
     expect_equal(sum(grepl("Fisher Scoring iterations", smry)), 1)
 })
+

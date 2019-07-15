@@ -5,7 +5,8 @@
 \title{Draw multiple partial residual plots}
 \usage{
 partialResPlot(fit, varname, showBootstraps = nrow(fit$model) >= 30 &
-  nrow(fit$model) < 4000, use.inzightplots = FALSE, env = parent.frame())
+  nrow(fit$model) < 4000, use.inzightplots = FALSE,
+  env = parent.frame())
 }
 \arguments{
 \item{fit}{an \code{lm}, \code{glm} or \code{svyglm} object.}
