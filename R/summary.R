@@ -227,6 +227,8 @@ iNZightSummary <- function (x, method = "standard", reorder.factors = FALSE,
         }
         na.line <- rep(NA, 4)
         i <- 1
+        cat("\n\n\n")
+        coefs.copy <- cbind(coefs.copy, confint(x.lm))
         while (i <= nrow(coefs.copy)) {
          ## If the name has been modified, we know we're not dealing
          ## with a numeric variable, or it is crossed with some factor
@@ -383,14 +385,16 @@ iNZightSummary <- function (x, method = "standard", reorder.factors = FALSE,
                                         pvalue <- type3pval
                                     }
                                     coefs.copy <-
-                                        insert.lines(name.k, k,
-                                                     c(rep(NA, 3), pvalue),
-                                                     coefs.copy)
+                                        insert.lines(
+                                            name.k, k,
+                                            c(rep(NA, 3), pvalue, rep(NA, 2)),
+                                            coefs.copy
+                                        )
                                 }
                                 ## Base level
                                 if (k == (i + 1)) {
                                     coefs.copy <-
-                                        insert.lines(name.k, k, rep(NA, 4),
+                                        insert.lines(name.k, k, rep(NA, 6),
                                                      coefs.copy)
                                 }
 
