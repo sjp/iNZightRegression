@@ -17,6 +17,7 @@ Imports:
     car
 Suggests:
     iNZightPlots,
+    survey,
     testthat,
     covr
 Description: Core functions for iNZight Model Fitting module, and can also be

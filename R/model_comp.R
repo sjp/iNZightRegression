@@ -7,6 +7,12 @@
 #' @author Tom Elliott
 #' @export
 compare_models <- function(x, ...) {
+    UseMethod("compare_models")
+}
+
+#' @describeIn compare_models default method
+#' @export
+compare_models.default <- function(x, ...) {
     # x should be a model
     xclass <- class(x)
     model.list <- c(list(x), list(...))
@@ -25,11 +31,17 @@ compare_models <- function(x, ...) {
     }
     else df <- attr(stats4::logLik(x), "df")
 
-    mat <- cbind(df, AIC, BIC)
+    mat <- cbind(df, AIC, BIC)    
     structure(mat,
         .Dimnames = list(
             Model = as.character(match.call())[-1],
             colnames(mat)
         )
     )
+}
+
+#' @describeIn compare_models method for survey GLMs
+#' @export
+compare_models.svyglm <- function(x, ...) {
+    AIC(x, ...)
 }

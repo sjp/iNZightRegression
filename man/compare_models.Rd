@@ -2,9 +2,15 @@
 % Please edit documentation in R/model_comp.R
 \name{compare_models}
 \alias{compare_models}
+\alias{compare_models.default}
+\alias{compare_models.svyglm}
 \title{Compare regression models using AIC, BIC, etc}
 \usage{
 compare_models(x, ...)
+
+\method{compare_models}{default}(x, ...)
+
+\method{compare_models}{svyglm}(x, ...)
 }
 \arguments{
 \item{x}{a regression model (lm, glm, svyglm, ...)}
@@ -17,6 +23,13 @@ an matrix object
 \description{
 Obtain a quick model comparison matrix for a selection of models
 }
+\section{Methods (by class)}{
+\itemize{
+\item \code{default}: default method
+
+\item \code{svyglm}: method for survey GLMs
+}}
+
 \author{
 Tom Elliott
 }
