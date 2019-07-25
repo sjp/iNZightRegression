@@ -2,7 +2,6 @@
 
 S3method(multicomp,moecalc)
 S3method(plot,moecalc)
-S3method(print,inzmodelcomp)
 S3method(print,moecalc)
 S3method(print,multicomp)
 S3method(print,summary.moecalc)

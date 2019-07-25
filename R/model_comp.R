@@ -3,7 +3,7 @@
 #' Obtain a quick model comparison matrix for a selection of models
 #' @param x a regression model (lm, glm, svyglm, ...)
 #' @param ... other models
-#' @return an `inzmodelcomp` object
+#' @return an matrix object
 #' @author Tom Elliott
 #' @export
 compare_models <- function(x, ...) {
@@ -11,14 +11,25 @@ compare_models <- function(x, ...) {
     xclass <- class(x)
     model.list <- c(list(x), list(...))
     if (length(model.list) > 1) {
-        if (any(!sapply(model.list[[-1]], function(z) all(class(z) == xclass))))
+        if (any(!sapply(model.list, function(z) all(class(z) == xclass))))
             stop("Models must be of the same type")
     }
 
-    model.list
-}
+    AIC <- AIC(x, ...)
+    BIC <- BIC(x, ...)
 
-#' @export
-print.inzmodelcomp <- function(x, ...) {
+    if (length(model.list) > 1) {
+        df <- AIC$df
+        AIC <- AIC$AIC
+        BIC <- BIC$BIC
+    }
+    else df <- attr(stats4::logLik(x), "df")
 
+    mat <- cbind(df, AIC, BIC)
+    structure(mat,
+        .Dimnames = list(
+            Model = as.character(match.call())[-1],
+            colnames(mat)
+        )
+    )
 }

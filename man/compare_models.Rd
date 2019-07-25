@@ -12,7 +12,7 @@ compare_models(x, ...)
 \item{...}{other models}
 }
 \value{
-an `inzmodelcomp` object
+an matrix object
 }
 \description{
 Obtain a quick model comparison matrix for a selection of models
