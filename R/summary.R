@@ -227,6 +227,7 @@ iNZightSummary <- function (x, method = "standard", reorder.factors = FALSE,
         }
         na.line <- rep(NA, 4)
         i <- 1
+        coefs.copy <- cbind(coefs.copy, confint(x.lm))
         while (i <= nrow(coefs.copy)) {
          ## If the name has been modified, we know we're not dealing
          ## with a numeric variable, or it is crossed with some factor
@@ -383,14 +384,16 @@ iNZightSummary <- function (x, method = "standard", reorder.factors = FALSE,
                                         pvalue <- type3pval
                                     }
                                     coefs.copy <-
-                                        insert.lines(name.k, k,
-                                                     c(rep(NA, 3), pvalue),
-                                                     coefs.copy)
+                                        insert.lines(
+                                            name.k, k,
+                                            c(rep(NA, 3), pvalue, rep(NA, 2)),
+                                            coefs.copy
+                                        )
                                 }
                                 ## Base level
                                 if (k == (i + 1)) {
                                     coefs.copy <-
-                                        insert.lines(name.k, k, rep(NA, 4),
+                                        insert.lines(name.k, k, rep(NA, 6),
                                                      coefs.copy)
                                 }
 
@@ -439,6 +442,7 @@ iNZightSummary <- function (x, method = "standard", reorder.factors = FALSE,
             }
             i <- i + nlines.to.add
         }
+        
         iNZightPrintCoefmat(coefs.copy, digits = digits)
 
         ######
@@ -521,7 +525,7 @@ iNZightPrintCoefmat <-
 	     dig.tst = max(1, min(5, digits - 1)),
 	     cs.ind = 1:k, tst.ind = k+1, zap.ind = integer(0L),
 	     P.values = NULL,
-	     has.Pvalue = nc >= 4 && substr(colnames(x)[nc], 1, 3) == "Pr(",
+	     has.Pvalue = nc >= 4 && any(substr(colnames(x), 1, 3) == "Pr("),
              eps.Pvalue = .Machine$double.eps,
 	     na.print = "NA", ...)
 {
@@ -549,11 +553,13 @@ iNZightPrintCoefmat <-
     else if(P.values && !has.Pvalue)
 	stop("'P.values' is TRUE, but 'has.Pvalue' is not")
 
-    ## Renaming last column so that we're not using an explicit test stat
-    colnames(x)[nc] <- "p-value"
+    ## Renaming p-value column so that we're not using an explicit test stat
+    pcol <- grep("Pr\\(", colnames(x))
+    if (length(pcol) > 1) stop("Multiple p-value columns...?")
+    colnames(x)[pcol] <- "p-value"
 
     if(has.Pvalue && !P.values) {# P values are there, but not wanted
-	d <- dim(xm <- data.matrix(x[,-nc , drop = FALSE]))
+	d <- dim(xm <- data.matrix(x[,-pcol , drop = FALSE]))
 	nc <- nc - 1
 	has.Pvalue <- FALSE
     } else xm <- data.matrix(x)
@@ -580,10 +586,10 @@ iNZightPrintCoefmat <-
 	Cf[, tst.ind]<- format(round(xm[, tst.ind], digits = dig.tst),
                                digits = digits)
     if(any(r.ind <- !((1L:nc) %in%
-                      c(cs.ind, tst.ind, if(has.Pvalue) nc))))
+                      c(cs.ind, tst.ind, if(has.Pvalue) pcol))))
 	for(i in which(r.ind)) Cf[, i] <- format(xm[, i], digits=digits)
     ok[, tst.ind] <- FALSE
-    okP <- if(has.Pvalue) ok[, -nc] else ok
+    okP <- if(has.Pvalue) ok[, -pcol] else ok
     ## we need to find out where Cf is zero.  We can't use as.numeric
     ## directly as OutDec could have been set.
     ## x0 <- (xm[okP]==0) != (as.numeric(Cf[okP])==0)
@@ -648,12 +654,12 @@ iNZightPrintCoefmat <-
             warning("option \"show.signif.stars\" is invalid: assuming TRUE")
             signif.stars <- TRUE
         }
-	if(any(okP <- ok[,nc])) {
-            orig.pv <- xm[, nc] # keeping copy with names
+	if(any(okP <- ok[,pcol])) {
+            orig.pv <- xm[, pcol] # keeping copy with names
             empty.lvl <- Cf[, 1] == "-" # Used for when we cannot use
                                         # a level
             lvl <- substr(names(orig.pv), 1, 2) == "  "
-            pv <- as.vector(xm[, nc]) # drop names
+            pv <- as.vector(xm[, pcol]) # drop names
             okP[empty.lvl] <- TRUE
     	    pvals <- format.pval(c(pv[okP & !lvl], pv[okP & lvl]),
                                  digits = dig.tst, eps = eps.Pvalue)
@@ -669,14 +675,19 @@ iNZightPrintCoefmat <-
                                                 # the left
             reg.pvals <- paste(reg.pvals, "  ", sep = "")
             lvl.pvals <- paste("  ", lvl.pvals, sep = "")
-            Cf[okP & !lvl, nc] <- reg.pvals
-            Cf[okP & lvl, nc] <- lvl.pvals
+            Cf[okP & !lvl, pcol] <- reg.pvals
+            Cf[okP & lvl, pcol] <- lvl.pvals
 	    signif.stars <- signif.stars && any(pv[okP] < .1)
 	    if(signif.stars) {
 		Signif <- symnum(pv, corr = FALSE, na = FALSE,
 				 cutpoints = c(0,  .001,.01,.05, .1, 1),
 				 symbols   =  c("***","**","*","."," "))
-		Cf <- cbind(Cf, format(Signif)) #format.ch: right=TRUE
+        # place stars directly after p-value
+		Cf <- cbind(
+            Cf[,1:pcol,drop=FALSE], 
+            format(Signif),
+            Cf[,-(1:pcol),drop=FALSE]
+        ) #format.ch: right=TRUE
 	    }
 	} else signif.stars <- FALSE
     } else signif.stars <- FALSE
