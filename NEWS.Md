@@ -1,5 +1,6 @@
 ## iNZightRegression 1.2.4.9000
 
+- add parameter confidence limits to regression summary output
 
 
 ## iNZightRegression 1.2.4
