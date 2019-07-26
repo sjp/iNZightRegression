@@ -14,7 +14,8 @@ Imports:
     grDevices,
     graphics,
     grid,
-    car
+    car,
+    stats4
 Suggests:
     iNZightPlots,
     survey,
