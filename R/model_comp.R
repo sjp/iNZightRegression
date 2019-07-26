@@ -3,7 +3,7 @@
 #' Obtain a quick model comparison matrix for a selection of models
 #' @param x a regression model (lm, glm, svyglm, ...)
 #' @param ... other models
-#' @return an matrix object
+#' @return an `inzmodelcomp` object
 #' @author Tom Elliott
 #' @export
 compare_models <- function(x, ...) {
@@ -36,12 +36,71 @@ compare_models.default <- function(x, ...) {
         .Dimnames = list(
             Model = as.character(match.call())[-1],
             colnames(mat)
-        )
+        ),
+        class = "inzmodelcomp"
     )
 }
 
 #' @describeIn compare_models method for survey GLMs
 #' @export
 compare_models.svyglm <- function(x, ...) {
-    AIC(x, ...)
+    model.list <- c(list(x), list(...))
+    if (length(model.list) > 1) {
+        if (any(!sapply(model.list, function(z) inherits(z, "svyglm"))))
+            stop("Models must be of the same type")
+    }
+
+    AIC <- AIC(x, ...)
+
+    # models must be nested to compute BIC, and the "maximal" model needs 
+    # to be computed
+    maximal <- which.max(sapply(model.list, function(z) length(names(coef(z)))))
+    
+    model_names <- as.character(match.call())[-1]
+    BIC <- try(BIC(x, ..., maximal = model.list[[maximal]]), silent = TRUE)
+    if (inherits(BIC, "try-error")) BIC <- NULL
+
+    if (length(model.list) > 1) {
+        AIC <- AIC[, "AIC"]
+        if (!is.null(BIC))
+            BIC <- BIC[, "BIC"]
+    } else {
+        AIC <- AIC["AIC"]
+        BIC <- BIC["BIC"]
+    }
+
+    mat <- cbind(AIC, BIC)
+    if (length(model.list) > 1)
+        mat <- cbind(mat, maximal = 1:length(model.list) == maximal)
+    structure(mat,
+        .Dimnames = list(
+            Model = as.character(match.call())[-1],
+            colnames(mat)
+        ),
+        class = "inzmodelcomp"
+    )
+}
+
+print.inzmodelcomp <- function(x, ...) {
+    if (nrow(x) == 1) {
+        print(unclass(x))
+        return()
+    }
+
+    hasBIC <- "BIC" %in% colnames(x)
+    z <- data.frame(
+        Model = rownames(x),
+        AIC = x[, "AIC"]
+    )
+    if (hasBIC) {
+        z$BIC <- x[, "BIC"]
+        z$maximal <- ifelse(x[, "maximal"] == 1, "*", "")
+        colnames(z)[4] <- ""
+    }
+    print(z, row.names = FALSE)
+    if (hasBIC)
+        cat("\nModel BICs compared to the maximal model, denoted with *\n")
+    else
+        cat("\nBIC not shown as no single model contains all of the variables\n")
+    invisible(NULL)
 }
