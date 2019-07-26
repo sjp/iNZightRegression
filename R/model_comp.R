@@ -50,6 +50,11 @@ compare_models.svyglm <- function(x, ...) {
             stop("Models must be of the same type")
     }
 
+    # # apparently it is necessary to have the design object available
+    # des <- as.character(x$call$design)
+    # assign(des, get(des, parent.frame()))
+    # print(ls())
+    dclus2 <- get("dclus2", parent.frame())
     AIC <- AIC(x, ...)
 
     # models must be nested to compute BIC, and the "maximal" model needs 
