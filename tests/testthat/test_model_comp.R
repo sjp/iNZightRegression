@@ -44,31 +44,31 @@ s2 <- svyglm(api00 ~ ell + meals, design = dclus2)
 s3 <- svyglm(api00 ~ ell + meals + mobility, design = dclus2)
 s4 <- svyglm(api00 ~ meals, design = dclus2)
 
-# test_that("Survey models work", {
-#     expect_is(compare_models(s1), "inzmodelcomp")
-#     expect_equivalent(compare_models(s1)[, "AIC"], AIC(s1)["AIC"])
-#     expect_equivalent(
-#         compare_models(s1)[, "BIC"], 
-#         BIC(s1, maximal = s1)["BIC"]
-#     )
+test_that("Survey models work", {
+    expect_is(compare_models(s1), "inzmodelcomp")
+    expect_equivalent(compare_models(s1)[, "AIC"], AIC(s1)["AIC"])
+    expect_equivalent(
+        compare_models(s1)[, "BIC"], 
+        BIC(s1, maximal = s1)["BIC"]
+    )
 
-#     expect_is(compare_models(s1, s2, s3), "inzmodelcomp")
-#     expect_is(compare_models(s3, s2, s1), "inzmodelcomp")
-#     expect_is(compare_models(s1, s4), "inzmodelcomp")
+    expect_is(compare_models(s1, s2, s3), "inzmodelcomp")
+    expect_is(compare_models(s3, s2, s1), "inzmodelcomp")
+    expect_is(compare_models(s1, s4), "inzmodelcomp")
 
-#     expect_equal(
-#         compare_models(s1, s2, s3, s4),
-#         structure(
-#             cbind(
-#                 AIC(s1, s2, s3, s4)[, "AIC"],
-#                 BIC(s1, s2, s3, s4, maximal = s3)[, "BIC"],
-#                 c(0, 0, 1, 0)
-#             ),
-#             .Dimnames = list(Model = paste0("s", 1:4), c("AIC", "BIC", "maximal")),
-#             class = "inzmodelcomp"
-#         )
-#     )
-# })
+    expect_equal(
+        compare_models(s1, s2, s3, s4),
+        structure(
+            cbind(
+                AIC(s1, s2, s3, s4)[, "AIC"],
+                BIC(s1, s2, s3, s4, maximal = s3)[, "BIC"],
+                c(0, 0, 1, 0)
+            ),
+            .Dimnames = list(Model = paste0("s", 1:4), c("AIC", "BIC", "maximal")),
+            class = "inzmodelcomp"
+        )
+    )
+})
 
 test_that("Mixing model types returns an error", {
     expect_error(compare_models(f1, g1))
