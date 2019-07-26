@@ -21,6 +21,8 @@ Suggests:
     survey,
     testthat,
     covr
+Additional_repositories:
+    https://r.docker.stat.auckland.ac.nz
 Description: Core functions for iNZight Model Fitting module, and can also be
     used as a standalone package called directly from R.
 License: GPL-3 | file LICENSE
