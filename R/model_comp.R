@@ -86,6 +86,7 @@ compare_models.svyglm <- function(x, ...) {
     )
 }
 
+#' @export
 print.inzmodelcomp <- function(x, ...) {
     if (nrow(x) == 1) {
         print(unclass(x))
