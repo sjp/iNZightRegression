@@ -100,13 +100,17 @@ print.inzmodelcomp <- function(x, ...) {
     )
     if (hasBIC) {
         z$BIC <- x[, "BIC"]
-        z$maximal <- ifelse(x[, "maximal"] == 1, "*", "")
-        colnames(z)[4] <- ""
+        if ("maximal" %in% colnames(x)) {
+            z$maximal <- ifelse(x[, "maximal"] == 1, "*", "")
+            colnames(z)[4] <- ""
+        }
     }
     print(z, row.names = FALSE)
-    if (hasBIC)
-        cat("\nModel BICs compared to the maximal model, denoted with *\n")
-    else
-        cat("\nBIC not shown as no single model contains all of the variables\n")
+    if ("maximal" %in% colnames(x)) {
+        if (hasBIC)
+            cat("\nModel BICs compared to the maximal model, denoted with *\n")
+        else
+            cat("\nBIC not shown as no single model contains all of the variables\n")
+    }
     invisible(NULL)
 }
