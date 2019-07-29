@@ -1,6 +1,7 @@
 ## iNZightRegression 1.2.4.9000
 
 - add parameter confidence limits to regression summary output
+- add model comparison function (AIC, BIC)
 
 
 ## iNZightRegression 1.2.4
