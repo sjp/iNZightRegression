@@ -130,13 +130,19 @@ adjustedMeans = function(fit) {
 #' @author Tom Elliott
 #' @export
 factorComp <- function(fit, factor) {
-    comp <- TukeyHSD(aov(fit), factor)[[factor]]
+    #comp <- TukeyHSD(aov(fit), factor)[[factor]]
+
+    comp <- summary(multcomp::glht(fit, 
+       linfct = eval(parse(text = sprintf("mcp(%s = \"Tukey\")", factor)))
+    ))
+    ci <- confint(comp)$confint
+    
     levels <- fit$xlevels[[factor]]
     n <- length(levels)
-    diff <- comp[, "diff"]
-    lower <- comp[, "lwr"]
-    upper <- comp[, "upr"]
-    pval <- comp[, "p adj"]
+    diff <- comp$test$coefficients
+    lower <- ci[, "lwr"]
+    upper <- ci[, "upr"]
+    pval <- comp$test$pvalues
 
     pvalmat <- diffmat <- 
         matrix(nrow = n - 1, ncol = n - 1)
@@ -182,7 +188,8 @@ print.inzfactorcomp <- function(x, ...) {
 
     cat("\nP-values\n\n")
     pmat <- x$p.value
-    pmat[1:prod(dim(pmat))] <- format.pval(pmat, digits = 5, na.form = "")
+    pmat[1:prod(dim(pmat))] <- 
+      format.pval(pmat, digits = 5, eps = 1e-8, na.form = "")
     print(pmat, quote = FALSE)
     invisible(NULL)
 }
