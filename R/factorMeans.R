@@ -117,3 +117,72 @@ adjustedMeans = function(fit) {
       cat('There are no factors in this model.\n')
   }
 }
+
+#' Compare factor levels
+#' 
+#' Computes confidence intervals for the pairwise differences between levels 
+#' of a factor, based off of \link{TukeyHSD}.
+#' 
+#' @param fit a lm/glm/svyglm object
+#' @param factor the name of the factor to compare
+#' @return a factor level comparison matrix with estimates, CIs, 
+#'         and (adjusted) p-values
+#' @author Tom Elliott
+#' @export
+factorComp <- function(fit, factor) {
+    comp <- TukeyHSD(aov(fit), factor)[[factor]]
+    levels <- fit$xlevels[[factor]]
+    n <- length(levels)
+    diff <- comp[, "diff"]
+    lower <- comp[, "lwr"]
+    upper <- comp[, "upr"]
+    pval <- comp[, "p adj"]
+
+    pvalmat <- diffmat <- 
+        matrix(nrow = n - 1, ncol = n - 1)
+    cimat <- 
+        matrix(NA, nrow = 2 * (n - 1), ncol = n - 1)
+
+    k <- 0
+    for (i in 1:(n-1)) {
+        for (j in i:(n-1)) {
+            k <- k + 1
+            diffmat[i, j] <- diff[k]
+            pvalmat[i, j] <- pval[k]
+            cimat[i*2 - 1, j] <- lower[k]
+            cimat[i*2, j] <- upper[k]
+        }
+    }
+    colnames(diffmat) <- colnames(cimat) <- colnames(pvalmat) <- levels[-1]
+    rownames(diffmat) <- rownames(pvalmat) <- levels[-n]
+    rownames(cimat) <- rbind(levels[-n], "")
+
+    structure(
+        list(estimate = diffmat, ci = cimat, p.value = pvalmat),
+        class = "inzfactorcomp",
+        response = colnames(fit$model)[1],
+        factor = factor
+    )
+}
+
+#' @export
+print.inzfactorcomp <- function(x, ...) {
+    cat(sprintf(
+        "# Estimated differences in mean %s between levels of %s\n",
+        attr(x, "response"), attr(x, "factor")
+    ))
+    cat("  adjusted for the other variables in the model\n")
+    cat("  (col group - row group)\n\n")
+
+    cat("Estimates\n\n")
+    print(x$estimate, na.print = "")
+
+    cat("\n95% Confidence Intervals\n\n")
+    print(x$ci, na.print = "")
+
+    cat("\nP-values\n\n")
+    pmat <- x$p.value
+    pmat[1:prod(dim(pmat))] <- format.pval(pmat, digits = 5, na.form = "")
+    print(pmat, quote = FALSE)
+    invisible(NULL)
+}
