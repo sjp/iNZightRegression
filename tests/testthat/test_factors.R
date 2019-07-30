@@ -2,13 +2,14 @@ context("Factor output")
 
 fit <- lm(Sepal.Length ~ Species, data = iris)
 fit2 <- lm(Sepal.Length ~ Species + Sepal.Width, data = iris)
-fit3 <- 
 
 test_that("Factor comparisons computed correctly", {
+    set.seed(10)
     x <- factorComp(fit, "Species")
     expect_is(x, "inzfactorcomp")
 
-    z <- summary(multcomp::glht(fit, linfct = mcp(Species = "Tukey")))
+    set.seed(10)
+    z <- summary(multcomp::glht(fit, linfct = multcomp::mcp(Species = "Tukey")))
     expect_equal(x$estimate[c(1, 3:4)], as.numeric(z$test$coefficients))
     expect_equal(x$p.value[c(1, 3:4)], as.numeric(z$test$pvalues))
     expect_equal(

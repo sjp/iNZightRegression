@@ -130,11 +130,8 @@ adjustedMeans = function(fit) {
 #' @author Tom Elliott
 #' @export
 factorComp <- function(fit, factor) {
-    #comp <- TukeyHSD(aov(fit), factor)[[factor]]
-
-    comp <- summary(multcomp::glht(fit, 
-       linfct = eval(parse(text = sprintf("mcp(%s = \"Tukey\")", factor)))
-    ))
+    z <- sprintf("multcomp::mcp(%s = \"Tukey\")", factor)
+    comp <- summary(multcomp::glht(fit, linfct = eval(parse(text = z))))
     ci <- confint(comp)$confint
     
     levels <- fit$xlevels[[factor]]
