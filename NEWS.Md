@@ -1,6 +1,8 @@
 ## iNZightRegression 1.2.4.9000
 
 - add parameter confidence limits to regression summary output
+- add `factorComp()` function to obtain adjusted pairwise comparisons of
+  factor levels in a model
 
 
 ## iNZightRegression 1.2.4

@@ -13,5 +13,5 @@ test_that("Factor comparisons computed correctly", {
 })
 
 test_that("Factor comparison matrix prints OK", {
-    expect_success(print(factorComp(fit, "Species")))
+    expect_output(print(factorComp(fit, "Species")))
 })
