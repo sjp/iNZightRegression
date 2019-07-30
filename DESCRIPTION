@@ -14,12 +14,17 @@ Imports:
     grDevices,
     graphics,
     grid,
-    car
+    car,
+    stats4
 Suggests:
     iNZightPlots,
+    survey,
     testthat,
     covr
+Additional_repositories:
+    https://r.docker.stat.auckland.ac.nz
 Description: Core functions for iNZight Model Fitting module, and can also be
     used as a standalone package called directly from R.
 License: GPL-3 | file LICENSE
+Encoding: UTF-8
 RoxygenNote: 6.1.1
