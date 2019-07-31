@@ -22,10 +22,9 @@ test_that("Plot works for basic lm", {
     expect_silent(plotlm6(lm1, which = 6))
 })
 
+set.seed(100)
 dat <- data.frame(x = runif(100, 0, 1))
 dat$y <- rbinom(100, 1, log(dat$x*2 + 1) / log(3))
-
-
 test_that("Plot works for basic glm", {
     glm0 <- glm(y ~ 1, data = dat)
     expect_silent(plotlm6(glm0, which = 1))
