@@ -36,4 +36,18 @@ test_that("Factor comparison matrix prints OK", {
     expect_output(print(factorComp(fit, "Species")))
 })
 
+test_that("Factor comparison for glm", {
+    dat <- data.frame(x = runif(1000, 0, 1))
+    dat$y <- rbinom(1000, 1, log(dat$x*2 + 1) / log(3))
+    dat$g <- factor(sample(c("A", "B", "C"), 1000, replace = TRUE))
+    glm1 <- glm(y ~ x + g, data = dat)
+    expect_is(factorComp(glm1, "g"), "inzfactorcomp")
+})
 
+require(survey)
+test_that("Factor comparison for svyglm", {
+    data(api)
+    dstrat<-svydesign(id=~1,strata=~stype, weights=~pw, data=apistrat, fpc=~fpc)
+    s <- svyglm(api00~ell+meals+mobility+awards, design=dstrat)
+    expect_is(factorComp(s, "awards"), "inzfactorcomp")
+})
