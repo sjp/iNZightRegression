@@ -15,7 +15,8 @@ Imports:
     graphics,
     grid,
     car,
-    stats4
+    stats4,
+    multcomp
 Suggests:
     iNZightPlots,
     survey,
