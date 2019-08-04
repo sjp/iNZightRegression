@@ -1,6 +1,8 @@
 bootstrapModels <- function(fit, nBootstraps = 30, env = parent.frame()) {
-    if (isSurvey(fit))
-        warning('Bootstrapping for survey glms is still under development.')
+    if (isSurvey(fit)) {
+        warning('Bootstrapping for survey glms is not yet ready.')
+        return(NULL)
+    }
 
   # Variables for adding bootstrap lowess lines
     # nr = nrow(fit$model)
@@ -29,7 +31,11 @@ bootstrapModels <- function(fit, nBootstraps = 30, env = parent.frame()) {
                 ## - need to subset the FULL data set (using fit$model excludes missing values!)
                 ## - fit$call$data is the name of the data object, which needs to be evaluated FIRST
                 ## - and THEN the fit update is evaluate in the parent environment (where fit$call$data exists)
-                tmpdata <- eval(fit$call$data, envir = env)
+                if (is.null(fit$call$data)) {
+                    tmpdata <- fit$model
+                } else {
+                    tmpdata <- eval(fit$call$data, envir = env)
+                }
                 call <- update(fit,
                     data = tmpdata,
                     subset = sample(nrow(tmpdata), replace = TRUE),
