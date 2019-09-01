@@ -86,7 +86,7 @@ plotlm6 <- function(x, which = 1:6,
                     ask = prod(par("mfcol")) < length(which) && dev.interactive(),
                     id.n = 3, labels.id = names(residuals(x)),
                     cex.id = 0.75, qqline = TRUE, cook.levels = c(0.5, 1),
-                    add.smooth = getOption("add.smooth"), label.pos = c(4, 2),
+                    add.smooth = getOption("add.smooth", TRUE), label.pos = c(4, 2),
                     cex.caption = 1,
                     showBootstraps = nrow(x$model) >= 30 && nrow(x$model) < 4000,
                     use.inzightplots = FALSE,
@@ -95,7 +95,7 @@ plotlm6 <- function(x, which = 1:6,
 
 
     ## disable bootstraps for survey designs:
-    if (inherits(x, "glm"))
+    if (inherits(x, "svyglm"))
         showBootstraps <- FALSE
 
     ## disable smoother for intercept-only models

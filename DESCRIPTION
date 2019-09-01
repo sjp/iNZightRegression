@@ -1,7 +1,7 @@
 Package: iNZightRegression
 Type: Package
 Title: iNZightRegression
-Version: 1.2.4
+Version: 1.2.5
 Authors@R: c(person("Simon", "Potter", role = c("aut"),
     email = "spot023@aucklanduni.ac.nz"),
     person("David", "Banks", role = "aut"),
@@ -14,12 +14,18 @@ Imports:
     grDevices,
     graphics,
     grid,
-    car
+    car,
+    stats4,
+    multcomp
 Suggests:
     iNZightPlots,
+    survey,
     testthat,
     covr
+Additional_repositories:
+    https://r.docker.stat.auckland.ac.nz
 Description: Core functions for iNZight Model Fitting module, and can also be
     used as a standalone package called directly from R.
 License: GPL-3 | file LICENSE
+Encoding: UTF-8
 RoxygenNote: 6.1.1
