@@ -1,4 +1,5 @@
-## iNZightRegression 1.2.4.9000
+## iNZightRegression 1.2.5
+__Release date__: 2 September 2019
 
 - add parameter confidence limits to regression summary output
 - add model comparison function (AIC, BIC)
