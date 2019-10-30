@@ -1,6 +1,7 @@
 ## iNZightRegression 1.2.5.9000
 __Release date__: TBA
 
+- fix bug in regression summary causing interactions to fail
 
 
 ## iNZightRegression 1.2.5
