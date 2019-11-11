@@ -182,28 +182,30 @@ iNZightSummary <- function (x, method = "standard", reorder.factors = FALSE,
     rdf <- df[2L]
 
     if (rdf > 5L) {
-	nam <- c("Min", "1Q", "Median", "3Q", "Max")
-	rq <- if (length(dim(resid)) == 2L)
-	    structure(apply(t(resid), 1L, quantile),
-		      dimnames = list(nam, dimnames(resid)[[2L]]))
-	else {
-            zz <- zapsmall(quantile(resid), digits + 1)
-            structure(zz, names = nam)
-        }
-    }
-    else if (rdf > 0L) {
-	print(resid, digits = digits, ...)
+        nam <- c("Min", "1Q", "Median", "3Q", "Max")
+        rq <- if (length(dim(resid)) == 2L) {
+            structure(apply(t(resid), 1L, quantile),
+                dimnames = list(nam, dimnames(resid)[[2L]]))
+        } else {
+                zz <- zapsmall(quantile(resid), digits + 1)
+                structure(zz, names = nam)
+            }
+    } else if (rdf > 0L) {
+	    print(resid, digits = digits, ...)
     } else { # rdf == 0 : perfect fit!
-	cat("ALL", df[1L],
-            "residuals are 0: no residual degrees of freedom!\n")
+        cat("ALL", df[1L],
+                "residuals are 0: no residual degrees of freedom!\n")
     }
+
     if (length(x$aliased) == 0L) {
         cat("\nNo Coefficients\n")
     } else {
-        if (nsingular <- df[3L] - df[1L])
+        if (nsingular <- df[3L] - df[1L]) {
             cat("Coefficients: (", nsingular,
                 " not defined because of singularities)\n", sep = "")
-        else cat("Coefficients:\n")
+        } else {
+            cat("Coefficients:\n")
+        }
         coefs <- x$coefficients
         if(!is.null(aliased <- x$aliased) && any(aliased)) {
             cn <- names(aliased)
@@ -285,7 +287,7 @@ iNZightSummary <- function (x, method = "standard", reorder.factors = FALSE,
 
                             coefs.copy <-
                                 insert.lines(row.label, i,
-                                             c(rep(NA, 3), pvalue),
+                                             c(rep(NA, 5), pvalue),
                                              coefs.copy)
                         }
 
@@ -297,8 +299,8 @@ iNZightSummary <- function (x, method = "standard", reorder.factors = FALSE,
                         level.list <- list()
                         for (fs in 1:length(isf)) {
                             if (isf[fs] == "factor") {
-                             ## Always omit base level
-                                l <- levels(data.sub[, fs])[-1]
+                             ## Always omit base level ## ---> Why?
+                                l <- levels(data.sub[, fs])#[-1]
                             } else {
                                 l <- cterms[fs]
                             }
@@ -442,7 +444,7 @@ iNZightSummary <- function (x, method = "standard", reorder.factors = FALSE,
             }
             i <- i + nlines.to.add
         }
-        
+
         iNZightPrintCoefmat(coefs.copy, digits = digits)
 
         ######
@@ -684,7 +686,7 @@ iNZightPrintCoefmat <-
 				 symbols   =  c("***","**","*","."," "))
         # place stars directly after p-value
 		Cf <- cbind(
-            Cf[,1:pcol,drop=FALSE], 
+            Cf[,1:pcol,drop=FALSE],
             format(Signif),
             Cf[,-(1:pcol),drop=FALSE]
         ) #format.ch: right=TRUE

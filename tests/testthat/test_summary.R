@@ -25,3 +25,12 @@ test_that("Probit models supported", {
     expect_equal(sum(grepl("Fisher Scoring iterations", smry)), 1)
 })
 
+test_that("Interactions are handled", {
+    fit1 <- lm(uptake ~ Type:Treatment, data = CO2)
+    fit2 <- lm(uptake ~ conc + Type:Treatment, data = CO2)
+
+    smry1 <- capture.output(iNZightSummary(fit1))
+    smry2 <- capture.output(iNZightSummary(fit2))
+    expect_match(smry1, "^Type:Treatment", all = FALSE)
+    expect_match(smry2, "^Type:Treatment", all = FALSE)
+})
