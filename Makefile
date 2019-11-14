@@ -1,5 +1,7 @@
 R := R
 
+default: install
+
 document:
 	@$(R) -e "devtools::document()"
 
