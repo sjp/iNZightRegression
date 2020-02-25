@@ -1,5 +1,5 @@
 ## iNZightRegression 1.2.6
-__Release date__: 11 November 2011
+__Release date__: 11 November 2019
 
 - fix bug in regression summary causing interactions to fail
 
