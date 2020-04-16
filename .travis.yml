@@ -10,6 +10,8 @@ matrix:
   include:
     - os: linux
       r: oldrel
+      r_github_packages:
+        - hojsgaard/pbkrtest@9235f2bc85
     - os: linux
       r: release
     - os: linux
@@ -30,6 +32,9 @@ addons:
 
 before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sudo chown -R $(whoami) /usr/local/share; fi
+
+after_install:
+  - if [[ "$TRAVIS_R_VERSION_STRING" == "oldrel" ]]; then R -e "devtools::install_version('pbkrtest')"; fi
 
 after_success:
   - Rscript -e 'covr::codecov()'
