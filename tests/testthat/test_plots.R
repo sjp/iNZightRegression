@@ -1,6 +1,6 @@
 context("Model plots")
 
-dat <- data.frame(x = runif(100, 0, 1))
+dat <- data.frame(x = runif(100, 0, 1), stringsAsFactors = TRUE)
 dat$y <- rnorm(100, 20 + dat$x * 5, 5)
 
 
@@ -23,7 +23,7 @@ test_that("Plot works for basic lm", {
 })
 
 set.seed(100)
-dat <- data.frame(x = runif(100, 0, 1))
+dat <- data.frame(x = runif(100, 0, 1), stringsAsFactors = TRUE)
 dat$y <- rbinom(100, 1, log(dat$x*2 + 1) / log(3))
 test_that("Plot works for basic glm", {
     glm0 <- glm(y ~ 1, data = dat)

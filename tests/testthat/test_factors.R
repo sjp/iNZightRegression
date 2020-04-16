@@ -22,11 +22,12 @@ test_that("Factor comparisons computed correctly", {
     )
 
     expect_is(factorComp(fit2, "Species"), "inzfactorcomp")
-    
+
     d <- data.frame(
         x = rnorm(1000),
         g1 = sample(c("A", "B"), 1000, replace = TRUE),
-        g2 = sample(c("first", "second"), 1000, replace = TRUE)
+        g2 = sample(c("first", "second"), 1000, replace = TRUE),
+        stringsAsFactors = TRUE
     )
     expect_is(factorComp(lm(x ~ g1 + g2, data = d), "g1"), "inzfactorcomp")
     expect_is(factorComp(lm(x ~ g1 + g2, data = d), "g2"), "inzfactorcomp")
@@ -37,7 +38,7 @@ test_that("Factor comparison matrix prints OK", {
 })
 
 test_that("Factor comparison for glm", {
-    dat <- data.frame(x = runif(1000, 0, 1))
+    dat <- data.frame(x = runif(1000, 0, 1), stringsAsFactors = TRUE)
     dat$y <- rbinom(1000, 1, log(dat$x*2 + 1) / log(3))
     dat$g <- factor(sample(c("A", "B", "C"), 1000, replace = TRUE))
     glm1 <- glm(y ~ x + g, data = dat)
