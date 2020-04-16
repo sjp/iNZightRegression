@@ -1,3 +1,5 @@
+- specify `stringsAsFactors = TRUE` for upcoming R 4.0.0
+
 ## iNZightRegression 1.2.6
 __Release date__: 11 November 2019
 
