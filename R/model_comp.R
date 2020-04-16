@@ -1,5 +1,5 @@
 #' Compare regression models using AIC, BIC, etc
-#' 
+#'
 #' Obtain a quick model comparison matrix for a selection of models
 #' @param x a regression model (lm, glm, svyglm, ...)
 #' @param ... other models
@@ -31,7 +31,7 @@ compare_models.default <- function(x, ...) {
     }
     else df <- attr(stats4::logLik(x), "df")
 
-    mat <- cbind(df, AIC, BIC)    
+    mat <- cbind(df, AIC, BIC)
     structure(mat,
         .Dimnames = list(
             Model = as.character(match.call())[-1],
@@ -52,10 +52,10 @@ compare_models.svyglm <- function(x, ...) {
 
     AIC <- AIC(x, ...)
 
-    # models must be nested to compute BIC, and the "maximal" model needs 
+    # models must be nested to compute BIC, and the "maximal" model needs
     # to be computed
     maximal <- which.max(sapply(model.list, function(z) length(names(coef(z)))))
-    
+
     model_names <- as.character(match.call())[-1]
     BIC <- try(BIC(x, ..., maximal = model.list[[maximal]]), silent = TRUE)
     if (inherits(BIC, "try-error")) BIC <- NULL
@@ -91,7 +91,8 @@ print.inzmodelcomp <- function(x, ...) {
     hasBIC <- "BIC" %in% colnames(x)
     z <- data.frame(
         Model = rownames(x),
-        AIC = x[, "AIC"]
+        AIC = x[, "AIC"],
+        stringsAsFactors = TRUE
     )
     if (hasBIC) {
         z$BIC <- x[, "BIC"]
