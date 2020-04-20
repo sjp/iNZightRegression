@@ -34,3 +34,12 @@ test_that("Interactions are handled", {
     expect_match(smry1, "^Type:Treatment", all = FALSE)
     expect_match(smry2, "^Type:Treatment", all = FALSE)
 })
+
+test_that("Confounding variables are handled appropriately", {
+    o <- capture.output(iNZightSummary(fit, exclude = "Species"))
+    expect_match(
+        o,
+        "The model has been adjusted for the following confounder\\(s\\)",
+        all = FALSE
+    )
+})
