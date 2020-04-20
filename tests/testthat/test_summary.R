@@ -36,5 +36,10 @@ test_that("Interactions are handled", {
 })
 
 test_that("Confounding variables are handled appropriately", {
-    iNZightSummary(fit, exclude = "Species")
+    o <- capture.output(iNZightSummary(fit, exclude = "Species"))
+    expect_match(
+        o,
+        "The model has been adjusted for the following confounder\\(s\\)",
+        all = FALSE
+    )
 })
