@@ -1,3 +1,4 @@
+## iNZightRegression 1.2.7
 - specify `stringsAsFactors = TRUE` for upcoming R 4.0.0
 - fix bug in processing summary for models with `exlude`d variables
 

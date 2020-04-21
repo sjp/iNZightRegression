@@ -4,10 +4,16 @@
 \alias{iNZightSummary}
 \title{Informative Summary Information for Regression Models}
 \usage{
-iNZightSummary(x, method = "standard", reorder.factors = FALSE,
+iNZightSummary(
+  x,
+  method = "standard",
+  reorder.factors = FALSE,
   digits = max(3, getOption("digits") - 3),
   symbolic.cor = x$symbolic.cor,
-  signif.stars = getOption("show.signif.stars"), exclude = NULL, ...)
+  signif.stars = getOption("show.signif.stars"),
+  exclude = NULL,
+  ...
+)
 }
 \arguments{
 \item{x}{an object of class \code{"lm"}, \code{"glm"} or \code{"svyglm"},

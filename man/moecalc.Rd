@@ -6,9 +6,17 @@
 \alias{plot.moecalc}
 \title{Margin of Error Calculations}
 \usage{
-moecalc(x, factorname = NULL, levelnames = NULL, coef.idx = NULL,
-  est = NULL, ci = NULL, base = TRUE, basename = "base",
-  conf.level = 1.96)
+moecalc(
+  x,
+  factorname = NULL,
+  levelnames = NULL,
+  coef.idx = NULL,
+  est = NULL,
+  ci = NULL,
+  base = TRUE,
+  basename = "base",
+  conf.level = 1.96
+)
 
 \method{summary}{moecalc}(object, ...)
 
