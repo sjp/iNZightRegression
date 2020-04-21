@@ -11,7 +11,7 @@ test_that("Confidence limits included in summary output", {
     )
 })
 
-dat <- data.frame(x = runif(100, 0, 1))
+dat <- data.frame(x = runif(100, 0, 1), stringsAsFactors = TRUE)
 dat$y <- rbinom(100, 1, log(dat$x*2 + 1) / log(3))
 test_that("Probit models supported", {
     fit.logit <- glm(y ~ x, family = binomial, data = dat)
@@ -33,4 +33,13 @@ test_that("Interactions are handled", {
     smry2 <- capture.output(iNZightSummary(fit2))
     expect_match(smry1, "^Type:Treatment", all = FALSE)
     expect_match(smry2, "^Type:Treatment", all = FALSE)
+})
+
+test_that("Confounding variables are handled appropriately", {
+    o <- capture.output(iNZightSummary(fit, exclude = "Species"))
+    expect_match(
+        o,
+        "The model has been adjusted for the following confounder\\(s\\)",
+        all = FALSE
+    )
 })

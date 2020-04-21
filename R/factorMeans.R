@@ -76,7 +76,7 @@ adjustedMeans = function(fit) {
           adjMean = structure(numeric(length(facLevels)), names = facLevels)
           for (flev in facLevels) {
               xVarsList[[f]] = factor(flev, levels = facLevels)
-              adjMean[flev] = predict(fit, data.frame(xVarsList))
+              adjMean[flev] = predict(fit, data.frame(xVarsList, stringsAsFactors = TRUE))
           }
           res[[f]] = adjMean
       }
@@ -101,7 +101,7 @@ adjustedMeans = function(fit) {
           for (i in 1:nCombinations) {
               for (j in 1:2)
                   xVarsList[[f[j]]] = facCombinations[i, j]
-              adjMean[combinationNames[i]] = predict(fit, data.frame(xVarsList))
+              adjMean[combinationNames[i]] = predict(fit, data.frame(xVarsList, stringsAsFactors = TRUE))
           }
           ord = order(names(adjMean))
           adjMean = adjMean[names(adjMean)[ord]]
@@ -119,13 +119,13 @@ adjustedMeans = function(fit) {
 }
 
 #' Compare factor levels
-#' 
-#' Computes confidence intervals for the pairwise differences between levels 
+#'
+#' Computes confidence intervals for the pairwise differences between levels
 #' of a factor, based off of \link{TukeyHSD}.
-#' 
+#'
 #' @param fit a lm/glm/svyglm object
 #' @param factor the name of the factor to compare
-#' @return a factor level comparison matrix with estimates, CIs, 
+#' @return a factor level comparison matrix with estimates, CIs,
 #'         and (adjusted) p-values
 #' @author Tom Elliott
 #' @export
@@ -133,7 +133,7 @@ factorComp <- function(fit, factor) {
     z <- sprintf("multcomp::mcp(%s = \"Tukey\")", factor)
     comp <- summary(multcomp::glht(fit, linfct = eval(parse(text = z))))
     ci <- confint(comp)$confint
-    
+
     levels <- fit$xlevels[[factor]]
     n <- length(levels)
     diff <- comp$test$coefficients
@@ -141,9 +141,9 @@ factorComp <- function(fit, factor) {
     upper <- ci[, "upr"]
     pval <- comp$test$pvalues
 
-    pvalmat <- diffmat <- 
+    pvalmat <- diffmat <-
         matrix(nrow = n - 1, ncol = n - 1)
-    cimat <- 
+    cimat <-
         matrix(NA, nrow = 2 * (n - 1), ncol = n - 1)
 
     k <- 0
@@ -185,7 +185,7 @@ print.inzfactorcomp <- function(x, ...) {
 
     cat("\nP-values\n\n")
     pmat <- x$p.value
-    pmat[1:prod(dim(pmat))] <- 
+    pmat[1:prod(dim(pmat))] <-
       format.pval(pmat, digits = 5, eps = 1e-8, na.form = "")
     print(pmat, quote = FALSE)
     invisible(NULL)

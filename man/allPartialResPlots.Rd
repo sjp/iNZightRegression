@@ -4,8 +4,10 @@
 \alias{allPartialResPlots}
 \title{Draw multiple partial residual plots}
 \usage{
-allPartialResPlots(fit, showBootstraps = nrow(fit$model) >= 30 &
-  nrow(fit$model) < 4000)
+allPartialResPlots(
+  fit,
+  showBootstraps = nrow(fit$model) >= 30 & nrow(fit$model) < 4000
+)
 }
 \arguments{
 \item{fit}{an \code{lm}, \code{glm} or \code{svyglm} object.}

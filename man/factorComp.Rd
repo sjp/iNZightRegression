@@ -12,11 +12,11 @@ factorComp(fit, factor)
 \item{factor}{the name of the factor to compare}
 }
 \value{
-a factor level comparison matrix with estimates, CIs, 
+a factor level comparison matrix with estimates, CIs,
         and (adjusted) p-values
 }
 \description{
-Computes confidence intervals for the pairwise differences between levels 
+Computes confidence intervals for the pairwise differences between levels
 of a factor, based off of \link{TukeyHSD}.
 }
 \author{

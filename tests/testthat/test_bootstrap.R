@@ -29,7 +29,7 @@ test_that("Bootstrapping without database works", {
 })
 
 test_that("Bootstrapping GLMs works", {
-    dat <- data.frame(x = runif(100, 0, 1))
+    dat <- data.frame(x = runif(100, 0, 1), stringsAsFactors = TRUE)
     dat$y <- rbinom(100, 1, log(dat$x*2 + 1) / log(3))
     fit <- lm(y ~ x, data = dat)
     expect_silent(bs <- bootstrapModels(fit, 10))

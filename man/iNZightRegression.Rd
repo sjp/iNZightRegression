@@ -3,7 +3,6 @@
 \docType{package}
 \name{iNZightRegression}
 \alias{iNZightRegression}
-\alias{iNZightRegression-package}
 \title{Additional functionality for iNZight}
 \description{
 This package provides some additional functions to be used when
