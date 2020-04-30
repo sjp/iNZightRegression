@@ -358,8 +358,7 @@ iNZightSummary <- function (x, method = "standard", reorder.factors = FALSE,
                       # substring matching an existing variable
                       # name, and there is a level present
 
-                        if (current.var == summary.row.subs &&
-                            is.level.of.cvar) {
+                        if (current.var == summary.row.subs && is.level.of.cvar) {
                             levels.of.cvar <- levels(x.data[, current.var])
                             base.level <- levels.of.cvar[1]
                             nlines.to.add <- length(levels.of.cvar) + 1
@@ -386,6 +385,10 @@ iNZightSummary <- function (x, method = "standard", reorder.factors = FALSE,
                                             }
                                         pvalue <- type3pval
                                     }
+                                    # print(coefs.copy)
+                                    # print(name.k)
+                                    # print(k)
+                                    # print(i)
                                     coefs.copy <-
                                         insert.lines(
                                             name.k, k,
@@ -712,8 +715,8 @@ insert.lines <- function(name, line.num, linedata, mat, replace = FALSE) {
         mat <- mat[-(line.num + 1), ]
         rownames(mat)[line.num] <- name
     } else {
-        rownames(mat) <- c(rns[1:(line.num - 1)], name,
-                           rns[line.num:nr + 1])
+        rns <- c(rns[1:(line.num - 1)], name, rns[line.num:nr + 1])
+        rownames(mat) <- rns
     }
     mat
 }

@@ -43,3 +43,9 @@ test_that("Confounding variables are handled appropriately", {
         all = FALSE
     )
 })
+
+test_that("Model intercept removed from model with factors", {
+    fit <- lm(Sepal.Length ~ Species - 1, data = iris)
+    expect_silent(smry <- capture.output(iNZightSummary(fit)))
+
+})
