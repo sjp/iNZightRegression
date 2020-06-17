@@ -445,6 +445,23 @@ iNZightSummary <- function (x, method = "standard", reorder.factors = FALSE,
             }
             i <- i + nlines.to.add
         }
+        
+        ## If the link is logit/log for GLM, or the response is log-transformed,
+        ## add exponentiated coefficients to output
+        log.resp <- grepl("^log\\(.*\\)", attr(x.lm$model, "names")[1])
+        if (isGlm(x.lm) && x.lm$family$link %in% c("logit", "log") || log.resp) {
+          coefs.copy <- cbind(
+            coefs.copy[, 1, drop = FALSE], 
+            exp(coefs.copy[, 1]),
+            coefs.copy[, 2:ncol(coefs.copy), drop = FALSE]
+          )
+          
+          colnames(coefs.copy)[2] <- ifelse(
+            isGlm(x.lm) && x.lm$family$link == "logit", 
+            "Odds Ratio", 
+            "Estimate (exp)"
+          )
+        }
 
         iNZightPrintCoefmat(coefs.copy, digits = digits)
 
