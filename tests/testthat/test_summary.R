@@ -43,3 +43,21 @@ test_that("Confounding variables are handled appropriately", {
         all = FALSE
     )
 })
+
+dat$y.pois <- rpois(100, 10)
+test_that("Exponentiated estimates are provided where appropriate", {
+    ## Logistic regression - odds ratios
+    fit.logit <- glm(y ~ x, family = binomial, data = dat)
+    smry <- capture.output(iNZightSummary(fit.logit))
+    expect_match(smry, "Odds Ratio", all = FALSE)
+    
+    ## Log-transformed response
+    fit.log <- lm(log(Sepal.Length) ~ Sepal.Width + Species + Petal.Length, data = iris)
+    smry2 <- capture.output(iNZightSummary(fit.log))
+    expect_match(smry2, "Estimate \\(exp\\)", all = FALSE)
+    
+    ## log link
+    fit.pois <- glm(y ~ x, family = poisson, data = dat)
+    smry3 <- capture.output(iNZightSummary(fit.pois))
+    expect_match(smry3, "Estimate \\(exp\\)", all = FALSE)
+})
