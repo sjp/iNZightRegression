@@ -1,4 +1,13 @@
+## iNZightRegression 1.2.7.9000
+__Release date__: Unreleased
+
+- add column for exponentiated estimates where appropriate
+- add `exponentiate.cis` argument to `iNZightSummary` which replaces the CIs
+  with exponentiated versions if appropriate (`FALSE` by default)
+
 ## iNZightRegression 1.2.7
+__Release date__: 21 April 2020
+
 - specify `stringsAsFactors = TRUE` for upcoming R 4.0.0
 - fix bug in processing summary for models with `exlude`d variables
 
