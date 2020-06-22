@@ -7,6 +7,11 @@ isSurvey <- function(fit)
 isCox <- function(fit)
     inherits(fit, 'coxph')
 
+isAFT <- function(fit)
+    inherits(fit, 'survreg')
+
+isSurvival <- function(fit)
+    isCox(fit) || isAFT(fit)
 
 errorPlot <- function(x = "Unable to draw plot") {
     ##plot.new()
