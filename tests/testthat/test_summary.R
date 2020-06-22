@@ -61,3 +61,21 @@ test_that("Exponentiated estimates are provided where appropriate", {
     smry3 <- capture.output(iNZightSummary(fit.pois))
     expect_match(smry3, "Estimate \\(exp\\)", all = FALSE)
 })
+
+test_that("Exponentiated CIs are provided where appropriate if wanted", {
+    ## Logistic regression - odds ratios
+    fit.logit <- glm(y ~ x, family = binomial, data = dat)
+    
+    ## Don't exponentiate by default
+    smry.noexp <- capture.output(iNZightSummary(fit.logit))
+    expect_match(smry.noexp, "2.5 % +97.5 %", all = FALSE)
+    
+    ## ...but exponentiate if required
+    smry.exp <- capture.output(iNZightSummary(fit.logit, exponentiate.ci = TRUE))
+    expect_match(smry.exp, "2.5 % \\(OR\\) +97.5 % \\(OR\\)", all = FALSE)
+    
+    ## No change to CIs if inappropriate
+    fit.lm <- lm(Sepal.Length ~ Sepal.Width + Species + Petal.Length, data = iris)
+    smry2 <- capture.output(iNZightSummary(fit.lm, exponentiate.ci = TRUE))
+    expect_match(smry2, "2.5 % +97.5 %", all = FALSE)
+})
