@@ -4,6 +4,8 @@ isGlm <- function(fit)
 isSurvey <- function(fit)
     inherits(fit, 'svyglm')
 
+isCox <- function(fit)
+    inherits(fit, 'coxph')
 
 
 errorPlot <- function(x = "Unable to draw plot") {

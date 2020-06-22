@@ -154,14 +154,25 @@ iNZightSummary <- function (x, method = "standard", reorder.factors = FALSE,
         linkfun <- sprintf("(using the %s link function)\n",
             x.lm$family$link)
     }
-    cat(sprintf("\n%s%sModel for: %s%s\n%s\n",
-        surv, genlin, attr(x.data, "names")[1], baseline,
+    
+    cox <- ifelse(isCox(x.lm), 'Cox Proportional Hazards ', '')
+
+    cat(sprintf("\n%s%s%sModel for: %s%s\n%s\n",
+        surv, genlin, cox, attr(x.data, "names")[1], baseline,
         linkfun
     ))
+    
     if (isSurvey(x.lm)) {
         cat("Survey design:\n")
         print(x$survey.design$call)
         cat("\n")
+    }
+    
+    if (isCox(x.lm)) {
+        surv.resp <- names(x.lm$model)[1]
+        cat("Survival parameters:\n")
+        cat(sprintf("\tTime to follow-up: %s\n", gsub("Surv\\((.*), ?.*\\)", "\\1", surv.resp)))
+        cat(sprintf("\tStatus indicator:  %s\n\n", gsub("Surv\\(.*, ?(.*)\\)", "\\1", surv.resp)))
     }
 
   # Print out a description of the confounding variables excluded from
@@ -174,35 +185,47 @@ iNZightSummary <- function (x, method = "standard", reorder.factors = FALSE,
         cat('\n\n')
     }
 
-    var.classes <- attr(x$terms, "dataClasses")[-1]
-    var.labels <- attr(x$terms, "term.labels")
+    if (!isCox(x.lm)) {
+      var.classes <- attr(x$terms, "dataClasses")[-1]
+      var.labels <- attr(x$terms, "term.labels")
+    } else {
+      var.classes <- attr(x.lm$terms, "dataClasses")[-1]
+      var.labels <- attr(x.lm$terms, "term.labels")
+    }
     var.labels <- strsplit(var.labels, ":")
-    resid <- ifelse(isGlm(x.lm), x$deviance.resid, x$residuals)
-    df <- x$df
-    rdf <- df[2L]
-
-    if (rdf > 5L) {
-        nam <- c("Min", "1Q", "Median", "3Q", "Max")
-        rq <- if (length(dim(resid)) == 2L) {
-            structure(apply(t(resid), 1L, quantile),
-                dimnames = list(nam, dimnames(resid)[[2L]]))
-        } else {
-                zz <- zapsmall(quantile(resid), digits + 1)
-                structure(zz, names = nam)
-            }
-    } else if (rdf > 0L) {
-	    print(resid, digits = digits, ...)
-    } else { # rdf == 0 : perfect fit!
-        cat("ALL", df[1L],
-                "residuals are 0: no residual degrees of freedom!\n")
+    resid <- ifelse(isGlm(x.lm), x$deviance.resid, ifelse(isCox(x.lm), x.lm$residuals, x$residuals))
+    
+    if (!isCox(x.lm)) {
+        df <- x$df
+        rdf <- df[2L]
+    
+        if (rdf > 5L) {
+            nam <- c("Min", "1Q", "Median", "3Q", "Max")
+            rq <- if (length(dim(resid)) == 2L) {
+                structure(apply(t(resid), 1L, quantile),
+                    dimnames = list(nam, dimnames(resid)[[2L]]))
+            } else {
+                    zz <- zapsmall(quantile(resid), digits + 1)
+                    structure(zz, names = nam)
+                }
+        } else if (rdf > 0L) {
+    	    print(resid, digits = digits, ...)
+        } else { # rdf == 0 : perfect fit!
+            cat("ALL", df[1L],
+                    "residuals are 0: no residual degrees of freedom!\n")
+        }
     }
 
-    if (length(x$aliased) == 0L) {
+    if (length(x$aliased) == 0L && !isCox(x.lm)) {
         cat("\nNo Coefficients\n")
     } else {
-        if (nsingular <- df[3L] - df[1L]) {
-            cat("Coefficients: (", nsingular,
-                " not defined because of singularities)\n", sep = "")
+        if (!isCox(x.lm)) {
+            if (nsingular <- df[3L] - df[1L]) {
+                cat("Coefficients: (", nsingular,
+                    " not defined because of singularities)\n", sep = "")
+            } else {
+                cat("Coefficients:\n")
+            }
         } else {
             cat("Coefficients:\n")
         }
@@ -219,6 +242,9 @@ iNZightSummary <- function (x, method = "standard", reorder.factors = FALSE,
         ### ------------------------------------------------------------ ###
 
         coefs.copy <- coefs
+        if (isCox(x.lm)) {
+          coefs.copy <- coefs.copy[, -2]
+        }
         rowns <- rownames(coefs)
         varnames <- names(x.data)
         coefs.copy <- cbind(coefs.copy, confint(x.lm))
@@ -281,7 +307,7 @@ iNZightSummary <- function (x, method = "standard", reorder.factors = FALSE,
                                         NA
                                     } else {
                                         tmpaov[which(rownames(tmpaov) == row.label),
-                                               ifelse(isGlm(x.lm), 3, 4)]
+                                               ifelse(isGlm(x.lm) || isCox(x.lm), 3, 4)]
                                     }
                                 pvalue <- type3pval
                             }
@@ -382,7 +408,7 @@ iNZightSummary <- function (x, method = "standard", reorder.factors = FALSE,
                                             } else {
                               ## Anova() on glm has different dimensions:
                               tmpaov[which(rownames(tmpaov) == name.k),
-                                     ifelse(isGlm(x.lm), 3, 4)]
+                                     ifelse(isGlm(x.lm) || isCox(x.lm), 3, 4)]
                                             }
                                         pvalue <- type3pval
                                     }
@@ -445,6 +471,16 @@ iNZightSummary <- function (x, method = "standard", reorder.factors = FALSE,
             }
             i <- i + nlines.to.add
         }
+        
+        if (isCox(x.lm)) {
+          coefs.copy <- cbind(
+            coefs.copy[, 1, drop = FALSE], 
+            exp(coefs.copy[, 1]), 
+            coefs.copy[, 2:ncol(coefs.copy), drop = FALSE]
+          )
+          
+          colnames(coefs.copy)[1:4] <- c("Estimate", "Estimate (exp)", "Std. Error", "z value")
+        }
 
         iNZightPrintCoefmat(coefs.copy, digits = digits)
 
@@ -488,7 +524,7 @@ iNZightSummary <- function (x, method = "standard", reorder.factors = FALSE,
                 }
             }
         }
-    } else {
+    } else if (!isCox(x.lm)) {
         cat("\nResidual standard error:",
             format(signif(x$sigma, digits)), "on", rdf,
             "degrees of freedom\n")
@@ -515,6 +551,13 @@ iNZightSummary <- function (x, method = "standard", reorder.factors = FALSE,
                 }
             }
         }
+    } else if (isCox(x.lm)) {
+      ## For Cox PH models, just print the last few lines of summary output 
+      other.stats <- capture.output(x)
+      s.len <- length(other.stats)
+      
+      other.stats <- other.stats[(s.len - 4):(s.len - 1)]
+      cat("\n", other.stats, sep = "\n")
     }
     cat("\n")
     invisible(x)
