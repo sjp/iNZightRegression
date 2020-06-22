@@ -44,6 +44,10 @@
 #'
 #' @param exclude a character vector of names of variables to be exluded from the
 #' summary output (i.e., confounding variables).
+#' 
+#' @param exponentiate.ci logical, if \code{TRUE}, the exponential of the 
+#' confidence intervals will be printed if appropriate (log/logit link or log 
+#' transformed response)
 #'
 #' @param ... further arguments passed to and from other methods.
 #'
@@ -77,6 +81,7 @@ iNZightSummary <- function (x, method = "standard", reorder.factors = FALSE,
                             symbolic.cor = x$symbolic.cor,
                             signif.stars= getOption("show.signif.stars"),
                             exclude = NULL,
+                            exponentiate.ci = FALSE,
                             ...) {
 
   # method: 'standard' or 'bootstrap'
@@ -461,6 +466,18 @@ iNZightSummary <- function (x, method = "standard", reorder.factors = FALSE,
             "Odds Ratio", 
             "Estimate (exp)"
           )
+          
+          if (exponentiate.ci) {
+            ci.cols <- (ncol(coefs.copy) - 1):ncol(coefs.copy)
+            coefs.copy[, ci.cols] <- exp(coefs.copy[, ci.cols, drop = FALSE])
+            ci.label <- ifelse(
+              isGlm(x.lm) && x.lm$family$link == "logit",
+              "(OR)",
+              "(exp)"
+            )
+            
+            colnames(coefs.copy)[ci.cols] <- paste(colnames(coefs.copy)[ci.cols], ci.label)
+          }
         }
 
         iNZightPrintCoefmat(coefs.copy, digits = digits)
