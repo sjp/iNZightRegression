@@ -553,7 +553,7 @@ iNZightSummary <- function (x, method = "standard", reorder.factors = FALSE,
         }
     } else if (isCox(x.lm)) {
       ## For Cox PH models, just print the last few lines of summary output 
-      other.stats <- capture.output(x)
+      other.stats <- utils::capture.output(x)
       s.len <- length(other.stats)
       
       other.stats <- other.stats[(s.len - 4):(s.len - 1)]
