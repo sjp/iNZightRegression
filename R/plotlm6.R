@@ -73,8 +73,7 @@
 ##' @param env environment for performing bootstrap simulations (i.e., to find the dataset!)
 ##' @param ... other arguments to be passed to through to plotting functions.
 ##'
-##' @author Simon Potter, David Banks, Tom Elliott. Original authors of
-##' \code{plot.lm} are John Maindonald and Martin Maechler.
+##' @author Simon Potter, David Banks, Tom Elliott.
 ##'
 ##' @seealso \code{\link{histogramArray}}, \code{\link{iNZightQQplot}}
 ##'
