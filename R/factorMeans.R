@@ -31,7 +31,7 @@ factorMeans = function(fit) {
       }
       return(res)
   }
-  else cat('There are no factors in this model.\n')
+  else warning('There are no factors in this model.')
 }
 
 
@@ -114,7 +114,7 @@ adjustedMeans = function(fit) {
       return(res)
   }
   else {
-      cat('There are no factors in this model.\n')
+      warning('There are no factors in this model.')
   }
 }
 

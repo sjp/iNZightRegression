@@ -488,6 +488,8 @@ warningErrProp = function(obj){
 ## obj     : xlevels
 ## conflict: output from function "typeofconflict"
 warningConflict = function(xlevels, conflict){
+  # Note: called by the `print` method.
+
   factorname = names(xlevels)[1]
   levelnames = xlevels[[factorname]]
   x = conflict
