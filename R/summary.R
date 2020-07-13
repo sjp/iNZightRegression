@@ -779,8 +779,12 @@ insert.lines <- function(name, line.num, linedata, mat, replace = FALSE) {
         mat <- mat[-(line.num + 1), ]
         rownames(mat)[line.num] <- name
     } else {
-        rownames(mat) <- c(rns[1:(line.num - 1)], name,
-                           rns[line.num:nr + 1])
+        if (line.num == 1) {
+            rownames(mat) <- c(name, rns[-1])
+        } else {
+            rownames(mat) <- c(rns[1:(line.num - 1)], name,
+                               rns[line.num:nr + 1])
+        }
     }
     mat
 }
