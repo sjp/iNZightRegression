@@ -248,7 +248,7 @@ iNZightSummary <- function (x, method = "standard", reorder.factors = FALSE,
 
         coefs.copy <- coefs
         if (isCox(x.lm)) {
-          coefs.copy <- coefs.copy[, -2]
+          coefs.copy <- coefs.copy[, -2, drop = FALSE]
         }
         rowns <- rownames(coefs)
         varnames <- names(x.data)
@@ -476,23 +476,23 @@ iNZightSummary <- function (x, method = "standard", reorder.factors = FALSE,
             }
             i <- i + nlines.to.add
         }
-        
+
         ## If the link is logit/log for GLM, or the response is log-transformed,
         ## add exponentiated coefficients to output
         log.resp <- grepl("^log\\(.*\\)", attr(x.lm$model, "names")[1])
         if (isGlm(x.lm) && x.lm$family$link %in% c("logit", "log") || log.resp || isCox(x.lm)) {
           coefs.copy <- cbind(
-            coefs.copy[, 1, drop = FALSE], 
+            coefs.copy[, 1, drop = FALSE],
             exp(coefs.copy[, 1]),
             coefs.copy[, 2:ncol(coefs.copy), drop = FALSE]
           )
-          
+
           colnames(coefs.copy)[2] <- ifelse(
-            isGlm(x.lm) && x.lm$family$link == "logit", 
-            "Odds Ratio", 
+            isGlm(x.lm) && x.lm$family$link == "logit",
+            "Odds Ratio",
             "Estimate (exp)"
           )
-          
+
           if (exponentiate.ci) {
             ci.cols <- (ncol(coefs.copy) - 1):ncol(coefs.copy)
             coefs.copy[, ci.cols] <- exp(coefs.copy[, ci.cols, drop = FALSE])
@@ -501,7 +501,7 @@ iNZightSummary <- function (x, method = "standard", reorder.factors = FALSE,
               "(OR)",
               "(exp)"
             )
-            
+
             colnames(coefs.copy)[ci.cols] <- paste(colnames(coefs.copy)[ci.cols], ci.label)
           }
         }
