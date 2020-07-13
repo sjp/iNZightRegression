@@ -159,25 +159,25 @@ iNZightSummary <- function (x, method = "standard", reorder.factors = FALSE,
         linkfun <- sprintf("(using the %s link function)\n",
             x.lm$family$link)
     }
-    
+
     cox <- ifelse(isCox(x.lm), 'Cox Proportional Hazards ', '')
 
     cat(sprintf("\n%s%s%sModel for: %s%s\n%s\n",
-        surv, genlin, cox, attr(x.data, "names")[1], baseline,
+        surv, genlin, cox, gsub("survival::", "", attr(x.data, "names")[1]), baseline,
         linkfun
     ))
-    
+
     if (isSurvey(x.lm)) {
         cat("Survey design:\n")
         print(x$survey.design$call)
         cat("\n")
     }
-    
+
     if (isCox(x.lm)) {
         surv.resp <- names(x.lm$model)[1]
         cat("Survival parameters:\n")
-        cat(sprintf("\tTime to follow-up: %s\n", gsub("Surv\\((.*), ?.*\\)", "\\1", surv.resp)))
-        cat(sprintf("\tStatus indicator:  %s\n\n", gsub("Surv\\(.*, ?(.*)\\)", "\\1", surv.resp)))
+        cat(sprintf("\tTime to follow-up: %s\n", gsub("survival::Surv\\((.*), ?.*\\)", "\\1", surv.resp)))
+        cat(sprintf("\tStatus indicator:  %s\n\n", gsub("survival::Surv\\(.*, ?(.*)\\)", "\\1", surv.resp)))
     }
 
   # Print out a description of the confounding variables excluded from
