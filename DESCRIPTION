@@ -17,9 +17,9 @@ Imports:
     grid,
     car,
     stats4,
+    iNZightPlots (>= 2.12),
     multcomp
 Suggests:
-    iNZightPlots,
     survey,
     testthat,
     covr
