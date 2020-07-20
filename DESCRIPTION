@@ -17,13 +17,15 @@ Imports:
     grid,
     car,
     stats4,
-    multcomp
+    iNZightPlots (>= 2.12),
+    multcomp,
+    magrittr,
+    dplyr
 Suggests:
-    iNZightPlots,
     survey,
     testthat,
     covr
 Description: Provides a suite of funcitons to use with regression models, including summaries, residual plots, and factor comparisons. Used as part of the Model Fitting module of 'iNZight', a graphical user interface providing easy exploration and visualisation of data for students of statistics, available in both desktop and online versions.
 License: GPL-3
 Encoding: UTF-8
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
