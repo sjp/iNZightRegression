@@ -20,7 +20,9 @@ Imports:
     iNZightPlots (>= 2.12),
     multcomp,
     magrittr,
-    dplyr
+    dplyr,
+    ggplot2,
+    utils
 Suggests:
     survey,
     testthat,

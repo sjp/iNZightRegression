@@ -1,3 +1,11 @@
+#' inzplot method
+#'
+#' @importFrom iNZightPlots inzplot
+#' @name inzplot
+#' @rdname inzplot.lm
+#' @export
+NULL
+
 #' Diagnostic Plots for Regression Models
 #'
 #' @section Plot types:
@@ -9,15 +17,15 @@
 #' * normal Q-Q
 #' * histogram
 #'
-#' @param fit a regression model
+#' @param x a regression model
 #' @param which the type of plot to draw
+#' @param show.bootstraps logical, if `TRUE` bootstrap smoothers will be shown
 #' @param ... additional arguments
 #' @param env the environment for evaluating things (e.g., bootstraps)
 #' @return A ggplot object
 #'
 #' @md
 #' @import ggplot2
-#' @importFrom iNZightPlots inzplot
 #' @importFrom magrittr "%>%"
 #' @author Tom Elliott
 #' @export
@@ -45,7 +53,7 @@ inzplot.lm <- function(x,
         }
     }
 
-    p <- ggplot(d, aes(yh, r)) +
+    p <- ggplot(d, aes_(~yh, ~r)) +
         geom_point() +
         geom_hline(yintercept = 0, lty = 3) +
         scale_x_continuous(
@@ -56,7 +64,7 @@ inzplot.lm <- function(x,
             "Residuals"
         ) +
         ggtitle("Plot of residuals versus fitted values",
-            subtitle = sprintf("for the model %s", capture.output(x$call))
+            subtitle = sprintf("for the model %s", utils::capture.output(x$call))
         )
 
 
