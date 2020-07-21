@@ -51,4 +51,10 @@ test_that("Factor comparison for svyglm", {
     dstrat<-svydesign(id=~1,strata=~stype, weights=~pw, data=apistrat, fpc=~fpc)
     s <- svyglm(api00~ell+meals+mobility+awards, design=dstrat)
     expect_is(factorComp(s, "awards"), "inzfactorcomp")
+
+    expect_match(
+        capture.output(factorComp(s, "awards")),
+        "all coefficients associated with 'awards' are zero",
+        all = FALSE
+    )
 })
