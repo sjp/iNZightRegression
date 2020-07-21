@@ -411,9 +411,9 @@ iNZightSummary <- function (x, method = "standard", reorder.factors = FALSE,
                                             if (all(is.na(tmpaov))) {
                                                 NA
                                             } else {
-                              ## Anova() on glm has different dimensions:
-                              tmpaov[which(rownames(tmpaov) == name.k),
-                                     ifelse(isGlm(x.lm) || isCox(x.lm), 3, 4)]
+                                                ## Anova() on glm has different dimensions:
+                                                col.i <- ifelse(isGlm(x.lm), 3, ifelse(isCox(x.lm) && !("loglik" %in% colnames(tmpaov)), 3, 4))
+                                                tmpaov[which(rownames(tmpaov) == name.k), col.i]
                                             }
                                         pvalue <- type3pval
                                     }
