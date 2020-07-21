@@ -176,8 +176,8 @@ iNZightSummary <- function (x, method = "standard", reorder.factors = FALSE,
     if (isCox(x.lm)) {
         surv.resp <- names(x.lm$model)[1]
         cat("Survival parameters:\n")
-        cat(sprintf("\tTime to follow-up: %s\n", gsub("survival::Surv\\((.*), ?.*\\)", "\\1", surv.resp)))
-        cat(sprintf("\tStatus indicator:  %s\n\n", gsub("survival::Surv\\(.*, ?(.*)\\)", "\\1", surv.resp)))
+        cat(sprintf("\tTime to follow-up: %s\n", gsub("(survival::)?Surv\\((.*), ?.*\\)", "\\2", surv.resp)))
+        cat(sprintf("\tStatus indicator:  %s\n\n", gsub("(survival::)?Surv\\(.*, ?(.*)\\)", "\\2", surv.resp)))
     }
 
   # Print out a description of the confounding variables excluded from
