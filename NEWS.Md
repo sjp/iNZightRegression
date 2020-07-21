@@ -4,6 +4,8 @@ __Release date__: Unreleased
 - add column for exponentiated estimates where appropriate
 - add `exponentiate.cis` argument to `iNZightSummary` which replaces the CIs
   with exponentiated versions if appropriate (`FALSE` by default)
+- add summary method for Cox PH models
+
 
 ## iNZightRegression 1.2.7
 __Release date__: 21 April 2020
