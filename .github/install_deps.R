@@ -1,7 +1,8 @@
 # R script
 github_deps <- c(
-    "iNZightVIT/iNZightTools@release/1.9",
-    "iNZightVIT/iNZightPlots@release/2.12"
+    "iNZightVIT/iNZightTools@1.9",
+    "iNZightVIT/iNZightPlots@2.12",
+    "iNZightVIT/iNZightMR@2.2.5"     # dependency of iNZightPlots
 )
 
 options(repos = c(CRAN = "https://cloud.r-project.org"))
