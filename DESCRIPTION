@@ -1,7 +1,7 @@
 Package: iNZightRegression
 Type: Package
 Title: Tools for Exploring Regression Models with 'iNZight'
-Version: 1.2.8
+Version: 1.2.8.9000
 Authors@R: c(
     person("Tom", "Elliott", role = c("aut", "cre"), email = "tom.elliott@auckland.ac.nz", comment = c(ORCID = "0000-0002-7815-6318")),
     person("Simon", "Potter", role = c("aut"), email = "spot023@aucklanduni.ac.nz"),
