@@ -12,6 +12,7 @@ iNZightSummary(
   symbolic.cor = x$symbolic.cor,
   signif.stars = getOption("show.signif.stars"),
   exclude = NULL,
+  exponentiate.ci = FALSE,
   ...
 )
 }
@@ -36,6 +37,10 @@ each coefficient.}
 
 \item{exclude}{a character vector of names of variables to be exluded from the
 summary output (i.e., confounding variables).}
+
+\item{exponentiate.ci}{logical, if \code{TRUE}, the exponential of the 
+confidence intervals will be printed if appropriate (log/logit link or log 
+transformed response)}
 
 \item{...}{further arguments passed to and from other methods.}
 }

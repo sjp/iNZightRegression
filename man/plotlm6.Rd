@@ -106,6 +106,5 @@ function in the \code{s20x} package.
 \code{\link{histogramArray}}, \code{\link{iNZightQQplot}}
 }
 \author{
-Simon Potter, David Banks, Tom Elliott. Original authors of
-\code{plot.lm} are John Maindonald and Martin Maechler.
+Simon Potter, David Banks, Tom Elliott.
 }

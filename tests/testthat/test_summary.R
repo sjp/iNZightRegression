@@ -43,3 +43,55 @@ test_that("Confounding variables are handled appropriately", {
         all = FALSE
     )
 })
+
+dat$y.pois <- rpois(100, 10)
+test_that("Exponentiated estimates are provided where appropriate", {
+    ## Logistic regression - odds ratios
+    fit.logit <- glm(y ~ x, family = binomial, data = dat)
+    smry <- capture.output(iNZightSummary(fit.logit))
+    expect_match(smry, "Odds Ratio", all = FALSE)
+
+    ## Log-transformed response
+    fit.log <- lm(log(Sepal.Length) ~ Sepal.Width + Species + Petal.Length, data = iris)
+    smry2 <- capture.output(iNZightSummary(fit.log))
+    expect_match(smry2, "Estimate \\(exp\\)", all = FALSE)
+
+    ## log link
+    fit.pois <- glm(y ~ x, family = poisson, data = dat)
+    smry3 <- capture.output(iNZightSummary(fit.pois))
+    expect_match(smry3, "Estimate \\(exp\\)", all = FALSE)
+})
+
+test_that("Exponentiated CIs are provided where appropriate if wanted", {
+    ## Logistic regression - odds ratios
+    fit.logit <- glm(y ~ x, family = binomial, data = dat)
+
+    ## Don't exponentiate by default
+    smry.noexp <- capture.output(iNZightSummary(fit.logit))
+    expect_match(smry.noexp, "2.5 % +97.5 %", all = FALSE)
+
+    ## ...but exponentiate if required
+    smry.exp <- capture.output(iNZightSummary(fit.logit, exponentiate.ci = TRUE))
+    expect_match(smry.exp, "2.5 % \\(OR\\) +97.5 % \\(OR\\)", all = FALSE)
+
+    ## No change to CIs if inappropriate
+    fit.lm <- lm(Sepal.Length ~ Sepal.Width + Species + Petal.Length, data = iris)
+    smry2 <- capture.output(iNZightSummary(fit.lm, exponentiate.ci = TRUE))
+    expect_match(smry2, "2.5 % +97.5 %", all = FALSE)
+})
+
+test_that("Cox PH models are supported", {
+    test1 <- data.frame(time=c(4,3,1,1,2,2,3),
+                  status=c(1,1,1,0,1,1,0),
+                  x=c(0,2,1,1,1,0,0),
+                  sex=factor(c(0,0,0,0,1,1,1)))
+    fit.cox <- survival::coxph(survival::Surv(time, status) ~ sex + x, data = test1, model = TRUE)
+
+    smry.cox <- capture.output(iNZightSummary(fit.cox, exponentiate.ci = TRUE))
+
+    expect_match(smry.cox, "Cox Proportional Hazards Model", all = FALSE)
+    expect_match(smry.cox, "Coefficients:", all=FALSE)
+    expect_match(smry.cox, "^sex", all = FALSE)
+    expect_match(smry.cox, "^Concordance", all = FALSE)
+})
+
