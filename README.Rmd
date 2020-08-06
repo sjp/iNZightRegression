@@ -48,7 +48,6 @@ Plots and summaries of model objects:
 
 ```{r example}
 library(iNZightRegression)
-
 iris.lm <- lm(Sepal.Width ~ Sepal.Length, data = iris)
 inzplot(iris.lm)
 ```
