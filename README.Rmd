@@ -46,8 +46,10 @@ devtools::install_github("iNZightVIT/iNZightRegression")
 
 Plots and summaries of model objects:
 
-```{r example}
+```{r example, out.width = "50%", fig.align = "center"}
 library(iNZightRegression)
 iris.lm <- lm(Sepal.Width ~ Sepal.Length, data = iris)
-inzplot(iris.lm)
+inzplot(iris.lm, which = "residual")
+inzplot(iris.lm, which = "scale")
+inzplot(iris.lm, which = "leverage")
 ```
