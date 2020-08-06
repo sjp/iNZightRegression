@@ -1,6 +1,5 @@
 # iNZightRegression
-[![Travis-CI Build Status](https://travis-ci.org/iNZightVIT/iNZightRegression.svg?branch=master)](https://travis-ci.org/iNZightVIT/iNZightRegression)
-[![AppVeyor Build status](https://ci.appveyor.com/api/projects/status/3vwj3qn0lpltld38/branch/master?svg=true)](https://ci.appveyor.com/project/tmelliott/inzightregression/branch/master)
+![R-CMD-check](https://github.com/iNZightVIT/iNZightRegression/workflows/R-CMD-check/badge.svg)
 [![Coverage status](https://codecov.io/gh/iNZightVIT/iNZightRegression/branch/master/graph/badge.svg)](https://codecov.io/github/iNZightVIT/iNZightRegression?branch=master)
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](http://www.gnu.org/licenses/gpl-3.0)
 
