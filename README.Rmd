@@ -31,7 +31,8 @@ It now handles `glm` object, as well as `svyglm` objects from the `survey` packa
 You can install the released version of iNZightRegression from [CRAN](https://CRAN.R-project.org) with:
 
 ``` r
-install.packages("iNZightRegression")
+# Not yet on CRAN - please use devtools below
+# install.packages("iNZightRegression")
 ```
 
 And the development version from [GitHub](https://github.com/) with:
