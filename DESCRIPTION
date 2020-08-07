@@ -23,7 +23,8 @@ Imports:
     dplyr,
     ggplot2,
     utils,
-    ggtext
+    ggtext,
+    ggrepel
 Suggests:
     survey,
     testthat,

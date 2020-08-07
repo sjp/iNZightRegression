@@ -9,6 +9,7 @@
   x,
   which = c("residual", "scale", "leverage", "cooks", "normal", "hist"),
   show.bootstraps = TRUE,
+  label.id = 3L,
   col.smooth = "orangered",
   col.bs = "lightgreen",
   ...,
@@ -21,6 +22,8 @@
 \item{which}{the type of plot to draw}
 
 \item{show.bootstraps}{logical, if \code{TRUE} bootstrap smoothers will be shown}
+
+\item{label.id}{integer for the number of extreme points to label (with row id)}
 
 \item{col.smooth}{the colour of smoothers}
 
