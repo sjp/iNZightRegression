@@ -17,6 +17,7 @@ Imports:
     grid,
     car,
     stats4,
+    iNZightTools (>= 1.9),
     iNZightPlots (>= 2.12),
     multcomp,
     magrittr,
