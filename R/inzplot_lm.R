@@ -177,7 +177,7 @@ inzplot.lm <- function(x,
             p <- p +
                 geom_path(lty = 2, col = col.cook,
                     data = dx, na.rm = TRUE) +
-                geom_path(aes(y = -y), lty = 2, col = col.cook,
+                geom_path(aes_(y = ~-y), lty = 2, col = col.cook,
                     data = dx, na.rm = TRUE) +
                 geom_vline(xintercept = XL[2])
         }
