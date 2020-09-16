@@ -12,6 +12,8 @@
   label.id = 3L,
   col.smooth = "orangered",
   col.bs = "lightgreen",
+  cook.levels = c(0.5, 1),
+  col.cook = "pink",
   ...,
   env = parent.frame()
 )
@@ -28,6 +30,10 @@
 \item{col.smooth}{the colour of smoothers}
 
 \item{col.bs}{the colour of bootstrap (smoothers)}
+
+\item{cook.levels}{levels of the Cook's distance at which to draw contours.}
+
+\item{col.cook}{the colour of Cook's distance contours}
 
 \item{...}{additional arguments}
 
