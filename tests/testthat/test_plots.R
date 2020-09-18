@@ -6,7 +6,7 @@ fit <- lm(height ~ armspan + gender + age + travel, data = cas)
 
 # dev.new()
 # dev.set(dev.next())
-# plotlm6(fit, which = 4)
+# plotlm6(fit, which = 5)
 
 test_that("Linear regression model plots - residual vs fitted", {
     expect_silent(p <- inzplot(fit))
@@ -24,4 +24,8 @@ test_that("Linear regression model plots - residuals vs leverage", {
 
 test_that("Linear regression model plots - Cook's distance", {
     expect_is(inzplot(fit, which = "cooks"), "gg")
+})
+
+test_that("Linear regression model plots - Normal Q-Q", {
+    expect_is(inzplot(fit, which = "normal"), "gg")
 })

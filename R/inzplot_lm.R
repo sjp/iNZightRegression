@@ -61,7 +61,9 @@ inzplot.lm <- function(x,
             ...,
             env = env
         ),
-        "cooks" = .inzplot_lm_cooks(x, label.id, ..., env = env)
+        "cooks" = .inzplot_lm_cooks(x, label.id, ..., env = env),
+        "normal" = .inzplot_lm_normqq(x, show.bootstraps, label.id, ..., env = env),
+        "hist" = .inzplot_lm_hist(x, show.bootstraps, ..., env = env)
     )
 
     grDevices::dev.hold()
@@ -301,6 +303,74 @@ inzplot.lm <- function(x,
             plot.title = element_markdown()
         ) +
         coord_cartesian(expand = FALSE)
+
+}
+
+.inzplot_lm_normqq <- function(x, show.bootstraps, label.id, ..., env = env) {
+    r <- residuals(x)
+    s <- sqrt(deviance(x) / df.residual(x))
+    hii <- lm.influence(x, do.coef = FALSE)$hat
+    rs <- dropInf(r / (s * sqrt(1 - hii)), hii)
+    iid <- 1:3L
+    labs <- character(nrow(x$model))
+    l <- sort.list(abs(rs), decreasing = TRUE)[iid]
+    labs[l] <- names(r)[l]
+
+    qq <- normCheck(rs, plot = FALSE)
+    d <- data.frame(x = qq$x, y = qq$y, lab = labs)
+
+    stest <- shapiro.test(rs)
+    sp <- stest$p.value
+    sres <- sprintf("Shapiro Wilk normality test: W = %s, P-value %s %s",
+        round(stest$statistic, 4),
+        ifelse(sp < 1e-4, "<", "="),
+        max(round(stest$p.value, 3), 1e-4)
+    )
+
+    p <- ggplot(d, aes_(~x, ~y)) +
+        geom_abline(slope = 1, intercept = 0)
+
+    title <- "**Normal Q-Q** of residuals"
+    if (show.bootstraps) {
+        colz <- iNZightPlots::inzpalette("rainbow")(10L)
+        for (i in 1:10) {
+            qqx <- normCheck(rnorm(length(rs)), plot = FALSE)
+            dx <- data.frame(x = qqx$x, y = qqx$y)
+            p <- p +
+                geom_point(
+                    colour = colz[i],
+                    data = dx,
+                    pch = 4L
+                )
+        }
+        tx <- c("boo", "tst", "rap", " No", "rma", "l e", "rro", "rs")
+        tc <- paste0("<span style='color:", colz[1:8], "'>", tx, "</span>", collapse = "")
+        title <- sprintf("%s with a sample of %s", title, tc)
+    }
+
+    p <- p +
+        geom_point() +
+        geom_text_repel(aes_(label = ~lab), data = d[d$lab != "", ],
+            direction = "x"
+        ) +
+        ggtitle(title,
+                subtitle = sprintf(
+                    "Linear model: %s<br>%s",
+                    utils::capture.output(x$call$formula),
+                    sres
+                )
+            ) +
+        scale_x_continuous("Theoretical quantiles") +
+        scale_y_continuous("Standardized residuals") +
+        theme_classic() +
+        theme(
+            plot.title.position = "plot",
+            plot.title = element_markdown(),
+            plot.subtitle = element_markdown(lineheight = 1.5)
+        )
+}
+
+.inzplot_lm_hist <- function(x, ..., env = env) {
 
 }
 
