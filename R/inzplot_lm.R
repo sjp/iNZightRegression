@@ -60,7 +60,8 @@ inzplot.lm <- function(x,
             label.id, col.smooth, col.bs, cook.levels, col.cook,
             ...,
             env = env
-        )
+        ),
+        "cooks" = .inzplot_lm_cooks(x, label.id, ..., env = env)
     )
 
     grDevices::dev.hold()
@@ -262,6 +263,45 @@ inzplot.lm <- function(x,
         )
 
     p
+}
+
+.inzplot_lm_cooks <- function(x, label.id, ..., env) {
+    cdx <- cooks.distance(x)
+    show.mx <- order(-cdx)[1:3]
+    d <- data.frame(
+        obs_n = seq_along(cdx),
+        cooks_distance = cdx
+    )
+    co <- order(-cdx)[1:3]
+    d$lab <- as.character(d$obs_n)
+
+    XL <- extendrange(c(0L, nrow(d)))
+    YL <- c(0, max(cdx) * 1.08)
+
+    ggplot(d, aes_(~obs_n, ~cooks_distance)) +
+        geom_segment(aes_(xend = ~obs_n, y = 0, yend = ~cooks_distance)) +
+        geom_text(aes_(label = ~lab),
+            data = d[co, ],
+            nudge_y = 0.02 * YL[2]
+        ) +
+        scale_x_continuous("Observation number",
+            limits = XL
+        ) +
+        scale_y_continuous("Cook's Distance",
+            limits = YL
+         ) +
+        ggtitle("**Cook's Distance** of ordered observations",
+            subtitle = sprintf("Linear model: %s",
+                utils::capture.output(x$call$formula)
+            )
+        ) +
+        theme_classic() +
+        theme(
+            plot.title.position = "plot",
+            plot.title = element_markdown()
+        ) +
+        coord_cartesian(expand = FALSE)
+
 }
 
 dropInf <- function(x, h) {
