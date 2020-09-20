@@ -25,7 +25,8 @@ Imports:
     ggplot2,
     utils,
     ggtext,
-    ggrepel
+    ggrepel,
+    patchwork
 Suggests:
     survey,
     testthat,

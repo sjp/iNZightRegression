@@ -25,6 +25,7 @@
 #' @import ggplot2
 #' @import ggtext
 #' @import ggrepel
+#' @import patchwork
 #' @importFrom magrittr "%>%"
 #' @author Tom Elliott
 #' @export
@@ -51,20 +52,32 @@ inzplot.lm <- function(x,
                        ) {
 
     # instead, just loop over `which` and patchwork:: them together
-    which <- match.arg(which)
-
-    p <- switch(which,
-        "residual" = ,
-        "scale" = ,
-        "leverage" = .inzplot_lm_scatter(x, which, show.bootstraps,
-            label.id, col.smooth, col.bs, cook.levels, col.cook,
-            ...,
-            env = env
-        ),
-        "cooks" = .inzplot_lm_cooks(x, label.id, ..., env = env),
-        "normal" = .inzplot_lm_normqq(x, show.bootstraps, label.id, ..., env = env),
-        "hist" = .inzplot_lm_hist(x, show.bootstraps, ..., env = env)
+    short.title <- length(which) > 1L
+    ps <- lapply(which,
+        function(w) {
+            switch(w,
+                "residual" = ,
+                "scale" = ,
+                "leverage" = .inzplot_lm_scatter(x, w, show.bootstraps,
+                    label.id, col.smooth, col.bs, cook.levels, col.cook,
+                    short.title,
+                    ...,
+                    env = env
+                ),
+                "cooks" = .inzplot_lm_cooks(x, label.id,
+                    short.title,
+                    ..., env = env),
+                "normal" = .inzplot_lm_normqq(x, show.bootstraps, label.id,
+                    short.title,
+                    ..., env = env),
+                "hist" = .inzplot_lm_hist(x, show.bootstraps,
+                    short.title,
+                    ..., env = env)
+            )
+        }
     )
+
+    p <- patchwork::wrap_plots(ps)
 
     grDevices::dev.hold()
     on.exit(grDevices::dev.flush())
@@ -76,6 +89,7 @@ inzplot.lm <- function(x,
 .inzplot_lm_scatter <- function(x, which, show.bootstraps, label.id,
                                 col.smooth, col.bs,
                                 cook.levels, col.cook,
+                                short.title,
                                 ...,
                                 env) {
     HEX_THRESHOLD <- 1e5
@@ -137,24 +151,31 @@ inzplot.lm <- function(x,
         "scale" = "Scale-location plot",
         "leverage" = "Residuals vs Leverage"
     )
-    if (show.bootstraps) {
-        title <- sprintf(
-            "**%s** with <span style='color:%s'>fitted</span> and <span style='color:%s'>bootstrap</span> smoothers",
-            title,
-            col.smooth,
-            col.bs
-        )
+    if (short.title) {
+        subtitle <- waiver()
     } else {
-        title <- sprintf(
-            "**%s** with fitted smoother",
-            title
+        subtitle <- sprintf("Linear model: %s",
+            utils::capture.output(x$call$formula)
         )
-    }
-    if (which == "leverage" && !is.null(attr(d, "r.hat"))) {
-        title <- sprintf("%s, and <span style='color:%s'>Cook's contours</span>",
-            title,
-            col.cook
-        )
+        if (show.bootstraps) {
+            title <- sprintf(
+                "**%s** with <span style='color:%s'>fitted</span> and <span style='color:%s'>bootstrap</span> smoothers",
+                title,
+                col.smooth,
+                col.bs
+            )
+        } else {
+            title <- sprintf(
+                "**%s** with fitted smoother",
+                title
+            )
+        }
+        if (which == "leverage" && !is.null(attr(d, "r.hat"))) {
+            title <- sprintf("%s, and <span style='color:%s'>Cook's contours</span>",
+                title,
+                col.cook
+            )
+        }
     }
 
     USE_HEX <- nrow(d) > HEX_THRESHOLD
@@ -220,16 +241,11 @@ inzplot.lm <- function(x,
                     )
                 } else waiver()
         ) +
-        ggtitle(
-            title,
-            subtitle = sprintf("Linear model: %s",
-                utils::capture.output(x$call$formula)
-            )
-        ) +
+        ggtitle(title, subtitle = subtitle) +
         theme_classic() +
         theme(
-            plot.title.position = "plot",
-            plot.title = element_markdown()
+            plot.title.position = ifelse(short.title, "panel", "plot"),
+            plot.title = element_markdown(size = ifelse(short.title, 11, 12))
         ) +
         coord_cartesian(xlim = XL, ylim = YL, expand = FALSE)
 
@@ -267,7 +283,7 @@ inzplot.lm <- function(x,
     p
 }
 
-.inzplot_lm_cooks <- function(x, label.id, ..., env) {
+.inzplot_lm_cooks <- function(x, label.id, short.title, ..., env) {
     cdx <- cooks.distance(x)
     show.mx <- order(-cdx)[1:3]
     d <- data.frame(
@@ -292,21 +308,28 @@ inzplot.lm <- function(x,
         scale_y_continuous("Cook's Distance",
             limits = YL
          ) +
-        ggtitle("**Cook's Distance** of ordered observations",
-            subtitle = sprintf("Linear model: %s",
-                utils::capture.output(x$call$formula)
-            )
+        ggtitle(
+            ifelse(short.title, "Cook's Distance",
+                "**Cook's Distance** of ordered observations"),
+            subtitle = if (short.title) waiver ()
+                else {
+                    sprintf("Linear model: %s",
+                        utils::capture.output(x$call$formula)
+                    )
+                }
         ) +
         theme_classic() +
         theme(
-            plot.title.position = "plot",
-            plot.title = element_markdown()
+            plot.title.position = ifelse(short.title, "panel", "plot"),
+            plot.title = element_markdown(size = ifelse(short.title, 11, 12))
         ) +
         coord_cartesian(expand = FALSE)
 
 }
 
-.inzplot_lm_normqq <- function(x, show.bootstraps, label.id, ..., env = env) {
+.inzplot_lm_normqq <- function(x, show.bootstraps, label.id,
+                               short.title,
+                               ..., env = env) {
     r <- residuals(x)
     s <- sqrt(deviance(x) / df.residual(x))
     hii <- lm.influence(x, do.coef = FALSE)$hat
@@ -330,7 +353,18 @@ inzplot.lm <- function(x,
     p <- ggplot(d, aes_(~x, ~y)) +
         geom_abline(slope = 1, intercept = 0)
 
-    title <- "**Normal Q-Q** of residuals"
+    if (short.title) {
+        title <- "Normal Q-Q"
+        subtitle <- waiver()
+    } else {
+        title <- "**Normal Q-Q** of residuals"
+        subtitle <- sprintf(
+            "Linear model: %s<br>%s",
+            utils::capture.output(x$call$formula),
+            sres
+        )
+    }
+
     if (show.bootstraps) {
         colz <- iNZightPlots::inzpalette("rainbow")(10L)
         for (i in 1:10) {
@@ -343,9 +377,11 @@ inzplot.lm <- function(x,
                     pch = 4L
                 )
         }
-        tx <- c("boo", "tst", "rap", " No", "rma", "l e", "rro", "rs")
-        tc <- paste0("<span style='color:", colz[1:8], "'>", tx, "</span>", collapse = "")
-        title <- sprintf("%s with a sample of %s", title, tc)
+        if (!short.title) {
+            tx <- c("boo", "tst", "rap", " No", "rma", "l e", "rro", "rs")
+            tc <- paste0("<span style='color:", colz[1:8], "'>", tx, "</span>", collapse = "")
+            title <- sprintf("%s with a sample of %s", title, tc)
+        }
     }
 
     p <- p +
@@ -353,25 +389,75 @@ inzplot.lm <- function(x,
         geom_text_repel(aes_(label = ~lab), data = d[d$lab != "", ],
             direction = "x"
         ) +
-        ggtitle(title,
-                subtitle = sprintf(
-                    "Linear model: %s<br>%s",
-                    utils::capture.output(x$call$formula),
-                    sres
-                )
-            ) +
+        ggtitle(title, subtitle = subtitle) +
         scale_x_continuous("Theoretical quantiles") +
         scale_y_continuous("Standardized residuals") +
         theme_classic() +
         theme(
-            plot.title.position = "plot",
-            plot.title = element_markdown(),
+            plot.title.position = ifelse(short.title, "panel", "plot"),
+            plot.title = element_markdown(size = ifelse(short.title, 11, 12)),
             plot.subtitle = element_markdown(lineheight = 1.5)
         )
 }
 
-.inzplot_lm_hist <- function(x, ..., env = env) {
+.inzplot_lm_hist <- function(x, short.title, ..., env = env) {
+    d <- data.frame(x = residuals(x))
+    mx <- mean(d$x, na.rm = TRUE)
+    sx <- sd(d$x, na.rm = TRUE)
+    rx <- range(d$x, na.rm = TRUE)
 
+    h <- hist(d$x, plot = FALSE)
+
+    xmin <- min(rx[1], mx - 3.5 * sx, h$breaks[1])
+    xmax <- max(rx[2], mx + 3.5 * sx, h$breaks[length(h$breaks)])
+    ymax <- max(h$density, dnorm(mx, mx, sx)) * 1.05
+
+    d2 <- data.frame(x = seq(xmin, xmax, length.out = 1001))
+    d2$y <- dnorm(d2$x, mx, sx)
+
+    dd <- data.frame(x = h$mids, y = h$density)
+
+    curve.col <- "orangered"
+    if (short.title) {
+        title <- "Histogram"
+        subtitle <- waiver()
+    } else {
+        title <- sprintf(
+            "**Histogram of residuals** with <span style='color: %s'>Normal density curve</span>",
+            curve.col
+        )
+        subtitle <- sprintf(
+            "Linear model: %s",
+            utils::capture.output(x$call$formula)
+        )
+    }
+
+    ggplot(dd, aes_(~x, ~y)) +
+        geom_col(
+            width = diff(h$breaks),
+            fill = "light blue",
+            colour = "black"
+        ) +
+        geom_path(aes_(y = ~y),
+            data = d2,
+            colour = curve.col,
+            linetype = 2,
+            size = 1.2
+        ) +
+        coord_cartesian(expand = FALSE) +
+        scale_x_continuous("Residuals",
+            limits = extendrange(range(d$x))
+        ) +
+        scale_y_continuous("Density",
+            limits = function(l) c(l[1], l[2] * 1.04)
+        ) +
+        ggtitle(title, subtitle = subtitle) +
+        theme_classic() +
+        theme(
+            plot.title.position = ifelse(short.title, "panel", "plot"),
+            plot.title = element_markdown(size = ifelse(short.title, 11, 12)),
+            plot.subtitle = element_markdown(lineheight = 1.5)
+        )
 }
 
 dropInf <- function(x, h) {
