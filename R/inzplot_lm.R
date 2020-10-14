@@ -18,6 +18,7 @@
 #' @param cook.levels levels of the Cook's distance at which to draw contours.
 #' @param col.cook the colour of Cook's distance contours
 #' @param ... additional arguments
+#' @param bs.fits a list of bootstrapped datasets
 #' @param env the environment for evaluating things (e.g., bootstraps)
 #' @return A ggplot object
 #'
@@ -48,11 +49,13 @@ inzplot.lm <- function(x,
                        cook.levels = c(0.5, 1),
                        col.cook = "pink",
                        ...,
+                       bs.fits = NULL,
                        env = parent.frame()
                        ) {
 
     # instead, just loop over `which` and patchwork:: them together
     short.title <- length(which) > 1L
+    if (show.bootstraps && is.null(bs.fits)) bs.fits <- generate_bootstraps(x, env)
     ps <- lapply(which,
         function(w) {
             switch(w,
@@ -62,17 +65,22 @@ inzplot.lm <- function(x,
                     label.id, col.smooth, col.bs, cook.levels, col.cook,
                     short.title,
                     ...,
+                    bs.fits = bs.fits,
                     env = env
                 ),
                 "cooks" = .inzplot_lm_cooks(x, label.id,
                     short.title,
-                    ..., env = env),
+                    ...,
+                    env = env),
                 "normal" = .inzplot_lm_normqq(x, show.bootstraps, label.id,
                     short.title,
-                    ..., env = env),
+                    ...,
+                    bs.fits = bs.fits,
+                    env = env),
                 "hist" = .inzplot_lm_hist(x, show.bootstraps,
                     short.title,
-                    ..., env = env)
+                    ...,
+                    env = env)
             )
         }
     )
@@ -91,6 +99,7 @@ inzplot.lm <- function(x,
                                 cook.levels, col.cook,
                                 short.title,
                                 ...,
+                                bs.fits,
                                 env) {
     HEX_THRESHOLD <- 1e5
 
@@ -143,7 +152,7 @@ inzplot.lm <- function(x,
     }
     d <- d_fun(x, which, label.id = label.id)
 
-    if (show.bootstraps)
+    if (show.bootstraps && is.null(bs.fits))
         bs.fits <- generate_bootstraps(x, env)
 
     title <- switch(which,
@@ -257,18 +266,23 @@ inzplot.lm <- function(x,
     }
 
     if (show.bootstraps) {
-        for (i in seq_along(bs.fits)) {
-            ds <- d_fun(bs.fits[[i]], which, is.bs = TRUE)
-            p <- p +
-                geom_smooth(
-                    data = ds,
-                    method = "loess",
-                    formula = y ~ x,
-                    colour = col.bs,
-                    se = FALSE,
-                    na.rm = TRUE
-                )
-        }
+        bs.data <- lapply(seq_along(bs.fits),
+            function(i) {
+                d_fun(bs.fits[[i]], which = which, is.bs = TRUE) %>%
+                    dplyr::mutate(bs.index = i)
+            }
+        ) %>% dplyr::bind_rows()
+
+        p <- p +
+            geom_smooth(
+                aes_(group = ~bs.index),
+                data = bs.data,
+                method = "loess",
+                formula = y ~ x,
+                colour = col.bs,
+                se = FALSE,
+                na.rm = TRUE
+            )
     }
 
     p <- p +
@@ -329,7 +343,7 @@ inzplot.lm <- function(x,
 
 .inzplot_lm_normqq <- function(x, show.bootstraps, label.id,
                                short.title,
-                               ..., env = env) {
+                               ..., bs.fits = NULL, env = env) {
     r <- residuals(x)
     s <- sqrt(deviance(x) / df.residual(x))
     hii <- lm.influence(x, do.coef = FALSE)$hat

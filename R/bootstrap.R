@@ -9,6 +9,7 @@ generate_bootstraps <- function(x, env) {
         bs.data <- data %>% dplyr::slice_sample(n = nrow(data), replace = TRUE)
         bs.fits[[i]] <- eval(bs.call)
     }
+    class(bs.fits) <- "inzboots"
     bs.fits
 }
 
