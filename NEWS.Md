@@ -1,4 +1,6 @@
-- refactor plots using ggplot
+# iNZightRegression 1.3.0
+
+- refactor plots using ggplot creating new method for `inzplot` (from iNZightPlots)
 - removes some functions that aren't used by iNZightRegression, and are available in iNZightMR instead
 
 
