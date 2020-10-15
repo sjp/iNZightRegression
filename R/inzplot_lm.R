@@ -55,7 +55,8 @@ inzplot.lm <- function(x,
 
     # instead, just loop over `which` and patchwork:: them together
     short.title <- length(which) > 1L
-    if (show.bootstraps && is.null(bs.fits)) bs.fits <- generate_bootstraps(x, env)
+    if (show.bootstraps && is.null(bs.fits))
+        bs.fits <- generate_bootstraps(x, env)
     ps <- lapply(which,
         function(w) {
             switch(w,
@@ -266,22 +267,26 @@ inzplot.lm <- function(x,
     }
 
     if (show.bootstraps) {
-        bs.data <- lapply(seq_along(bs.fits),
-            function(i) {
-                d_fun(bs.fits[[i]], which = which, is.bs = TRUE) %>%
-                    dplyr::mutate(bs.index = i)
-            }
-        ) %>% dplyr::bind_rows()
+        bs.data <- do.call(
+            rbind,
+            lapply(seq_along(bs.fits),
+                function(i) {
+                    di <- cbind(
+                        d_fun(bs.fits[[i]], which = which, is.bs = TRUE),
+                        bs.index = i
+                    )
+                    si <- loess(y ~ x, data = di)
+                    o <- order(si$x)
+                    data.frame(x = si$x[o], y = si$fitted[o], bs.index = i)
+                }
+            )
+        )
 
         p <- p +
-            geom_smooth(
+            geom_path(
                 aes_(group = ~bs.index),
                 data = bs.data,
-                method = "loess",
-                formula = y ~ x,
-                colour = col.bs,
-                se = FALSE,
-                na.rm = TRUE
+                colour = col.bs
             )
     }
 

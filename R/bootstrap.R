@@ -6,7 +6,7 @@ generate_bootstraps <- function(x, env) {
     bs.call$data <- as.name("bs.data")
     bs.fits <- vector("list", 30L)
     for (i in seq_along(bs.fits)) {
-        bs.data <- data %>% dplyr::slice_sample(n = nrow(data), replace = TRUE)
+        bs.data <- dplyr::slice_sample(data, n = nrow(data), replace = TRUE)
         bs.fits[[i]] <- eval(bs.call)
     }
     class(bs.fits) <- "inzboots"
