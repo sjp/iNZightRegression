@@ -13,6 +13,10 @@ options(
     install.packages.compile.from.source = "never"
 )
 
+if (!requireNamespace("quantreg", quietly = TRUE)) {
+    install.packages("quantreg")
+}
+
 remotes::install_github(github_deps)
 remotes::install_deps(dependencies = TRUE)
 remotes::install_cran("rcmdcheck")
