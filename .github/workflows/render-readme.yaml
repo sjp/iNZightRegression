@@ -6,6 +6,7 @@ on:
     branches:
       - master
       - dev
+      - 'release/*'
 
 name: Render README
 
