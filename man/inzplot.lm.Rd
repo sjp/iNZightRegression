@@ -15,6 +15,7 @@
   cook.levels = c(0.5, 1),
   col.cook = "pink",
   ...,
+  bs.fits = NULL,
   env = parent.frame()
 )
 }
@@ -36,6 +37,8 @@
 \item{col.cook}{the colour of Cook's distance contours}
 
 \item{...}{additional arguments}
+
+\item{bs.fits}{a list of bootstrapped datasets}
 
 \item{env}{the environment for evaluating things (e.g., bootstraps)}
 }
