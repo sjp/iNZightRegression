@@ -17,12 +17,16 @@ Imports:
     grid,
     car,
     stats4,
+    iNZightTools (>= 1.9),
     iNZightPlots (>= 2.12),
     multcomp,
     magrittr,
     dplyr,
     ggplot2,
-    utils
+    utils,
+    ggtext,
+    ggrepel,
+    patchwork
 Suggests:
     survey,
     testthat,
