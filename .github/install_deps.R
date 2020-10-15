@@ -13,10 +13,12 @@ options(
     install.packages.compile.from.source = "never"
 )
 
-if (!requireNamespace("quantreg", quietly = TRUE)) {
-    install.packages("quantreg")
-}
-
-remotes::install_github(github_deps)
-remotes::install_deps(dependencies = TRUE)
-remotes::install_cran("rcmdcheck")
+remotes::install_github(github_deps,
+    INSTALL_opts = c("--no-multiarch")
+)
+remotes::install_deps(dependencies = TRUE,
+    INSTALL_opts = c("--no-multiarch")
+)
+remotes::install_cran("rcmdcheck",
+    INSTALL_opts = c("--no-multiarch")
+)
