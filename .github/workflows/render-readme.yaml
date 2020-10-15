@@ -4,7 +4,6 @@ on:
       - 'README.Rmd'
       - 'R/*.R'
     branches:
-      - master
       - dev
       - 'release/**'
 

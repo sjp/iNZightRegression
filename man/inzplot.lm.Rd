@@ -43,7 +43,7 @@
 \item{env}{the environment for evaluating things (e.g., bootstraps)}
 }
 \value{
-A ggplot object
+A ggplot object with a plot method that will show the plot in the graphics device
 }
 \description{
 inzplot method

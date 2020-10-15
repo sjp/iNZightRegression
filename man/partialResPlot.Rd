@@ -27,7 +27,7 @@ plotting.}
 \item{env}{environment where the data is stored for bootstrapping}
 }
 \value{
-None.
+No return value, called for side-effect of producing a plot.
 }
 \description{
 This function draws partial residual plots for all continuous

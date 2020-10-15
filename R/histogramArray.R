@@ -1,27 +1,27 @@
-##' Produces an array of histograms to compare against the histogram of
-##' residuals for a fitted linear model.
-##'
-##' The histogram of the model \code{x} appears in the top-left
-##' position. For each of the other histograms, the fitted values of
-##' \code{x} are taken and normal random errors are added to these. The
-##' normal residual standard errors have standard error equal to the
-##' estimated residual standard error of \code{x}. A model is then fitted
-##' to this altered data and a histogram is produced.
-##'
-##' @title Histogram Array
-##'
-##' @param x an \code{lm} or \code{svyglm} object.
-##'
-##' @param n the number of additional histograms to plot alongside the original.
-##'
-##' @param env environment for finding data to bootstrap
-##' @return None.
-##'
-##' @author David Banks, Tom Elliott
-##'
-##' @seealso \code{\link{iNZightQQplot}}
-##'
-##' @export
+#' Produces an array of histograms to compare against the histogram of
+#' residuals for a fitted linear model.
+#'
+#' The histogram of the model \code{x} appears in the top-left
+#' position. For each of the other histograms, the fitted values of
+#' \code{x} are taken and normal random errors are added to these. The
+#' normal residual standard errors have standard error equal to the
+#' estimated residual standard error of \code{x}. A model is then fitted
+#' to this altered data and a histogram is produced.
+#'
+#' @title Histogram Array
+#'
+#' @param x an \code{lm} or \code{svyglm} object.
+#'
+#' @param n the number of additional histograms to plot alongside the original.
+#'
+#' @param env environment for finding data to bootstrap
+#' @return No return value, called to generate plot.
+#'
+#' @author David Banks, Tom Elliott
+#'
+#' @seealso \code{\link{iNZightQQplot}}
+#'
+#' @export
 histogramArray <- function(x, n = 7, env = parent.frame()) {
     if (isGlm(x))
         if (x$family$family != 'gaussian')

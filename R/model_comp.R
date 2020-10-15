@@ -3,7 +3,7 @@
 #' Obtain a quick model comparison matrix for a selection of models
 #' @param x a regression model (lm, glm, svyglm, ...)
 #' @param ... other models
-#' @return an `inzmodelcomp` object
+#' @return an `inzmodelcomp` object containing model comparison statistics
 #' @author Tom Elliott
 #' @export
 compare_models <- function(x, ...) {

@@ -17,7 +17,7 @@ equal to 30 and less than 4000 samples in the model, plot
 bootstrap smoothers, by default.}
 }
 \value{
-None.
+No return value, called for side-effect of producing a plot.
 }
 \description{
 This function draws partial residual plots for all continuous

@@ -14,7 +14,7 @@ histogramArray(x, n = 7, env = parent.frame())
 \item{env}{environment for finding data to bootstrap}
 }
 \value{
-None.
+No return value, called to generate plot.
 }
 \description{
 Produces an array of histograms to compare against the histogram of

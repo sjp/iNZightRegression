@@ -20,14 +20,13 @@
 #' @param ... additional arguments
 #' @param bs.fits a list of bootstrapped datasets
 #' @param env the environment for evaluating things (e.g., bootstraps)
-#' @return A ggplot object
+#' @return A ggplot object with a plot method that will show the plot in the graphics device
 #'
 #' @md
 #' @import ggplot2
 #' @import ggtext
 #' @import ggrepel
 #' @import patchwork
-#' @importFrom magrittr "%>%"
 #' @author Tom Elliott
 #' @export
 #' @examples

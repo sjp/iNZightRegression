@@ -81,6 +81,9 @@ package will be used for plotting, rather than base R graphics.}
 
 \item{...}{other arguments to be passed to through to plotting functions.}
 }
+\value{
+No return value; called for the side-effect of producing a plot.
+}
 \description{
 These plots are an extension of the original plots provided by
 \code{plot.lm}.

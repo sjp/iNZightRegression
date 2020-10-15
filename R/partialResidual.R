@@ -1,28 +1,28 @@
-##' This function draws partial residual plots for all continuous
-##' explanatory variables in a given model. Clicking the device
-##' displays the next plot in the sequence.
-##'
-##' @title Draw multiple partial residual plots
-##'
-##' @param fit an \code{lm}, \code{glm} or \code{svyglm} object.
-##'
-##' @param varname explanatory variable
-##'
-##' @param showBootstraps logical. If there are more than than or
-##' equal to 30 and less than 4000 samples in the model, plot
-##' bootstrap smoothers, by default.
-##'
-##' @param use.inzightplots logical, if \code{TRUE}, the iNZightPlots package will be used for
-##' plotting.
-##'
-##' @param env environment where the data is stored for bootstrapping
-##' @return None.
-##'
-##' @author David Banks, Tom Elliott.
-##'
-##' @seealso \code{\link{partialResPlot}}
-##'
-##' @export
+#' This function draws partial residual plots for all continuous
+#' explanatory variables in a given model. Clicking the device
+#' displays the next plot in the sequence.
+#'
+#' @title Draw multiple partial residual plots
+#'
+#' @param fit an \code{lm}, \code{glm} or \code{svyglm} object.
+#'
+#' @param varname explanatory variable
+#'
+#' @param showBootstraps logical. If there are more than than or
+#' equal to 30 and less than 4000 samples in the model, plot
+#' bootstrap smoothers, by default.
+#'
+#' @param use.inzightplots logical, if \code{TRUE}, the iNZightPlots package will be used for
+#' plotting.
+#'
+#' @param env environment where the data is stored for bootstrapping
+#' @return No return value, called for side-effect of producing a plot.
+#'
+#' @author David Banks, Tom Elliott.
+#'
+#' @seealso \code{\link{partialResPlot}}
+#'
+#' @export
 partialResPlot <-
     function(fit, varname,
              showBootstraps = nrow(fit$model) >= 30 & nrow(fit$model) < 4000,
@@ -73,7 +73,7 @@ partialResPlot <-
                 bsm_r = bsm[[j]]$residuals
                 bsm_Bi = bsm[[j]]$coefficients[varname]
                 bsm_Xi = bsm[[j]]$model[, varname]
-                
+
                 if (inzplots) {
                     iNZightPlots:::addQuantileSmoother(
                         bsm_Xi, bsm_r + bsm_Bi * bsm_Xi, quantile = 0.5,
@@ -114,21 +114,21 @@ partialResPlot <-
     }
 }
 
-##' This function draws partial residual plots for all continuous
-##' explanatory variables in a given model. Clicking the device
-##' displays the next plot in the sequence.
-##'
-##' @title Draw multiple partial residual plots
-##'
-##' @inheritParams partialResPlot
-##'
-##' @return None.
-##'
-##' @author David Banks, Tom Elliott.
-##'
-##' @seealso \code{\link{partialResPlot}}
-##'
-##' @export
+#' This function draws partial residual plots for all continuous
+#' explanatory variables in a given model. Clicking the device
+#' displays the next plot in the sequence.
+#'
+#' @title Draw multiple partial residual plots
+#'
+#' @inheritParams partialResPlot
+#'
+#' @return No return value, called for side-effect of producing a plot.
+#'
+#' @author David Banks, Tom Elliott.
+#'
+#' @seealso \code{\link{partialResPlot}}
+#'
+#' @export
 allPartialResPlots <-
     function(fit, showBootstraps = nrow(fit$model) >= 30 & nrow(fit$model) < 4000) {
         promptSetting = grDevices::devAskNewPage(TRUE)

@@ -1,83 +1,85 @@
-##' These plots are an extension of the original plots provided by
-##' \code{plot.lm}.
-##' \cr \cr
-##' Six plots are currently available: residuals versus fitted,
-##' Scale-Location of \eqn{\sqrt{| residuals|}}{sqrt{|residual|}} against
-##' fitted values, residuals against leverages, Cook's distance, Normal
-##' Q-Q plot and histogram of residuals.
-##' \cr \cr
-##' Also privided is the summary plot which shows all diagnostic plots
-##' arranged in a 2 by 3 grid. By default, this is shown first, then each
-##' of the individual plots in turn.
-##'
-##' For the residuals versus fitted values plot, we add bootstrapped
-##' smoothers to illustrate variance. The smoother is also added to the
-##' Scale-Location plot.
-##' \cr \cr
-##' The Normal Q-Q and histogram plots are taken from the \code{normcheck}
-##' function in the \code{s20x} package.
-##'
-##' @title Extended Plot Diagnostics for (g)lm Models
-##'
-##' @param x an \code{lm} object, typically the result of
-##' \code{\link{lm}} or \code{\link{glm}}. Can also take
-##' \code{\link[survey]{svyglm}} objects.
-##'
-##' @param which numeric, if a subset of the plots is required, specify a subset of
-##' the numbers \code{1:6}. \code{7} will produce a summary plot showing
-##' all of the plots arranged ina a grid. \code{1:6} will show the
-##' summary plot followed by each of the single plots one by one
-##' (default).
-##'
-##' @param panel panel function. the useful alternative to \code{\link{points}},
-##' \code{\link{panel.smooth}} can be chosen by \code{add.smooth = TRUE}.
-##'
-##' @param sub.caption common title. Above the figures if there are more than one; used as
-##' \code{sub} (s.\code{\link{title}}) otherwise. If \code{NULL}, as by
-##' default, a possible abbreviated version of \code{deparse(x$call)} is
-##' used.
-##'
-##' @param main title to each plot, in addition to \code{caption}.
-##'
-##' @param ask logical, if \code{TRUE}, the user is \emph{ask}ed before each plot,
-##' see \code{\link{par}(ask=.)}. Ignored when only one plot is being
-##' shown.
-##'
-##' @param id.n number of points to be labelled in each plot, starting with the most
-##' extreme.
-##'
-##' @param labels.id vector of labels, from which the labels for extreme plots will be
-##' chosen. \code{NULL} uses observation numbers.
-##'
-##' @param cex.id magnification of point labels.
-##'
-##' @param qqline logical, if \code{TRUE}, a \code{\link{qqline}()} is added to the
-##' normal QQ plot.
-##'
-##' @param cook.levels levels of the Cook's distance at which to draw contours.
-##'
-##' @param add.smooth logical, if \code{TRUE}, a smoother is drawn to the appropriate
-##' plots; see also \code{panel} above.
-##'
-##' @param label.pos positioning of labels, for the left half and right half of the graph
-##' respectively, for plots 1--3.
-##'
-##' @param cex.caption controls the size of \code{caption}.
-##'
-##' @param showBootstraps logical, if \code{TRUE}, bootstrap loess smoothers are drawn in the
-##' first 4 plots. By default, only drawn for sample sizes of at least 30.
-##'
-##' @param use.inzightplots logical, if set to \code{TRUE}, the iNZightPlots
-##' package will be used for plotting, rather than base R graphics.
-##'
-##' @param env environment for performing bootstrap simulations (i.e., to find the dataset!)
-##' @param ... other arguments to be passed to through to plotting functions.
-##'
-##' @author Simon Potter, David Banks, Tom Elliott.
-##'
-##' @seealso \code{\link{histogramArray}}, \code{\link{iNZightQQplot}}
-##'
-##' @export
+#' These plots are an extension of the original plots provided by
+#' \code{plot.lm}.
+#' \cr \cr
+#' Six plots are currently available: residuals versus fitted,
+#' Scale-Location of \eqn{\sqrt{| residuals|}}{sqrt{|residual|}} against
+#' fitted values, residuals against leverages, Cook's distance, Normal
+#' Q-Q plot and histogram of residuals.
+#' \cr \cr
+#' Also privided is the summary plot which shows all diagnostic plots
+#' arranged in a 2 by 3 grid. By default, this is shown first, then each
+#' of the individual plots in turn.
+#'
+#' For the residuals versus fitted values plot, we add bootstrapped
+#' smoothers to illustrate variance. The smoother is also added to the
+#' Scale-Location plot.
+#' \cr \cr
+#' The Normal Q-Q and histogram plots are taken from the \code{normcheck}
+#' function in the \code{s20x} package.
+#'
+#' @title Extended Plot Diagnostics for (g)lm Models
+#'
+#' @param x an \code{lm} object, typically the result of
+#' \code{\link{lm}} or \code{\link{glm}}. Can also take
+#' \code{\link[survey]{svyglm}} objects.
+#'
+#' @param which numeric, if a subset of the plots is required, specify a subset of
+#' the numbers \code{1:6}. \code{7} will produce a summary plot showing
+#' all of the plots arranged ina a grid. \code{1:6} will show the
+#' summary plot followed by each of the single plots one by one
+#' (default).
+#'
+#' @param panel panel function. the useful alternative to \code{\link{points}},
+#' \code{\link{panel.smooth}} can be chosen by \code{add.smooth = TRUE}.
+#'
+#' @param sub.caption common title. Above the figures if there are more than one; used as
+#' \code{sub} (s.\code{\link{title}}) otherwise. If \code{NULL}, as by
+#' default, a possible abbreviated version of \code{deparse(x$call)} is
+#' used.
+#'
+#' @param main title to each plot, in addition to \code{caption}.
+#'
+#' @param ask logical, if \code{TRUE}, the user is \emph{ask}ed before each plot,
+#' see \code{\link{par}(ask=.)}. Ignored when only one plot is being
+#' shown.
+#'
+#' @param id.n number of points to be labelled in each plot, starting with the most
+#' extreme.
+#'
+#' @param labels.id vector of labels, from which the labels for extreme plots will be
+#' chosen. \code{NULL} uses observation numbers.
+#'
+#' @param cex.id magnification of point labels.
+#'
+#' @param qqline logical, if \code{TRUE}, a \code{\link{qqline}()} is added to the
+#' normal QQ plot.
+#'
+#' @param cook.levels levels of the Cook's distance at which to draw contours.
+#'
+#' @param add.smooth logical, if \code{TRUE}, a smoother is drawn to the appropriate
+#' plots; see also \code{panel} above.
+#'
+#' @param label.pos positioning of labels, for the left half and right half of the graph
+#' respectively, for plots 1--3.
+#'
+#' @param cex.caption controls the size of \code{caption}.
+#'
+#' @param showBootstraps logical, if \code{TRUE}, bootstrap loess smoothers are drawn in the
+#' first 4 plots. By default, only drawn for sample sizes of at least 30.
+#'
+#' @param use.inzightplots logical, if set to \code{TRUE}, the iNZightPlots
+#' package will be used for plotting, rather than base R graphics.
+#'
+#' @param env environment for performing bootstrap simulations (i.e., to find the dataset!)
+#' @param ... other arguments to be passed to through to plotting functions.
+#'
+#' @return No return value; called for the side-effect of producing a plot.
+#'
+#' @author Simon Potter, David Banks, Tom Elliott.
+#'
+#' @seealso \code{\link{histogramArray}}, \code{\link{iNZightQQplot}}
+#'
+#' @export
 plotlm6 <- function(x, which = 1:6,
                     panel = if (add.smooth) panel.smooth
                             else points, sub.caption = NULL,
