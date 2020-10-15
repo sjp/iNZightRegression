@@ -125,7 +125,7 @@ adjustedMeans = function(fit) {
 #'
 #' @param fit a lm/glm/svyglm object
 #' @param factor the name of the factor to compare
-#' @return a factor level comparison matrix with estimates, CIs,
+#' @return a factor level comparison object with estimates, CIs,
 #'         and (adjusted) p-values
 #' @author Tom Elliott
 #' @export
@@ -171,7 +171,11 @@ factorComp <- function(fit, factor) {
     out
 }
 
+#' @param x an `inzfactorcomp` object
+#' @param ... extra args for print (ignored)
 #' @export
+#' @describeIn factorComp print method for object of class `inzfactorcomp`
+#' @md
 print.inzfactorcomp <- function(x, ...) {
     if (!is.null(x$reg.term.test)) {
         cat(sprintf(

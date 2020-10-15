@@ -2,23 +2,35 @@
 % Please edit documentation in R/factorMeans.R
 \name{factorComp}
 \alias{factorComp}
+\alias{print.inzfactorcomp}
 \title{Compare factor levels}
 \usage{
 factorComp(fit, factor)
+
+\method{print}{inzfactorcomp}(x, ...)
 }
 \arguments{
 \item{fit}{a lm/glm/svyglm object}
 
 \item{factor}{the name of the factor to compare}
+
+\item{x}{an \code{inzfactorcomp} object}
+
+\item{...}{extra args for print (ignored)}
 }
 \value{
-a factor level comparison matrix with estimates, CIs,
+a factor level comparison object with estimates, CIs,
         and (adjusted) p-values
 }
 \description{
 Computes confidence intervals for the pairwise differences between levels
 of a factor, based off of \link{TukeyHSD}.
 }
+\section{Methods (by generic)}{
+\itemize{
+\item \code{print}: print method for object of class \code{inzfactorcomp}
+}}
+
 \author{
 Tom Elliott
 }
