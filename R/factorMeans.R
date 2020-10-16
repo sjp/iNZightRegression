@@ -121,7 +121,7 @@ adjustedMeans = function(fit) {
 #' Compare factor levels
 #'
 #' Computes confidence intervals for the pairwise differences between levels
-#' of a factor, based off of \link{TukeyHSD}.
+#' of a factor, based off of \code{stats::TukeyHSD}.
 #'
 #' @param fit a lm/glm/svyglm object
 #' @param factor the name of the factor to compare

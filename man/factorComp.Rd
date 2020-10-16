@@ -23,7 +23,7 @@ a factor level comparison object with estimates, CIs, and (adjusted) p-values
 }
 \description{
 Computes confidence intervals for the pairwise differences between levels
-of a factor, based off of \link{TukeyHSD}.
+of a factor, based off of \code{stats::TukeyHSD}.
 }
 \section{Methods (by generic)}{
 \itemize{

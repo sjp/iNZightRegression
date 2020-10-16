@@ -2,7 +2,8 @@
 % Please edit documentation in R/partialResidual.R
 \name{partialResPlot}
 \alias{partialResPlot}
-\title{Draw multiple partial residual plots}
+\alias{allPartialResPlots}
+\title{Partial residual plot of continuous variable}
 \usage{
 partialResPlot(
   fit,
@@ -11,35 +12,40 @@ partialResPlot(
   use.inzightplots = FALSE,
   env = parent.frame()
 )
+
+allPartialResPlots(fit, ...)
 }
 \arguments{
 \item{fit}{an \code{lm}, \code{glm} or \code{svyglm} object.}
 
-\item{varname}{explanatory variable}
+\item{varname}{character, the name of an explanatory variable in the model}
 
-\item{showBootstraps}{logical. If there are more than than or
-equal to 30 and less than 4000 samples in the model, plot
-bootstrap smoothers, by default.}
+\item{showBootstraps}{logical, if \code{TRUE}, bootstrap smoothers will overlay the graph. By default this is \code{TRUE} if there are between 30 and 4000 observations in the model, otherwise it is \code{FALSE}.}
 
-\item{use.inzightplots}{logical, if \code{TRUE}, the iNZightPlots package will be used for
-plotting.}
+\item{use.inzightplots}{logical, if \code{TRUE}, the iNZightPlots package will be used for plotting.}
 
 \item{env}{environment where the data is stored for bootstrapping}
+
+\item{...}{additional arguments passed to `partialResPlot`}
 }
 \value{
 No return value, called for side-effect of producing a plot.
 }
 \description{
-This function draws partial residual plots for all continuous
-explanatory variables in a given model. Clicking the device
-displays the next plot in the sequence.
+This function draws partial residual plots for a continuous explanatory variables in a given model.
 }
+\section{Functions}{
+\itemize{
+\item \code{allPartialResPlots}: Cycle through all partial residual plots
+}}
+
 \examples{
 m <- lm(Sepal.Length ~ Sepal.Width + Petal.Width, data = iris)
 partialResPlot(m, "Sepal.Width")
+
+\donttest{
+allPartialResPlots(lm(Sepal.Length ~ Sepal.Width + Petal.Width, data = iris))
 }
-\seealso{
-\code{\link{partialResPlot}}
 }
 \author{
 David Banks, Tom Elliott.
