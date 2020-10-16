@@ -174,7 +174,7 @@ factorComp <- function(fit, factor) {
 }
 
 #' @param x an `inzfactorcomp` object
-#' @param ... extra args for print (ignored)
+#' @param ... extra arguments for print (ignored)
 #' @export
 #' @describeIn factorComp print method for object of class `inzfactorcomp`
 #' @md

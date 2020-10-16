@@ -4,7 +4,7 @@
 \alias{compare_models}
 \alias{compare_models.default}
 \alias{compare_models.svyglm}
-\title{Compare regression models using AIC, BIC, etc}
+\title{Compare regression models using AIC and BIC.}
 \usage{
 compare_models(x, ...)
 

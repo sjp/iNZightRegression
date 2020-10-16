@@ -57,14 +57,14 @@ __Release date__: 01 February 2019
 ## iNZightRegression 1.2.1
 __Release date__: 15 November 2018
 
-- display baseline level for binary glms
+- display baseline level for binary GLMs
 
 
 ## iNZightRegression 1.2.0-2
 __Release date__: 02 October 2017
 
 - fix bootstrapping algorithm
-- summary of model with only confounders (i.e., "adjusted intercept")
+- summary of model with only confounding variables (i.e., "adjusted intercept")
 
 
 ## iNZightRegression 1.2.0-1
@@ -87,8 +87,8 @@ to make the Model Fitting module better (over on `iNZightModules`).
 ### Bug fixes:
 
 - catch errors in model bootstrapping so the rest of the plot still works
-- use the `subset` argument to `lm` (via `update()`) to perform bootraps, rather than the long-winded data-bootstrapping call-modifying version that was buggy
-- fix up bootstrapping algorithms for QQplot and histogram arrays
+- use the `subset` argument to `lm` (via `update()`) to perform bootstraps, rather than the long-winded data-bootstrapping call-modifying version that was buggy
+- fix up bootstrapping algorithms for QQ-plot and histogram arrays
 
 
 ## iNZightRegression 1.1.7
@@ -114,8 +114,8 @@ __Release date__: 20 July 2015
 
 ### Minor Changes
 
-- added an extra argument `use.inzightplots` to the
-  plotting functions that allows users to enabled/disable the use of
+- Adds an extra argument `use.inzightplots` to the
+  plotting functions that allows users to enable/disable the use of
   them as desired. Currently, the default is `FALSE` as the
   latest version of `iNZightPlots` is incompatible with
   `iNZightRegression`.
@@ -130,8 +130,8 @@ __Release date__: 17 September 2014
 
 ### Bug Fixes
 
-- on some graphics devices (eg. RStudio) `grid.rect()` is not
-  transparent - now enforces these to be transparent
+- on some graphics devices (e.g., RStudio) `grid.rect()` is not
+  transparent; now enforces these to be transparent
 
 
 ## iNZightRegression 1.1.2
@@ -162,14 +162,14 @@ __Release date__: 27 March 2014
 
 - Maximum sample size for drawing bootstraps implemented
   (currently at 4000), as over this they don't provide much
-  information (this can be overridded by `showBootstraps = TRUE`).
+  information (this can be overridden by `showBootstraps = TRUE`).
 
-- p-values for normality test are printed as "P < 0.001"
+- P-values for normality test are printed as "P < 0.001"
   rather than "P = 0".
 
 ## Bug Fixes
 
-- Shapiro Wilk test not used if sample size > 5000 (resulted in an error).
+- Shapiro-Wilk test not used if sample size > 5000 (resulted in an error).
 
 
 # iNZightRegression 1.1
@@ -177,27 +177,27 @@ __Release date__: 18 January 2014
 
 ### New Features
 
-- Support for generalised lienar models (GLMs) and `svyglm`
+- Support for generalized linear models (GLMs) and `svyglm`
   objects from the `survey` package.
 
 - Changes to the `iNZightSummary` output include:
 
-  - Output now hides output of counfounding
+  - Output now hides output of confounding
     variables through the `exclude` argument, and lists these at the
     top of the output.
 
-  - Displays the type of fit (e.g., Suvey / Generalised Linear / Model).
+  - Displays the type of fit (e.g., Survey / Generalized Linear / Model).
 
 - The QQ-plot array has been replaced by a single plot with
   the parametric bootstrap data QQ-plots all on a single plot,
-  overlaid by the QQ plot of the true data (this was suggested by
+  overlaid by the QQ-plot of the true data (this was suggested by
   Thomas Lumley).
 
 ### Changes
 
 - The Histogram Array has been rewritten using `grid`, and
-  minimises margin whitespace and draws simulated histograms in a
-  different color.
+  minimizes margin whitespace and draws simulated histograms in a
+  different colour.
 
 ### Bug Fixes
 
@@ -211,13 +211,12 @@ __Release date__: 18 January 2014
   cut-off if the sample size becomes too small (which can be
   overridden by the `showBootstraps = TRUE|FALSE` argument.
 
-- `factorMeans` and `adjustedMeans` have be fixed so they work
-  for GLMs.
+- `factorMeans` and `adjustedMeans` have been enhanced to work with GLMs.
 
 
 ## iNZightRegression 1.0.2-20130913
 
-- Initial support for generalised linear models (GLMs),
+- Initial support for generalized linear models (GLMs),
   including the `survey` package's `svyglm`.
 
 

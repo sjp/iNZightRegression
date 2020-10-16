@@ -16,7 +16,7 @@ factorComp(fit, factor)
 
 \item{x}{an \code{inzfactorcomp} object}
 
-\item{...}{extra args for print (ignored)}
+\item{...}{extra arguments for print (ignored)}
 }
 \value{
 a factor level comparison object with estimates, CIs, and (adjusted) p-values

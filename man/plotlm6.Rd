@@ -32,7 +32,7 @@ plotlm6(
 
 \item{which}{numeric, if a subset of the plots is required, specify a subset of
 the numbers \code{1:6}. \code{7} will produce a summary plot showing
-all of the plots arranged ina a grid. \code{1:6} will show the
+all of the plots arranged in a a grid. \code{1:6} will show the
 summary plot followed by each of the single plots one by one
 (default).}
 
@@ -93,7 +93,7 @@ Scale-Location of \eqn{\sqrt{| residuals|}}{sqrt{|residual|}} against
 fitted values, residuals against leverages, Cook's distance, Normal
 Q-Q plot and histogram of residuals.
 \cr \cr
-Also privided is the summary plot which shows all diagnostic plots
+Also provided is the summary plot which shows all diagnostic plots
 arranged in a 2 by 3 grid. By default, this is shown first, then each
 of the individual plots in turn.
 }

@@ -35,7 +35,7 @@ then the most common level of the factor is set to be the baseline.}
 \item{signif.stars}{logical, if \code{TRUE}, \sQuote{significance stars} are printed for
 each coefficient.}
 
-\item{exclude}{a character vector of names of variables to be exluded from the
+\item{exclude}{a character vector of names of variables to be excluded from the
 summary output (i.e., confounding variables).}
 
 \item{exponentiate.ci}{logical, if \code{TRUE}, the exponential of the

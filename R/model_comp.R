@@ -1,4 +1,4 @@
-#' Compare regression models using AIC, BIC, etc
+#' Compare regression models using AIC and BIC.
 #'
 #' Obtain a quick model comparison matrix for a selection of models
 #' @param x a regression model (lm, glm, svyglm, ...)
