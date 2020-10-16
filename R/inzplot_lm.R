@@ -32,6 +32,7 @@
 #' @examples
 #' iris_fit <- lm(Sepal.Width ~ Sepal.Length, data = iris)
 #' inzplot(iris_fit)
+#' inzplot(iris_fit, which = "residual", show.bootstraps = FALSE)
 inzplot.lm <- function(x,
                        which = c(
                            "residual",

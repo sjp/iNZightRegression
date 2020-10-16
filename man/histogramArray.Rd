@@ -28,6 +28,9 @@ normal residual standard errors have standard error equal to the
 estimated residual standard error of \code{x}. A model is then fitted
 to this altered data and a histogram is produced.
 }
+\examples{
+histogramArray(lm(Sepal.Length ~ Sepal.Width + Species, data = iris))
+}
 \seealso{
 \code{\link{iNZightQQplot}}
 }

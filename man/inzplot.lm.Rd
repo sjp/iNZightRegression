@@ -66,6 +66,7 @@ There are several plot types available:
 \examples{
 iris_fit <- lm(Sepal.Width ~ Sepal.Length, data = iris)
 inzplot(iris_fit)
+inzplot(iris_fit, which = "residual", show.bootstraps = FALSE)
 }
 \author{
 Tom Elliott

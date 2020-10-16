@@ -125,10 +125,12 @@ adjustedMeans = function(fit) {
 #'
 #' @param fit a lm/glm/svyglm object
 #' @param factor the name of the factor to compare
-#' @return a factor level comparison object with estimates, CIs,
-#'         and (adjusted) p-values
+#' @return a factor level comparison object with estimates, CIs, and (adjusted) p-values
 #' @author Tom Elliott
 #' @export
+#' @examples
+#' f <- lm(Sepal.Length ~ Sepal.Width + Species, data = iris)
+#' factorComp(f, "Species")
 factorComp <- function(fit, factor) {
     z <- sprintf("multcomp::mcp(%s = \"Tukey\")", factor)
     comp <- summary(multcomp::glht(fit, linfct = eval(parse(text = z))))

@@ -105,6 +105,18 @@ Scale-Location plot.
 The Normal Q-Q and histogram plots are taken from the \code{normcheck}
 function in the \code{s20x} package.
 }
+\examples{
+
+m <- lm(Sepal.Length ~ Sepal.Width + Petal.Width, data = iris)
+plotlm6(m, which = 1)
+
+# the summary grid:
+plotlm6(m, which = 7)
+
+\donttest{# the default cycles through all 6 plots
+plotlm6(m)
+}
+}
 \seealso{
 \code{\link{histogramArray}}, \code{\link{iNZightQQplot}}
 }

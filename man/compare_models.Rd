@@ -30,6 +30,12 @@ Obtain a quick model comparison matrix for a selection of models
 \item \code{svyglm}: method for survey GLMs
 }}
 
+\examples{
+m0 <- lm(Sepal.Length ~ 1, data = iris)
+m1 <- lm(Sepal.Length ~ Sepal.Width, data = iris)
+m2 <- lm(Sepal.Length ~ Sepal.Width + Species, data = iris)
+compare_models(m0, m1, m2)
+}
 \author{
 Tom Elliott
 }

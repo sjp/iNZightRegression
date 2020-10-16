@@ -34,6 +34,10 @@ This function draws partial residual plots for all continuous
 explanatory variables in a given model. Clicking the device
 displays the next plot in the sequence.
 }
+\examples{
+m <- lm(Sepal.Length ~ Sepal.Width + Petal.Width, data = iris)
+partialResPlot(m, "Sepal.Width")
+}
 \seealso{
 \code{\link{partialResPlot}}
 }

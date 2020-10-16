@@ -80,6 +80,17 @@
 #' @seealso \code{\link{histogramArray}}, \code{\link{iNZightQQplot}}
 #'
 #' @export
+#' @examples
+#'
+#' m <- lm(Sepal.Length ~ Sepal.Width + Petal.Width, data = iris)
+#' plotlm6(m, which = 1)
+#'
+#' # the summary grid:
+#' plotlm6(m, which = 7)
+#'
+#' \donttest{# the default cycles through all 6 plots
+#' plotlm6(m)
+#' }
 plotlm6 <- function(x, which = 1:6,
                     panel = if (add.smooth) panel.smooth
                             else points, sub.caption = NULL,
@@ -292,10 +303,10 @@ plotlm6 <- function(x, which = 1:6,
     origpar = par(mfrow = c(1, 1), oma = c(0, 0, 0, 0))
     on.exit(par(origpar), add = TRUE)
 
-    dev.hold()
-    on.exit(dev.flush(), add = TRUE)
-
     for (plotNum in 1:7) {
+        # dev.hold()
+        # on.exit(dev.flush(), add = TRUE)
+
         if (showAllPlots & plotNum == 1) {
             ## We are showing all plots
             showPlot = rep(TRUE, 6)

@@ -6,6 +6,11 @@
 #' @return an `inzmodelcomp` object containing model comparison statistics
 #' @author Tom Elliott
 #' @export
+#' @examples
+#' m0 <- lm(Sepal.Length ~ 1, data = iris)
+#' m1 <- lm(Sepal.Length ~ Sepal.Width, data = iris)
+#' m2 <- lm(Sepal.Length ~ Sepal.Width + Species, data = iris)
+#' compare_models(m0, m1, m2)
 compare_models <- function(x, ...) {
     UseMethod("compare_models")
 }

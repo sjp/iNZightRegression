@@ -22,6 +22,8 @@
 #' @seealso \code{\link{iNZightQQplot}}
 #'
 #' @export
+#' @examples
+#' histogramArray(lm(Sepal.Length ~ Sepal.Width + Species, data = iris))
 histogramArray <- function(x, n = 7, env = parent.frame()) {
     if (isGlm(x))
         if (x$family$family != 'gaussian')

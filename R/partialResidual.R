@@ -23,6 +23,10 @@
 #' @seealso \code{\link{partialResPlot}}
 #'
 #' @export
+#'
+#' @examples
+#' m <- lm(Sepal.Length ~ Sepal.Width + Petal.Width, data = iris)
+#' partialResPlot(m, "Sepal.Width")
 partialResPlot <-
     function(fit, varname,
              showBootstraps = nrow(fit$model) >= 30 & nrow(fit$model) < 4000,
@@ -129,6 +133,11 @@ partialResPlot <-
 #' @seealso \code{\link{partialResPlot}}
 #'
 #' @export
+#'
+#' @examples
+#' \donttest{
+#' allPartialResPlots(lm(Sepal.Length ~ Sepal.Width + Petal.Width, data = iris))
+#' }
 allPartialResPlots <-
     function(fit, showBootstraps = nrow(fit$model) >= 30 & nrow(fit$model) < 4000) {
         promptSetting = grDevices::devAskNewPage(TRUE)
