@@ -3,7 +3,6 @@
 - refactor plots using ggplot creating new method for `inzplot` (from iNZightPlots)
 - removes some functions that aren't used by iNZightRegression, and are available in iNZightMR instead
 
-
 ## iNZightRegression 1.2.8
 
 - add column for exponentiated estimates where appropriate
