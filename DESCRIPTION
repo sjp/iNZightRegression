@@ -3,7 +3,10 @@ Type: Package
 Title: Tools for Exploring Regression Models with 'iNZight'
 Version: 1.3.0
 Authors@R: c(
-    person("Tom", "Elliott", role = c("aut", "cre"), email = "tom.elliott@auckland.ac.nz", comment = c(ORCID = "0000-0002-7815-6318")),
+    person("Tom", "Elliott", 
+        role = c("aut", "cre"), 
+        email = "tom.elliott@auckland.ac.nz", 
+        comment = c(ORCID = "0000-0002-7815-6318")),
     person("Simon", "Potter", role = c("aut")),
     person("David", "Banks", role = "aut"),
     person("Danny", "Chang", role = "ctb")
