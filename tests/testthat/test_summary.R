@@ -93,6 +93,6 @@ test_that("Cox PH models are supported", {
     expect_match(smry.cox, "Coefficients:", all=FALSE)
     expect_match(smry.cox, "^sex", all = FALSE)
 
-    skip_if(is.null(fit.cox$concordance))
-    expect_match(smry.cox, "^Concordance", all = FALSE)
+    if (!is.null(fit.cox$concordance))
+        expect_match(smry.cox, "^Concordance", all = FALSE)
 })
