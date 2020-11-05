@@ -121,14 +121,16 @@ adjustedMeans = function(fit) {
 #' Compare factor levels
 #'
 #' Computes confidence intervals for the pairwise differences between levels
-#' of a factor, based off of \link{TukeyHSD}.
+#' of a factor, based off of \code{stats::TukeyHSD}.
 #'
 #' @param fit a lm/glm/svyglm object
 #' @param factor the name of the factor to compare
-#' @return a factor level comparison matrix with estimates, CIs,
-#'         and (adjusted) p-values
+#' @return a factor level comparison object with estimates, CIs, and (adjusted) p-values
 #' @author Tom Elliott
 #' @export
+#' @examples
+#' f <- lm(Sepal.Length ~ Sepal.Width + Species, data = iris)
+#' factorComp(f, "Species")
 factorComp <- function(fit, factor) {
     z <- sprintf("multcomp::mcp(%s = \"Tukey\")", factor)
     comp <- summary(multcomp::glht(fit, linfct = eval(parse(text = z))))
@@ -171,7 +173,11 @@ factorComp <- function(fit, factor) {
     out
 }
 
+#' @param x an `inzfactorcomp` object
+#' @param ... extra arguments for print (ignored)
 #' @export
+#' @describeIn factorComp print method for object of class `inzfactorcomp`
+#' @md
 print.inzfactorcomp <- function(x, ...) {
     if (!is.null(x$reg.term.test)) {
         cat(sprintf(

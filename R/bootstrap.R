@@ -1,3 +1,21 @@
+# This may need to be converted to an S3 at some later date
+# generate_bootstraps.lm, .glm, .svyglm, etc
+generate_bootstraps <- function(x, env) {
+    data <- eval(x$call$data, envir = env)
+    bs.call <- x$call
+    bs.call$data <- as.name("bs.data")
+    bs.fits <- vector("list", 30L)
+    for (i in seq_along(bs.fits)) {
+        bs.data <- dplyr::slice_sample(data, n = nrow(data), replace = TRUE)
+        bs.fits[[i]] <- eval(bs.call)
+    }
+    class(bs.fits) <- "inzboots"
+    bs.fits
+}
+
+
+## THE FOLLOWING ARE DEPRECATED ... ?
+
 bootstrapModels <- function(fit, nBootstraps = 30, env = parent.frame()) {
     if (isSurvey(fit)) {
         warning('Bootstrapping for survey glms is not yet ready.')

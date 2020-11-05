@@ -35,11 +35,11 @@ then the most common level of the factor is set to be the baseline.}
 \item{signif.stars}{logical, if \code{TRUE}, \sQuote{significance stars} are printed for
 each coefficient.}
 
-\item{exclude}{a character vector of names of variables to be exluded from the
+\item{exclude}{a character vector of names of variables to be excluded from the
 summary output (i.e., confounding variables).}
 
-\item{exponentiate.ci}{logical, if \code{TRUE}, the exponential of the 
-confidence intervals will be printed if appropriate (log/logit link or log 
+\item{exponentiate.ci}{logical, if \code{TRUE}, the exponential of the
+confidence intervals will be printed if appropriate (log/logit link or log
 transformed response)}
 
 \item{...}{further arguments passed to and from other methods.}
@@ -82,6 +82,14 @@ squares when this is the case.
 The fitted model currently requires that the data are stored in a
 dataframe, which is pointed at by the \code{data} argument to
 \code{lm} (or equivalent).
+}
+\examples{
+m <- lm(Sepal.Length ~ ., data = iris)
+iNZightSummary(m)
+
+# exclude confounding variables for which you don't
+# need to know about their coefficients:
+iNZightSummary(m, exclude = "Sepal.Width")
 }
 \seealso{
 The model fitting functions \code{\link{lm}}, \code{\link{glm}}, and

@@ -1,5 +1,4 @@
-##' @import grid
-
+#' @import grid
 plotlm6grid <- function(x, which = 1:6,
                         panel = if (add.smooth) panel.smooth
                         else points, sub.caption = NULL,
@@ -10,6 +9,8 @@ plotlm6grid <- function(x, which = 1:6,
                         add.smooth = getOption("add.smooth"), label.pos = c(2, 4),
                         cex.caption = 1,
                         showBootstraps = nrow(x$model) >= 30 && nrow(x$model) < 4000, ...) {
+
+    # DEPRECATED in favour of `inzplot.lm()`, which uses ggplot2
 
   # This is a grid-graphics implementation of the summary plots, however is only
   # invoked when the iNZightPlots package is present. This means users can still

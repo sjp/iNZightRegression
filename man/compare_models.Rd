@@ -4,7 +4,7 @@
 \alias{compare_models}
 \alias{compare_models.default}
 \alias{compare_models.svyglm}
-\title{Compare regression models using AIC, BIC, etc}
+\title{Compare regression models using AIC and BIC.}
 \usage{
 compare_models(x, ...)
 
@@ -18,7 +18,7 @@ compare_models(x, ...)
 \item{...}{other models}
 }
 \value{
-an `inzmodelcomp` object
+an `inzmodelcomp` object containing model comparison statistics
 }
 \description{
 Obtain a quick model comparison matrix for a selection of models
@@ -30,6 +30,12 @@ Obtain a quick model comparison matrix for a selection of models
 \item \code{svyglm}: method for survey GLMs
 }}
 
+\examples{
+m0 <- lm(Sepal.Length ~ 1, data = iris)
+m1 <- lm(Sepal.Length ~ Sepal.Width, data = iris)
+m2 <- lm(Sepal.Length ~ Sepal.Width + Species, data = iris)
+compare_models(m0, m1, m2)
+}
 \author{
 Tom Elliott
 }

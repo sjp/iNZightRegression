@@ -1,32 +1,33 @@
-##' Produces a sample of QQ-plots based on the fitted values, overlaid by
-##' a QQ-plot of the original data.
-##'
-##' Multiple bootstrap models are generated from the fitted values of
-##' the model, each with different random normal errors with standard
-##' error equal to the estimated residual standard error from the
-##' original model. These are plotted, and then overlaid by the QQ plot
-##' from the original data.
-##' \cr \cr
-##' This plot can be used to assess the assumption of normality in the
-##' residuals for a linear regression model.
-##' @title iNZight QQ Plot
-##'
-##' @param x an \code{lm} or \code{svyglm} object (with \code{family = "Gaussian"}.
-##'
-##' @param n the number of sampled QQ plots to produce beneath the QQ plot of
-##' \code{x}.
-##'
-##' @param env environment for finding data to bootstrap
-##' @return None.
-##'
-##' @author David Banks, Tom Elliott
-##'
-##' @seealso \code{\link{histogramArray}}
-##'
-##' @examples fit <- lm(Volume ~ Height + Girth, data = trees)
-##' iNZightQQplot(fit)
-##'
-##' @export
+#' Produces a sample of QQ-plots based on the fitted values, overlaid by
+#' a QQ-plot of the original data.
+#'
+#' Multiple bootstrap models are generated from the fitted values of
+#' the model, each with different random normal errors with standard
+#' error equal to the estimated residual standard error from the
+#' original model. These are plotted, and then overlaid by the QQ plot
+#' from the original data.
+#' \cr \cr
+#' This plot can be used to assess the assumption of normality in the
+#' residuals for a linear regression model.
+#' @title iNZight QQ Plot
+#'
+#' @param x an \code{lm} or \code{svyglm} object (with \code{family = "Gaussian"}.
+#'
+#' @param n the number of sampled QQ plots to produce beneath the QQ plot of
+#' \code{x}.
+#'
+#' @param env environment for finding data to bootstrap
+#' @return No return value, called to produce plot.
+#'
+#' @author David Banks, Tom Elliott
+#'
+#' @seealso \code{\link{histogramArray}}
+#'
+#' @examples
+#' fit <- lm(Volume ~ Height + Girth, data = trees)
+#' iNZightQQplot(fit)
+#'
+#' @export
 iNZightQQplot <- function(x, n = 5, env = parent.frame()) {
 
   # ------------------------------------------------------------------ #
