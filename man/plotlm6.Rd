@@ -32,7 +32,7 @@ plotlm6(
 
 \item{which}{numeric, if a subset of the plots is required, specify a subset of
 the numbers \code{1:6}. \code{7} will produce a summary plot showing
-all of the plots arranged ina a grid. \code{1:6} will show the
+all of the plots arranged in a a grid. \code{1:6} will show the
 summary plot followed by each of the single plots one by one
 (default).}
 
@@ -81,6 +81,9 @@ package will be used for plotting, rather than base R graphics.}
 
 \item{...}{other arguments to be passed to through to plotting functions.}
 }
+\value{
+No return value; called for the side-effect of producing a plot.
+}
 \description{
 These plots are an extension of the original plots provided by
 \code{plot.lm}.
@@ -90,7 +93,7 @@ Scale-Location of \eqn{\sqrt{| residuals|}}{sqrt{|residual|}} against
 fitted values, residuals against leverages, Cook's distance, Normal
 Q-Q plot and histogram of residuals.
 \cr \cr
-Also privided is the summary plot which shows all diagnostic plots
+Also provided is the summary plot which shows all diagnostic plots
 arranged in a 2 by 3 grid. By default, this is shown first, then each
 of the individual plots in turn.
 }
@@ -101,6 +104,18 @@ Scale-Location plot.
 \cr \cr
 The Normal Q-Q and histogram plots are taken from the \code{normcheck}
 function in the \code{s20x} package.
+}
+\examples{
+
+m <- lm(Sepal.Length ~ Sepal.Width + Petal.Width, data = iris)
+plotlm6(m, which = 1)
+
+# the summary grid:
+plotlm6(m, which = 7)
+
+\donttest{# the default cycles through all 6 plots
+plotlm6(m)
+}
 }
 \seealso{
 \code{\link{histogramArray}}, \code{\link{iNZightQQplot}}

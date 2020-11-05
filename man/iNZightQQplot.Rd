@@ -15,7 +15,7 @@ iNZightQQplot(x, n = 5, env = parent.frame())
 \item{env}{environment for finding data to bootstrap}
 }
 \value{
-None.
+No return value, called to produce plot.
 }
 \description{
 Produces a sample of QQ-plots based on the fitted values, overlaid by

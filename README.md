@@ -41,12 +41,6 @@ Plots and summaries of model objects:
 
 ``` r
 library(iNZightRegression)
-#> Registered S3 methods overwritten by 'iNZightRegression':
-#>   method                from     
-#>   plot.moecalc          iNZightMR
-#>   print.moecalc         iNZightMR
-#>   print.summary.moecalc iNZightMR
-#>   summary.moecalc       iNZightMR
 iris.lm <- lm(Sepal.Width ~ Sepal.Length, data = iris)
 inzplot(iris.lm, which = "residual")
 ```

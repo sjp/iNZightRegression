@@ -16,21 +16,24 @@ factorComp(fit, factor)
 
 \item{x}{an \code{inzfactorcomp} object}
 
-\item{...}{extra args for print (ignored)}
+\item{...}{extra arguments for print (ignored)}
 }
 \value{
-a factor level comparison object with estimates, CIs,
-        and (adjusted) p-values
+a factor level comparison object with estimates, CIs, and (adjusted) p-values
 }
 \description{
 Computes confidence intervals for the pairwise differences between levels
-of a factor, based off of \link{TukeyHSD}.
+of a factor, based off of \code{stats::TukeyHSD}.
 }
 \section{Methods (by generic)}{
 \itemize{
 \item \code{print}: print method for object of class \code{inzfactorcomp}
 }}
 
+\examples{
+f <- lm(Sepal.Length ~ Sepal.Width + Species, data = iris)
+factorComp(f, "Species")
+}
 \author{
 Tom Elliott
 }

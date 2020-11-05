@@ -42,11 +42,11 @@
 #' @param signif.stars logical, if \code{TRUE}, \sQuote{significance stars} are printed for
 #' each coefficient.
 #'
-#' @param exclude a character vector of names of variables to be exluded from the
+#' @param exclude a character vector of names of variables to be excluded from the
 #' summary output (i.e., confounding variables).
-#' 
-#' @param exponentiate.ci logical, if \code{TRUE}, the exponential of the 
-#' confidence intervals will be printed if appropriate (log/logit link or log 
+#'
+#' @param exponentiate.ci logical, if \code{TRUE}, the exponential of the
+#' confidence intervals will be printed if appropriate (log/logit link or log
 #' transformed response)
 #'
 #' @param ... further arguments passed to and from other methods.
@@ -76,6 +76,14 @@
 #' type III sums of squares.
 #'
 #' @export
+#'
+#' @examples
+#' m <- lm(Sepal.Length ~ ., data = iris)
+#' iNZightSummary(m)
+#'
+#' # exclude confounding variables for which you don't
+#' # need to know about their coefficients:
+#' iNZightSummary(m, exclude = "Sepal.Width")
 iNZightSummary <- function (x, method = "standard", reorder.factors = FALSE,
                             digits = max(3, getOption("digits") - 3),
                             symbolic.cor = x$symbolic.cor,
@@ -199,11 +207,11 @@ iNZightSummary <- function (x, method = "standard", reorder.factors = FALSE,
     }
     var.labels <- strsplit(var.labels, ":")
     resid <- ifelse(isGlm(x.lm), x$deviance.resid, ifelse(isCox(x.lm), x.lm$residuals, x$residuals))
-    
+
     if (!isCox(x.lm)) {
         df <- x$df
         rdf <- df[2L]
-    
+
         if (rdf > 5L) {
             nam <- c("Min", "1Q", "Median", "3Q", "Max")
             rq <- if (length(dim(resid)) == 2L) {
@@ -576,10 +584,10 @@ iNZightSummary <- function (x, method = "standard", reorder.factors = FALSE,
             }
         }
     } else if (isCox(x.lm)) {
-      ## For Cox PH models, just print the last few lines of summary output 
+      ## For Cox PH models, just print the last few lines of summary output
       other.stats <- utils::capture.output(x)
       s.len <- length(other.stats)
-      
+
       other.stats <- other.stats[(s.len - 4):(s.len - 1)]
       cat("\n", other.stats, sep = "\n")
     }

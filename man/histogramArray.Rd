@@ -14,7 +14,7 @@ histogramArray(x, n = 7, env = parent.frame())
 \item{env}{environment for finding data to bootstrap}
 }
 \value{
-None.
+No return value, called to generate plot.
 }
 \description{
 Produces an array of histograms to compare against the histogram of
@@ -27,6 +27,9 @@ position. For each of the other histograms, the fitted values of
 normal residual standard errors have standard error equal to the
 estimated residual standard error of \code{x}. A model is then fitted
 to this altered data and a histogram is produced.
+}
+\examples{
+histogramArray(lm(Sepal.Length ~ Sepal.Width + Species, data = iris))
 }
 \seealso{
 \code{\link{iNZightQQplot}}

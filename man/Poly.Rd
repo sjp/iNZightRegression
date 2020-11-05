@@ -26,6 +26,18 @@ A modified `poly()` function that allows for missing values.
 \details{
 Credit goes to whoever posted this online first (google search if you must find it!)
 }
+\examples{
+Poly(rnorm(100), degree = 2L)
+
+# handles missing values:
+iris.na <- iris
+iris.na$Sepal.Length[c(5, 10)] <- NA
+lm(Sepal.Width ~ Poly(Sepal.Length, 2L), data = iris.na)
+
+\dontrun{# stats::poly() produces an error in this case:
+lm(Sepal.Width ~ poly(Sepal.Length, 2L), data = iris.na)
+}
+}
 \author{
 Tom Elliott
 }
