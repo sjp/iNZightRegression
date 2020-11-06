@@ -6,3 +6,4 @@
 ^appveyor\.yml$
 ^\.github$
 ^README\.Rmd$
+^CRAN-RELEASE$
