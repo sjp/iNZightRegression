@@ -2,6 +2,7 @@
 This is a resubmission. In this version I have:
 * replaced \dontrun with \donttest in examples
 * added link to iNZight in the description
+* remove assignment to .GlobalEnv in test
 
 
 ## Test environments
