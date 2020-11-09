@@ -117,11 +117,11 @@ partialResPlot <-
 allPartialResPlots <-
     function(fit, ...) {
         promptSetting = grDevices::devAskNewPage(TRUE)
+        on.exit(grDevices::devAskNewPage(promptSetting))
         xVarterms = attr(fit$terms, "term.labels")
         xVarnames = xVarterms[ ! grepl(":", xVarterms)]
         xVartypes = attr(fit$terms, "dataClasses")
         for (v in xVarnames)
             if (! xVartypes[v] %in% c("factor", "ordered"))
                 partialResPlot(fit, v, ...)
-        grDevices::devAskNewPage(promptSetting)
 }
