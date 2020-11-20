@@ -46,7 +46,7 @@ s3 <- svyglm(api00 ~ ell + meals + mobility, design = dclus2)
 s4 <- svyglm(api00 ~ meals, design = dclus2)
 
 test_that("Survey models work", {
-    skip_if_not(interactive())
+    skip("Test doesn't work within 'testthat' due to namespacing issues.")
     expect_is(compare_models(s1), "inzmodelcomp")
     expect_equivalent(compare_models(s1)[, "AIC"], AIC(s1)["AIC"])
     expect_equivalent(

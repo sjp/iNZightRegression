@@ -2,10 +2,10 @@
 This is a resubmission. In this version I have:
 * replaced \dontrun with \donttest in examples
 * removed assignment to .GlobalEnv in test
-* added URL for the main iNZight project to DESCIPTION
+* added URL to DESCIPTION for the main iNZight project to which this project belongs
 
 ## Test environments
-* local ubuntu 18.04, R 4.0.2
+* local ubuntu 20.04, R 4.0.3
 * ubuntu 20.04 (GitHub Actions) R release, and devel
 * macos (GitHub Actions), R release
 * win-builder, R release and devel
