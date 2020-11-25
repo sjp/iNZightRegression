@@ -2,7 +2,7 @@
 This is a resubmission. In this version I have:
 * replaced \dontrun with \donttest in examples
 * removed assignment to .GlobalEnv in test
-* added URL to DESCIPTION for the main iNZight project to which this project belongs
+* added URL to DESCIPTION for the main iNZight project to which this project belongs - there's no other 'webservice' this package uses that would require linking in the description.
 
 ## Test environments
 * local ubuntu 20.04, R 4.0.3
