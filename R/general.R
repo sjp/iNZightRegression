@@ -48,7 +48,7 @@ tryOrErrorPlot <- function(expr, x) {
 #' iris.na$Sepal.Length[c(5, 10)] <- NA
 #' lm(Sepal.Width ~ Poly(Sepal.Length, 2L), data = iris.na)
 #'
-#' \dontrun{# stats::poly() produces an error in this case:
+#' \donttest{# stats::poly() produces an error in this case:
 #' lm(Sepal.Width ~ poly(Sepal.Length, 2L), data = iris.na)
 #' }
 Poly <- function(x, degree = 1, coefs = NULL, raw = FALSE, ...) {
