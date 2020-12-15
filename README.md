@@ -10,6 +10,7 @@
 status](https://codecov.io/gh/iNZightVIT/iNZightRegression/branch/master/graph/badge.svg)](https://codecov.io/github/iNZightVIT/iNZightRegression?branch=master)
 [![License: GPL
 v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](http://www.gnu.org/licenses/gpl-3.0)
+[![CRAN](https://www.r-pkg.org/badges/version/iNZightRegression)](https://CRAN.R-project.org/package=iNZightRegression)
 <!-- badges: end -->
 
 An R package which provides summary information and plots which have
