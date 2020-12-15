@@ -24,7 +24,6 @@ Imports:
     grid,
     iNZightPlots (>= 2.12),
     iNZightTools (>= 1.9),
-    magrittr,
     multcomp,
     patchwork,
     stats,
