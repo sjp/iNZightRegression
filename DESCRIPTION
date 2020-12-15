@@ -23,7 +23,6 @@ Imports:
     grDevices,
     grid,
     iNZightPlots (>= 2.12),
-    iNZightTools (>= 1.9),
     multcomp,
     patchwork,
     stats,
@@ -31,6 +30,7 @@ Imports:
     utils
 Suggests:
     covr,
+    iNZightTools (>= 1.9),
     survey,
     survival,
     testthat

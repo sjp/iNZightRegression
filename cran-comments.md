@@ -10,7 +10,7 @@
 
 I have fixed the CRAN package check notes
 * 'magrittr' removed from Imports (no longer used)
-* 'iNZightTools' ... ?
+* 'iNZightTools' moved to Suggests (now only used in tests)
 
 ## Downstream dependencies
 
