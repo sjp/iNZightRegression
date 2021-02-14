@@ -4,3 +4,6 @@
 ^revdep$
 ^\.travis\.yml$
 ^appveyor\.yml$
+^\.github$
+^README\.Rmd$
+^CRAN-RELEASE$

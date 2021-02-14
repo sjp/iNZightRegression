@@ -31,7 +31,7 @@ factorMeans = function(fit) {
       }
       return(res)
   }
-  else cat('There are no factors in this model.\n')
+  else warning('There are no factors in this model.')
 }
 
 
@@ -114,21 +114,23 @@ adjustedMeans = function(fit) {
       return(res)
   }
   else {
-      cat('There are no factors in this model.\n')
+      warning('There are no factors in this model.')
   }
 }
 
 #' Compare factor levels
 #'
 #' Computes confidence intervals for the pairwise differences between levels
-#' of a factor, based off of \link{TukeyHSD}.
+#' of a factor, based off of \code{stats::TukeyHSD}.
 #'
 #' @param fit a lm/glm/svyglm object
 #' @param factor the name of the factor to compare
-#' @return a factor level comparison matrix with estimates, CIs,
-#'         and (adjusted) p-values
+#' @return a factor level comparison object with estimates, CIs, and (adjusted) p-values
 #' @author Tom Elliott
 #' @export
+#' @examples
+#' f <- lm(Sepal.Length ~ Sepal.Width + Species, data = iris)
+#' factorComp(f, "Species")
 factorComp <- function(fit, factor) {
     z <- sprintf("multcomp::mcp(%s = \"Tukey\")", factor)
     comp <- summary(multcomp::glht(fit, linfct = eval(parse(text = z))))
@@ -160,16 +162,42 @@ factorComp <- function(fit, factor) {
     rownames(diffmat) <- rownames(pvalmat) <- levels[-n]
     rownames(cimat) <- rbind(levels[-n], "")
 
-    structure(
+    out <- structure(
         list(estimate = diffmat, ci = cimat, p.value = pvalmat),
         class = "inzfactorcomp",
         response = colnames(fit$model)[1],
         factor = factor
     )
+    if (inherits(fit, "svyglm"))
+        out$reg.term.test <- survey::regTermTest(fit, factor)
+    out
 }
 
+#' @param x an `inzfactorcomp` object
+#' @param ... extra arguments for print (ignored)
 #' @export
+#' @describeIn factorComp print method for object of class `inzfactorcomp`
+#' @md
 print.inzfactorcomp <- function(x, ...) {
+    if (!is.null(x$reg.term.test)) {
+        cat(sprintf(
+            "# Overall effect of %s on %s\n\n",
+            attr(x, "factor"),
+            attr(x, "response")
+        ))
+        cat(sprintf(
+            "Null hypothesis: all coefficients associated with '%s' are zero\n",
+            attr(x, "factor")
+        ))
+        cat(sprintf("\nF = %.02f on %i and %i df, p-value%s%s\n\n\n",
+            x$reg.term.test$Ftest[1],
+            x$reg.term.test$df,
+            x$reg.term.test$ddf,
+            ifelse(x$reg.term.test$p < 1e-8, " ", " = "),
+            format.pval(x$reg.term.test$p, digits = 5, eps = 1e-8, na.form = "")
+        ))
+    }
+
     cat(sprintf(
         "# Estimated differences in mean %s between levels of %s\n",
         attr(x, "response"), attr(x, "factor")
@@ -188,5 +216,6 @@ print.inzfactorcomp <- function(x, ...) {
     pmat[1:prod(dim(pmat))] <-
       format.pval(pmat, digits = 5, eps = 1e-8, na.form = "")
     print(pmat, quote = FALSE)
+
     invisible(NULL)
 }
