@@ -99,3 +99,23 @@ test_that("Cox PH models are supported", {
     expect_match(smry.cox, "^sex", all = FALSE)
     # expect_match(smry.cox, "^Concordance", all = FALSE)
 })
+
+test_that("Other testing", {
+    skip_if_not_installed("FutureLearnData")
+    cas <- FutureLearnData::census.at.school.500
+
+    fmlas <- list(
+        height ~ 1,
+        height ~ armspan,
+        height ~ armspan - 1,
+        height ~ travel,
+        height ~ travel - 1,
+        height ~ armspan + travel,
+        height ~ armspan + travel * gender,
+        height ~ armspan + travel * gender * getlunch
+    )
+    z <- lapply(fmlas[1:7], function(f) {
+        cat("\n\n--------------------------------------\n")
+        inzsummary(lm(f, data = cas))
+    })
+})

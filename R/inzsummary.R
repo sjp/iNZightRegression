@@ -99,6 +99,8 @@ coef_matrix <- function(x, method, signif.stars, exclude) {
         lower = ci[,1],
         upper = ci[,2]
     )
+
+    class(mat) <- "inzcoefmat"
     return(mat)
 
     terms <- terms(z)
@@ -117,4 +119,33 @@ coef_matrix <- function(x, method, signif.stars, exclude) {
     print(intercept)
 # print(t(terms))
     # rbind(intercept, t(terms))
+}
+
+print.inzcoefmat <- function(x, digits = 3, ...) {
+    # assume (for now) that everything is there, we just need to format the column values
+    # cols 1-3,5-6 formatted normally; col 4 formatted as p-value
+
+    mat <- apply(x, 2, function(col) {
+        format(col, digits = digits, scientific = FALSE)
+    })
+    mat <- matrix(mat, ncol = ncol(x))
+    mat[,4] <- format.pval(x[,4], digits = digits)
+
+    mat <- rbind(colnames(x), mat)
+    mat <- matrix(
+        apply(mat, 2, function(col) format(col, justify = "right")),
+        nrow = nrow(mat)
+    )
+
+    mat <- cbind(c("", rownames(x)), mat)
+    mat <- matrix(
+        apply(mat, 2, function(col) format(col, justify = "left")),
+        nrow = nrow(mat)
+    )
+
+    mat <- apply(mat, 1,
+        function(x) paste0("   ", paste(x, collapse = "   "))
+    )
+
+    cat(mat, sep = "\n")
 }
