@@ -26,7 +26,7 @@ test_that("Probit models supported", {
 })
 
 test_that("Interactions are handled", {
-    fit1 <- lm(uptake ~ Type:Treatment, data = CO2)
+    fit1 <- lm(uptake ~ Type*Treatment, data = CO2)
     fit2 <- lm(uptake ~ conc + Type:Treatment, data = CO2)
 
     smry1 <- capture.output(iNZightSummary(fit1))

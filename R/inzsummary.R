@@ -12,7 +12,7 @@ NULL
 #'
 #' @param x an object of class \code{"lm"}, \code{"glm"} or \code{"svyglm"}, usually the result of a call to the corresponding function.
 #' @param method the type of inference to perform: "standard" uses Normal theory, "bootstrap" uses bootstrap resampling.
-#' @param reorder.factors if `FALSE` (default), factor order is left unchanged, if `TRUE`, the most common level is set as the baseline. Alternatively can be a character value of a level to use as the baseline.
+#' @param reorder.factors if `FALSE` (default), factor order is left unchanged, if `TRUE`, the most common level is set as the baseline.
 #' @param digits the number of significant digits to display in results
 #' @param symbolic.cor logical, if \code{TRUE}, print the correlations in a symbolic form (see \code{\link{symnum}}), rather than as numbers.
 #' @param signif.stars logical, if \code{TRUE}, \sQuote{significance stars} are printed for each coefficient.
@@ -40,17 +40,22 @@ inzsummary.lm <- function(x,
 
     method <- match.arg(method)
 
-
     ## section 1: model information
 
     # response:
     cat(glue::glue("Linear Model for '{attr(x$model, 'names')[1]}'"), "\n\n")
 
     # confounding variables/adjusted for:
-
+    if (!is.null(exclude)) {
+        cat('The model has been adjusted for the',
+            'following confounder(s):\n', sep = ' ')
+        cat('\t')
+        cat(exclude, sep = ', ')
+        cat('\n\n')
+    }
 
     ## section 2: coefficient matrix
-    # print(coef_matrix(x, signif.stars = signif.stars, exclude = exclude))
+    print(coef_matrix(x, method = method, signif.stars = signif.stars, exclude = exclude))
 
     # names -> factors split into levels; overall factor p-value
     # estimates
@@ -70,4 +75,46 @@ inzsummary.lm <- function(x,
 
     ## section 3: errors, df, R-squared, etc (model dependent)
 
+}
+
+coef_matrix <- function(x, method, signif.stars, exclude) {
+    z <- summary(x)
+    # coef <- z$coefficients
+    # if (signif.stars) {
+    #     Signif <- symnum(pv, corr = FALSE, na = FALSE,
+    #         cutpoints = c(0,  .001,.01,.05, .1, 1),
+    #         symbols   =  c("***","**","*","."," "))
+    # }
+
+    coefs <- coefficients(x)
+    err <- sqrt(diag(vcov(x)))
+    tval <- coefs / err
+    pval <- pt(tval, x$df, lower.tail = FALSE) * 2
+    ci <- confint(x)
+    mat <- cbind(
+        Estimate = coefs,
+        `Std. Error` = err,
+        `t value` = tval,
+        `p value` = pval,
+        lower = ci[,1],
+        upper = ci[,2]
+    )
+    return(mat)
+
+    terms <- terms(z)
+
+    # Intercept:
+    intercept <- if (attr(terms, "intercept") == 1) coef["(Intercept)", ] else NULL
+
+    # Now terms: should be one group of row(s) per column of `terms`
+    tf <- attr(terms, "factors")
+    terms <- sapply(colnames(tf),
+        function(term) {
+
+            c(estimate = NA, error = NA, tvalue = NA, pvalue = NA, NA, NA)
+        }
+    )
+    print(intercept)
+# print(t(terms))
+    # rbind(intercept, t(terms))
 }
