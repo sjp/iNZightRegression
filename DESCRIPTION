@@ -22,7 +22,7 @@ Imports:
     graphics,
     grDevices,
     grid,
-    iNZightPlots (>= 2.12),
+    iNZightPlots (>= 2.12.6.9000),
     multcomp,
     patchwork,
     stats,
