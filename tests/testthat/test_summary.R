@@ -112,9 +112,13 @@ test_that("Other testing", {
         height ~ travel - 1,
         height ~ armspan + travel,
         height ~ armspan + travel * gender,
+        height ~ armspan + travel:gender,
+        height ~ gender + armspan * travel,
         height ~ armspan + travel * gender * getlunch
     )
-    z <- lapply(fmlas[1:7], function(f) {
+
+    devtools::load_all()
+    z <- lapply(fmlas[-10], function(f) {
         cat("\n\n--------------------------------------\n")
         inzsummary(lm(f, data = cas))
     })
