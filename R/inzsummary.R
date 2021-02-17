@@ -57,24 +57,81 @@ inzsummary.lm <- function(x,
     ## section 2: coefficient matrix
     coef_matrix(x, method = method, signif.stars = signif.stars, exclude = exclude)
 
-    # names -> factors split into levels; overall factor p-value
-    # estimates
-    # standard errors
-    # test statistic (t-value)
-    # p-value
-    # p-value significance stars
-    # confidence interval of estimate (lower, upper)
-
-    # things to worry about:
-    # * intercept (yes/no)
-    # * numeric vars - one row
-    # * categorical vars - one row per level + 1
-    # * interactions - n*m + 1 (either can be numeric)
-
-    # significance codes (stars)
-
     ## section 3: errors, df, R-squared, etc (model dependent)
-    invisible(NULL)
+    x.lm <- x
+    x.data <- x.lm$model
+    x <- summary(x)
+    if (isGlm(x.lm)) {
+        cat("\n(Dispersion parameter for ",
+            x.lm$family$family, " family taken to be ",
+            format(x$dispersion), ")\n\n",
+            apply(cbind(paste(format(c("Null", "Residual"),
+                                     justify = "right"), "deviance:"),
+                        format(unlist(x[c("null.deviance", "deviance")]),
+                               digits = max(5, digits + 1)), " on",
+                        format(unlist(x[c("df.null", "df.residual")])),
+                        " degrees of freedom\n"),
+                  1L, paste, collapse = " "), sep = "")
+        if (nzchar(mess <- naprint(x$na.action)))
+            cat("  (", mess, ")\n", sep = "")
+        if (!is.na(x$aic))
+            cat("AIC: ", format(x$aic, digits = max(4, digits + 1)),
+                '\n', sep = '')
+        cat("\n", "Number of Fisher Scoring iterations: ", x$iter,
+            "\n", sep = "")
+        correl <- x$correlation
+        if (!is.null(correl)) {
+            p <- NCOL(correl)
+            if (p > 1) {
+                cat("\nCorrelation of Coefficients:\n")
+                if (is.logical(symbolic.cor) && symbolic.cor) {
+                    print(symnum(correl, abbr.colnames = NULL))
+                }
+                else {
+                    correl <- format(round(correl, 2), nsmall = 2,
+                                     digits = digits)
+                    correl[!lower.tri(correl)] <- ""
+                    print(correl[-1, -p, drop = FALSE], quote = FALSE)
+                }
+            }
+        }
+    } else if (!isCox(x.lm)) {
+        cat("\nResidual standard error:",
+            format(signif(x$sigma, digits)), "on", rdf,
+            "degrees of freedom\n")
+        if(nzchar(mess <- naprint(x$na.action))) cat("  (",mess, ")\n",
+                                                     sep="")
+        if (!is.null(x$fstatistic)) {
+            cat("Multiple R-squared:", formatC(x$r.squared, digits=digits))
+            cat(",\tAdjusted R-squared:",formatC(x$adj.r.squared,
+                                                 digits=digits), "\n")
+        }
+        correl <- x$correlation
+        if (!is.null(correl)) {
+            p <- NCOL(correl)
+            if (p > 1L) {
+                cat("\nCorrelation of Coefficients:\n")
+                if(is.logical(symbolic.cor) && symbolic.cor) {
+                    print(symnum(correl, abbr.colnames = NULL))
+                } else {
+                    correl <-
+                        format(round(correl, 2), nsmall = 2,
+                               digits = digits)
+                    correl[!lower.tri(correl)] <- ""
+                    print(correl[-1, -p, drop=FALSE], quote = FALSE)
+                }
+            }
+        }
+    } else if (isCox(x.lm)) {
+      ## For Cox PH models, just print the last few lines of summary output
+      other.stats <- utils::capture.output(x)
+      s.len <- length(other.stats)
+
+      other.stats <- other.stats[(s.len - 4):(s.len - 1)]
+      cat("\n", other.stats, sep = "\n")
+    }
+    cat("\n")
+    invisible(x)
 }
 
 coef_matrix <- function(x, method, signif.stars, exclude) {
