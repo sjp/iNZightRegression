@@ -37,3 +37,20 @@ test_that("Linear regression model plots - Histogram", {
 test_that("Linear regression model plots - summary grid", {
     expect_is(inzplot(fit), "patchwork")
 })
+
+
+fit_pois <- glm(cellcost ~ age + height + gender,
+    data = cas,
+    family = "poisson")
+
+fit_bin <- glm(gender ~ age + height,
+    data = cas,
+    family = "binomial")
+
+# p1 <- inzplot(fit_pois, "marginal")
+# p2 <- inzplot(fit_pois, "marginal")
+
+# test_that("GLM plots", {
+#     expect_null(p1)
+#     expect_null(p2)
+# })

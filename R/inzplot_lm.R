@@ -53,6 +53,15 @@ inzplot.lm <- function(x,
                        env = parent.frame()
                        ) {
 
+    if (which[1] == "marginal") {
+        terms <- x$terms
+        vars <- attr(terms, "term.labels")
+        vars <- vars[attr(terms, "dataClasses")[vars] == "numeric"]
+        f <- as.formula(paste("~", paste(vars, collapse = " + ")))
+        p <- car::marginalModelPlots(x, f, ...)
+        return(invisible(p))
+    }
+
     # instead, just loop over `which` and patchwork:: them together
     short.title <- length(which) > 1L
     if (show.bootstraps && is.null(bs.fits))
