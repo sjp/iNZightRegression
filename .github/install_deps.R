@@ -5,6 +5,9 @@ github_deps <- c(
     "iNZightVIT/iNZightMR@2.2.5"     # dependency of iNZightPlots
 )
 
+if (OS == "Windows" && !requireNamespace('utf8', quietly = TRUE))
+    install.packages("utf8")
+
 options(
     repos = c(
         RSPM = Sys.getenv("RSPM"),
