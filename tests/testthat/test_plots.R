@@ -47,10 +47,7 @@ fit_bin <- glm(gender ~ age + height,
     data = cas,
     family = "binomial")
 
-# p1 <- inzplot(fit_pois, "marginal")
-# p2 <- inzplot(fit_pois, "marginal")
-
-# test_that("GLM plots", {
-#     expect_null(p1)
-#     expect_null(p2)
-# })
+test_that("GLM plots", {
+    expect_null(inzplot(fit_pois, "marginal"))
+    expect_null(inzplot(fit_bin, "marginal"))
+})
