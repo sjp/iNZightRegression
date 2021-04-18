@@ -39,15 +39,17 @@ test_that("Linear regression model plots - summary grid", {
 })
 
 
-fit_pois <- glm(cellcost ~ age + height + gender,
-    data = cas,
-    family = "poisson")
-
-fit_bin <- glm(gender ~ age + height,
-    data = cas,
-    family = "binomial")
-
 test_that("GLM plots", {
+    skip("car::mms() calls to update(), which doesn't work within testthat")
+
+    fit_pois <- glm(cellcost ~ age + height + gender,
+        data = cas,
+        family = "poisson")
+
+    fit_bin <- glm(gender ~ age + height,
+        data = cas,
+        family = "binomial")
+
     expect_null(inzplot(fit_pois, "marginal"))
     expect_null(inzplot(fit_bin, "marginal"))
 })
