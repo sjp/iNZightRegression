@@ -1,3 +1,8 @@
+
+
+
+## iNZightRegression 1.3.1
+
 - add marginal model plots (from 'car') which are useful for `glm` objects
 
 # iNZightRegression 1.3.0
