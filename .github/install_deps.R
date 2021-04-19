@@ -5,6 +5,10 @@ github_deps <- c(
     "iNZightVIT/iNZightMR@2.2.5"     # dependency of iNZightPlots
 )
 
+OS <- Sys.getenv("OS_TYPE")
+if (OS == "Windows" && !requireNamespace('utf8', quietly = TRUE))
+    install.packages("utf8", repos = "https://cran.r-project.org")
+
 options(
     repos = c(
         RSPM = Sys.getenv("RSPM"),

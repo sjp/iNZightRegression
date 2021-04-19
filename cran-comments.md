@@ -1,22 +1,16 @@
-## Resubmission
-This is a resubmission. In this version I have:
-* replaced \dontrun with \donttest in examples
-* removed assignment to .GlobalEnv in test
-* added URL to DESCIPTION for the main iNZight project to which this project belongs - there's no other 'webservice' this package uses that would require linking in the description.
-
 ## Test environments
-* local ubuntu 20.04, R 4.0.3
-* ubuntu 20.04 (GitHub Actions) R release, and devel
+* ubuntu 20.04 (local), R 4.0.3
+* ubuntu 20.04 (GitHub Actions), R release and devel
 * macos (GitHub Actions), R release
-* win-builder, R release and devel
+* windows (win-builder), R release and devel
 
 ## R CMD check results
 
-0 errors | 0 warnings | 1 notes
+0 errors | 0 warnings | 0 notes
 
-* This is a new submission
-  - no published resources related to the methods
-  - no additional system dependencies
+I have fixed the CRAN package check notes
+* 'magrittr' removed from Imports (no longer used)
+* 'iNZightTools' moved to Suggests (now only used in tests)
 
 ## Downstream dependencies
 
