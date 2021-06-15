@@ -26,7 +26,7 @@ test_that("Probit models supported", {
 })
 
 test_that("Interactions are handled", {
-    fit1 <- lm(uptake ~ Type:Treatment, data = CO2)
+    fit1 <- lm(uptake ~ Type*Treatment, data = CO2)
     fit2 <- lm(uptake ~ conc + Type:Treatment, data = CO2)
 
     smry1 <- capture.output(iNZightSummary(fit1))
@@ -42,6 +42,11 @@ test_that("Confounding variables are handled appropriately", {
         "The model has been adjusted for the following confounder\\(s\\)",
         all = FALSE
     )
+})
+
+test_that("Model intercept removed from model with factors", {
+    fit <- lm(Sepal.Length ~ Species - 1, data = iris)
+    expect_silent(smry <- capture.output(iNZightSummary(fit)))
 })
 
 dat$y.pois <- rpois(100, 10)
@@ -93,4 +98,28 @@ test_that("Cox PH models are supported", {
     expect_match(smry.cox, "Coefficients:", all=FALSE)
     expect_match(smry.cox, "^sex", all = FALSE)
     # expect_match(smry.cox, "^Concordance", all = FALSE)
+})
+
+test_that("Other testing", {
+    skip_if_not_installed("FutureLearnData")
+    cas <- FutureLearnData::census.at.school.500
+
+    fmlas <- list(
+        height ~ 1,
+        height ~ armspan,
+        height ~ armspan - 1,
+        height ~ travel,
+        height ~ travel - 1,
+        height ~ armspan + travel,
+        height ~ armspan + travel * gender,
+        height ~ armspan + travel:gender,
+        height ~ gender + armspan * travel,
+        height ~ armspan + travel * gender * getlunch
+    )
+
+    devtools::load_all()
+    z <- lapply(fmlas[-10], function(f) {
+        cat("\n\n--------------------------------------\n")
+        inzsummary(lm(f, data = cas))
+    })
 })

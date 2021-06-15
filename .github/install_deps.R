@@ -1,7 +1,7 @@
 # R script
 github_deps <- c(
     "iNZightVIT/iNZightTools@1.9",
-    "iNZightVIT/iNZightPlots@2.12",
+    "iNZightVIT/iNZightPlots@dev",
     "iNZightVIT/iNZightMR@2.2.5"     # dependency of iNZightPlots
 )
 
