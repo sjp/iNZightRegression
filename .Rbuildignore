@@ -7,3 +7,5 @@
 ^\.github$
 ^README\.Rmd$
 ^CRAN-RELEASE$
+^.git$
+
