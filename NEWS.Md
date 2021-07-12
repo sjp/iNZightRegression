@@ -1,3 +1,4 @@
+* `show.bootstraps` defaults to `TRUE` only if fewer than 100,000 observations
 
 
 

@@ -11,7 +11,7 @@
 #'
 #' @param x a regression model
 #' @param which the type of plot to draw
-#' @param show.bootstraps logical, if `TRUE` bootstrap smoothers will be shown
+#' @param show.bootstraps logical, if `TRUE` bootstrap smoothers will be shown (defaults to `TRUE` if fewer than 100,000 observations)
 #' @param label.id integer for the number of extreme points to label (with row id)
 #' @param col.smooth the colour of smoothers
 #' @param col.bs the colour of bootstrap (smoothers)
@@ -42,7 +42,7 @@ inzplot.lm <- function(x,
                            "normal",
                            "hist"
                         ),
-                       show.bootstraps = TRUE,
+                       show.bootstraps = nrow(x$model) < 1e5,
                        label.id = 3L,
                        col.smooth = "orangered",
                        col.bs = "lightgreen",
