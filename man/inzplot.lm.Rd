@@ -11,7 +11,7 @@
 \method{inzplot}{lm}(
   x,
   which = c("residual", "scale", "leverage", "cooks", "normal", "hist"),
-  show.bootstraps = TRUE,
+  show.bootstraps = nrow(x$model) < 1e+05,
   label.id = 3L,
   col.smooth = "orangered",
   col.bs = "lightgreen",
@@ -31,7 +31,7 @@
 
 \item{which}{the type of plot to draw}
 
-\item{show.bootstraps}{logical, if \code{TRUE} bootstrap smoothers will be shown}
+\item{show.bootstraps}{logical, if \code{TRUE} bootstrap smoothers will be shown (defaults to \code{TRUE} if fewer than 100,000 observations)}
 
 \item{label.id}{integer for the number of extreme points to label (with row id)}
 
